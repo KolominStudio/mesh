@@ -48,7 +48,7 @@
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
         .header { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .header .title { font-size: 18px; font-weight: 700; color: var(--text); }
+        .header .title { font-size: 18px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px; }
         .header .title span { color: var(--blue); }
         .header .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .header select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; color: #333; background: #fff; }
@@ -56,6 +56,10 @@
         .btn-primary:hover { background: var(--blue-dark); }
         .btn-outline { background: #fff; color: var(--blue); border: 1px solid var(--blue); padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
         .btn-outline:hover { background: #e5f0fa; }
+        
+        /* Кнопка выхода для мобильных (в шапке) */
+        .btn-logout-mobile { display: none; background: #fee2e2; color: #ef4444; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
+        .btn-logout-mobile:hover { background: #fecaca; }
 
         .subjects-bar { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
         .subjects-bar::-webkit-scrollbar { display: none; }
@@ -94,8 +98,9 @@
         @media (max-width: 768px) {
             .sidebar { display: none; }
             .header { padding: 10px 15px; flex-direction: column; align-items: flex-start; gap: 10px; }
-            .header .title { font-size: 16px; }
+            .header .title { font-size: 16px; width: 100%; justify-content: space-between; }
             .header .controls { width: 100%; justify-content: space-between; }
+            .btn-logout-mobile { display: block; } /* Показываем мобильную кнопку выхода */
             .journal-container { padding: 0; margin: 10px; border-radius: 0; box-shadow: none; background: transparent; }
             .table-wrapper { display: none; }
             .homework-bar { flex-direction: column; align-items: flex-start; gap: 5px; padding: 10px 15px; }
@@ -151,12 +156,12 @@
 </head>
 <body>
 
-    <div id="authScreen">
+    <div id="authScreen" style="display:none;">
         <div class="auth-box">
             <h1>Журнал МЭШ</h1>
             <div id="authError" class="error" style="display:none;"></div>
-            <input type="text" id="loginInput" placeholder="Логин">
-            <input type="password" id="passwordInput" placeholder="Пароль">
+            <input type="text" id="loginInput" placeholder="Логин (например, student1)">
+            <input type="password" id="passwordInput" placeholder="Пароль (123456)">
             <button onclick="login()">Войти</button>
         </div>
     </div>
@@ -190,7 +195,11 @@
 
         <main class="main-content">
             <header class="header">
-                <div class="title"><span>Журнал 5В</span></div>
+                <div class="title">
+                    <span>Журнал 5В</span>
+                    <!-- Кнопка выхода для мобильных (скрыта на ПК) -->
+                    <button class="btn-logout-mobile" onclick="logout()">Выйти</button>
+                </div>
                 <div class="controls">
                     <select id="monthSelect">
                         <option>Февраль 2024</option>
@@ -222,7 +231,7 @@
         </main>
     </div>
 
-    <!-- Модалки -->
+    <!-- Модалки (без изменений) -->
     <div class="modal-overlay" id="gradeModal">
         <div class="modal">
             <div class="modal-header">
@@ -357,6 +366,39 @@
         let existingGradeKey = null;
         let dates = [];
 
+        // При загрузке страницы проверяем, сохранен ли вход
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('mesh_user');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    userRole = user.role;
+                    userStudentId = user.id;
+                    
+                    document.getElementById('authScreen').style.display = 'none';
+                    document.getElementById('appScreen').style.display = 'flex';
+                    document.getElementById('userRoleDisplay').textContent = user.name;
+                    
+                    if (userRole === 'teacher') {
+                        document.getElementById('btnTest').style.display = 'block';
+                        document.getElementById('btnEditHw').style.display = 'flex';
+                        document.getElementById('btnAddDate').style.display = 'block';
+                    } else {
+                        document.getElementById('btnTest').style.display = 'none';
+                        document.getElementById('btnEditHw').style.display = 'none';
+                        document.getElementById('btnAddDate').style.display = 'none';
+                    }
+                    
+                    loadData();
+                } catch (e) {
+                    localStorage.removeItem('mesh_user');
+                    document.getElementById('authScreen').style.display = 'flex';
+                }
+            } else {
+                document.getElementById('authScreen').style.display = 'flex';
+            }
+        });
+
         async function login() {
             const login = document.getElementById('loginInput').value;
             const password = document.getElementById('passwordInput').value;
@@ -374,6 +416,13 @@
                 if (res.ok) {
                     userRole = data.role;
                     userStudentId = data.id;
+                    
+                    // Сохраняем данные для автоматического входа
+                    localStorage.setItem('mesh_user', JSON.stringify({
+                        role: data.role,
+                        id: data.id,
+                        name: data.name
+                    }));
                     
                     document.getElementById('authScreen').style.display = 'none';
                     document.getElementById('appScreen').style.display = 'flex';
@@ -401,6 +450,9 @@
         }
 
         function logout() {
+            // Очищаем сохраненные данные
+            localStorage.removeItem('mesh_user');
+            // Перезагружаем страницу, чтобы вернуться на экран входа
             location.reload();
         }
 
@@ -423,6 +475,10 @@
             updateHomework();
             renderTable();
             renderMobileList();
+            
+            if (userRole === 'teacher' && dates.length === 0) {
+                document.getElementById('btnTest').style.display = 'none';
+            }
         }
 
         function renderSubjects() {
@@ -451,6 +507,12 @@
             const thead = document.getElementById('tableHeadRow');
             const tbody = document.getElementById('journalBody');
             const subjectData = appData.subjects[currentSubject];
+
+            if (dates.length === 0) {
+                thead.innerHTML = `<th>Список учеников</th>`;
+                tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#999;padding:20px;">Нет дат для оценок. Учитель должен добавить даты.</td></tr>`;
+                return;
+            }
 
             thead.innerHTML = `<th>Список учеников</th>`;
             dates.forEach(date => {
@@ -586,7 +648,6 @@
             document.getElementById('modal-comment').value = '';
             document.getElementById('modal-theme').value = '';
             
-            // Устанавливаем дату в модалке
             const [day, month] = date.split('.');
             const year = new Date().getFullYear();
             document.getElementById('modal-date').value = `${year}-${month}-${day}`;
@@ -649,11 +710,17 @@
                 role: userRole
             };
 
-            await fetch('/api/grade', {
+            const res = await fetch('/api/grade', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(gradeData)
             });
+
+            if (!res.ok) {
+                const err = await res.json();
+                alert('Ошибка сохранения: ' + (err.error || 'Неизвестная ошибка'));
+                return;
+            }
 
             await loadData();
             closeModal('gradeModal');
