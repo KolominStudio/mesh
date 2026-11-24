@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Журнал МЭШ</title>
     <style>
-        /* ================= ОБЩИЕ ПЕРЕМЕННЫЕ ================= */
         :root {
             --t-blue: #0078d4;
-            --t-blue-dark: #005a9e;
             --t-bg: #f3f4f6;
             --t-border: #e5e7eb;
             --t-text: #1f2937;
@@ -17,9 +15,6 @@
             --t-g3: #f97316;
             --t-g4: #22c55e;
             --t-g5: #3b82f6;
-            --t-sidebar: 260px;
-            --t-cell: 38px;
-
             --s-bg: #1c1c1e;
             --s-card: #2c2c2e;
             --s-text: #ffffff;
@@ -29,7 +24,7 @@
             --s-red: #ff3b30;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         
         /* ================= АВТОРИЗАЦИЯ ================= */
         #authScreen {
@@ -42,11 +37,11 @@
         .auth-box button { width: 100%; padding: 12px; background: var(--t-blue); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .auth-box .error { color: var(--t-g2); font-size: 13px; margin-bottom: 10px; }
 
-        /* ================= ИНТЕРФЕЙС УЧИТЕЛЯ (ПК) ================= */
+        /* ================= УЧИТЕЛЬ (ПК) ================= */
         .teacher-layout { display: none; background-color: var(--t-bg); color: var(--t-text); height: 100vh; overflow: hidden; font-size: 14px; width: 100%; }
         .teacher-layout.active { display: flex; }
 
-        .sidebar { width: var(--t-sidebar); background-color: #fff; border-right: 1px solid var(--t-border); display: flex; flex-direction: column; padding: 15px 10px; overflow-y: auto; flex-shrink: 0; }
+        .sidebar { width: 260px; background-color: #fff; border-right: 1px solid var(--t-border); display: flex; flex-direction: column; padding: 15px 10px; flex-shrink: 0; }
         .sidebar h2 { font-size: 11px; color: var(--t-gray); margin: 15px 10px 8px; text-transform: uppercase; font-weight: 600; }
         .sidebar ul { list-style: none; }
         .sidebar li { padding: 8px 12px; cursor: pointer; border-radius: 6px; display: flex; align-items: center; gap: 10px; color: #4b5563; font-weight: 500; }
@@ -57,38 +52,38 @@
 
         .t-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .t-header { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .t-header .title { font-size: 18px; font-weight: 700; }
-        .t-header .title span { color: var(--t-blue); }
+        .t-header .title { font-size: 18px; font-weight: 700; color: var(--t-blue); }
         .t-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .t-controls select { padding: 6px 10px; border: 1px solid var(--t-border); border-radius: 4px; font-size: 13px; background: #fff; }
-        .btn-primary { background: var(--t-blue); color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
-        .btn-outline { background: #fff; color: var(--t-blue); border: 1px solid var(--t-blue); padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
+        .btn-primary { background: var(--t-blue); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
+        .btn-outline { background: #fff; color: var(--t-blue); border: 1px solid var(--t-blue); padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
+        .btn-logout { background: #fee2e2; color: #ef4444; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
 
         .subjects-bar { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 8px; overflow-x: auto; }
         .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; font-size: 13px; cursor: pointer; color: #4b5563; font-weight: 500; white-space: nowrap; }
         .subject-btn.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
 
-        .homework-bar { background: #f8fafc; padding: 10px 20px; border-bottom: 1px solid var(--t-border); font-size: 13px; display: flex; gap: 10px; align-items: center; color: #4b5563; flex-wrap: wrap; }
+        .homework-bar { background: #f8fafc; padding: 10px 20px; border-bottom: 1px solid var(--t-border); font-size: 13px; display: flex; gap: 10px; align-items: center; color: #4b5563; }
         .hw-edit-btn { background: none; border: none; color: var(--t-blue); cursor: pointer; font-size: 12px; font-weight: 500; padding: 4px 8px; }
         
-        .journal-container { flex: 1; overflow: auto; padding: 15px; background: #fff; margin: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .journal-container { flex: 1; overflow: auto; padding: 15px; background: #fff; margin: 15px; border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 13px; table-layout: fixed; }
-        th, td { border: 1px solid var(--t-border); text-align: center; height: var(--t-cell); vertical-align: middle; padding: 0; }
-        th { background: #f8fafc; font-weight: 600; color: #4b5563; padding: 8px 5px; font-size: 12px; position: sticky; top: 0; z-index: 10; }
+        th, td { border: 1px solid var(--t-border); text-align: center; height: 38px; vertical-align: middle; padding: 0; }
+        th { background: #f8fafc; font-weight: 600; color: #4b5563; padding: 8px 5px; font-size: 12px; position: sticky; top: 0; }
         th:first-child { text-align: left; padding-left: 12px; width: 220px; }
-        td.student-name { text-align: left; padding-left: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .grade-cell { cursor: pointer; width: 42px; font-size: 15px; font-weight: 600; }
-        .grade-cell:hover { background: #f0f7ff; }
+        td.student-name { text-align: left; padding-left: 12px; font-weight: 500; white-space: nowrap; }
+        
+        /* КЛИКАБЕЛЬНАЯ ЯЧЕЙКА */
+        .grade-cell { cursor: pointer; width: 42px; font-size: 15px; font-weight: 600; user-select: none; }
+        .grade-cell:hover { background-color: #e5f0fa; }
         .grade-2 { color: var(--t-g2); } .grade-3 { color: var(--t-g3); } .grade-4 { color: var(--t-g4); } .grade-5 { color: var(--t-g5); }
         .grade-dot { font-size: 10px; border: 1px dashed #9ca3af; border-radius: 50%; width: 18px; height: 18px; line-height: 16px; display: inline-block; }
-        .test-cell { background: #fef2f2; } .test-icon { font-size: 10px; color: #ef4444; font-weight: 700; margin-top: 2px; display: block; }
 
-        /* ================= ИНТЕРФЕЙС УЧЕНИКА (ТЕЛЕФОН) ================= */
+        /* ================= УЧЕНИК (ТЕЛЕФОН) ================= */
         .student-layout { display: none; background-color: var(--s-bg); color: var(--s-text); min-height: 100vh; padding-bottom: 70px; flex-direction: column; width: 100%; }
         .student-layout.active { display: flex; }
 
         .s-top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: var(--s-bg); position: sticky; top: 0; z-index: 50; }
-        .s-avatar { width: 36px; height: 36px; border-radius: 50%; background: #555; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .s-avatar { width: 36px; height: 36px; border-radius: 50%; background: #555; overflow: hidden; }
         .s-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .s-top-center { display: flex; gap: 10px; }
         .s-icon-btn { width: 36px; height: 36px; border-radius: 10px; background: var(--s-card); display: flex; align-items: center; justify-content: center; position: relative; border: none; color: white; font-size: 16px; cursor: pointer; }
@@ -99,17 +94,13 @@
         .s-day-name { font-size: 12px; color: var(--s-gray); }
         .s-day-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; }
         .s-day.active .s-day-num { background: var(--s-accent); color: white; }
-        .s-day.weekend .s-day-num { color: var(--s-red); }
 
         .s-filters { padding: 0 15px; display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
         .s-filter-btn { padding: 8px 16px; background: #333; border-radius: 10px; font-size: 14px; font-weight: 500; border: none; color: white; cursor: pointer; }
-        .s-filter-btn.active { background: #444; }
-        .s-filter-icon { width: 38px; height: 38px; background: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: none; color: white; cursor: pointer; font-size: 12px; }
-        .s-filter-spacer { flex: 1; }
 
         .s-content { padding: 0 15px; flex: 1; overflow-y: auto; }
         
-        .s-card { background: var(--s-card); border-radius: 16px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--s-gray); display: flex; justify-content: space-between; gap: 10px; }
+        .s-card { background: var(--s-card); border-radius: 16px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; gap: 10px; }
         .s-card-main { flex: 1; }
         .s-card-header { display: flex; justify-content: space-between; font-size: 13px; color: var(--s-gray); margin-bottom: 10px; }
         .s-card-title { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
@@ -119,50 +110,33 @@
         .s-hw-text { font-size: 14px; color: #999; line-height: 1.4; }
 
         .s-grade-box { 
-            width: 40px; height: 40px; 
-            background: #3a3a3c; border-radius: 10px; 
+            width: 40px; height: 40px; background: #3a3a3c; border-radius: 10px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            cursor: pointer; transition: transform 0.1s; flex-shrink: 0;
+            cursor: pointer; flex-shrink: 0;
         }
-        .s-grade-box:active { transform: scale(0.95); }
         .s-grade-box .val { font-size: 18px; font-weight: 700; line-height: 1; }
         .s-grade-box .count { font-size: 10px; color: var(--s-gray); margin-top: 2px; }
         .s-grade-box.g5 .val { color: var(--s-green); }
         .s-grade-box.g4 .val { color: #ff9500; }
         .s-grade-box.g3 .val { color: var(--s-red); }
 
-        .s-grade-card-list { background: var(--s-card); border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; align-items: center; }
-        .s-grade-num-big { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; flex-shrink: 0; }
-        .s-grade-num-big.g5 { background: rgba(52, 199, 89, 0.2); color: var(--s-green); }
-        .s-grade-num-big.g4 { background: rgba(255, 149, 0, 0.2); color: #ff9500; }
-        .s-grade-num-big.g3 { background: rgba(255, 59, 48, 0.2); color: var(--s-red); }
-
-        .s-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; border-top: 1px solid #333; display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 100; }
+        .s-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; border-top: 1px solid #333; display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
         .s-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--s-gray); font-size: 10px; cursor: pointer; border: none; background: none; }
         .s-nav-item.active { color: white; }
         .s-nav-icon { font-size: 20px; }
 
         /* ================= МОДАЛЬНЫЕ ОКНА ================= */
         .modal-overlay { 
-            display: none; 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.5); z-index: 9999; 
             justify-content: center; align-items: center; 
         }
         
         .modal { 
-            background: #fff; 
-            border-radius: 12px; 
-            width: 100%; max-width: 480px; 
-            padding: 24px; 
-            max-height: 90vh; 
-            overflow-y: auto; 
-            color: var(--t-text); 
-            animation: slideIn 0.2s ease-out;
+            background: #fff; border-radius: 12px; width: 100%; max-width: 480px; 
+            padding: 24px; max-height: 90vh; overflow-y: auto; color: var(--t-text); 
             margin: 15px;
         }
-
-        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .modal-header h3 { font-size: 16px; }
@@ -185,7 +159,7 @@
         .modal-footer .btn-save { background: var(--t-blue); color: white; }
         .modal-footer .btn-delete { background: #fee2e2; color: #ef4444; margin-right: auto; }
 
-        /* Детали оценки (для ученика) */
+        /* Детали оценки (ученик) */
         .s-detail-header { text-align: center; margin-bottom: 20px; }
         .s-detail-grade { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 10px; }
         .s-detail-grade.g5 { background: rgba(52, 199, 89, 0.2); color: var(--s-green); }
@@ -206,18 +180,18 @@
 </head>
 <body>
 
-    <!-- ЭКРАН АВТОРИЗАЦИИ -->
-    <div id="authScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 1000; justify-content: center; align-items: center;">
-        <div style="width: 100%; max-width: 400px; padding: 30px; text-align: center;">
-            <h1 style="font-size: 24px; margin-bottom: 20px; color: #0078d4;">Журнал МЭШ</h1>
-            <div id="authError" style="color: #ef4444; font-size: 13px; margin-bottom: 10px; display: none;"></div>
-            <input type="text" id="loginInput" placeholder="Логин" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px;">
-            <input type="password" id="passwordInput" placeholder="Пароль" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px;">
-            <button onclick="login()" style="width: 100%; padding: 12px; background: #0078d4; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">Войти</button>
+    <!-- АВТОРИЗАЦИЯ -->
+    <div id="authScreen">
+        <div class="auth-box">
+            <h1>Журнал МЭШ</h1>
+            <div id="authError" class="error" style="display:none;"></div>
+            <input type="text" id="loginInput" placeholder="Логин">
+            <input type="password" id="passwordInput" placeholder="Пароль">
+            <button onclick="login()">Войти</button>
         </div>
     </div>
 
-    <!-- ИНТЕРФЕЙС УЧИТЕЛЯ (ПК) -->
+    <!-- УЧИТЕЛЬ (ПК) -->
     <div id="teacherApp" class="teacher-layout">
         <aside class="sidebar">
             <h2>Мои инструменты</h2>
@@ -234,12 +208,12 @@
 
         <main class="t-main">
             <header class="t-header">
-                <div class="title"><span>Журнал 5В</span></div>
+                <div class="title">Журнал 5В</div>
                 <div class="t-controls">
-                    <select id="monthSelect"><option>Февраль 2024</option></select>
                     <button class="btn-outline" onclick="openAddDateModal()">📅 Добавить дату</button>
                     <button class="btn-outline" onclick="openTestModal()">📝 Контрольная</button>
-                    <button class="btn-primary">Быстрый режим</button>
+                    <button class="btn-primary" onclick="openHomeworkModal()">✏️ Изменить ДЗ</button>
+                    <button class="btn-logout" onclick="logout()">Выйти</button>
                 </div>
             </header>
 
@@ -248,11 +222,10 @@
             <div class="homework-bar">
                 <strong>ДЗ:</strong>
                 <span id="homeworkText" style="flex:1;">Загрузка...</span>
-                <button class="hw-edit-btn" onclick="openHomeworkModal()">✏️ Изменить</button>
             </div>
 
             <div class="journal-container">
-                <table id="journalTable">
+                <table>
                     <thead><tr id="tableHeadRow"></tr></thead>
                     <tbody id="journalBody"></tbody>
                 </table>
@@ -260,7 +233,7 @@
         </main>
     </div>
 
-    <!-- ИНТЕРФЕЙС УЧЕНИКА (МОБИЛЬНЫЙ) -->
+    <!-- УЧЕНИК (ТЕЛЕФОН) -->
     <div id="studentApp" class="student-layout">
         <div class="s-top-bar">
             <div class="s-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Аватар"></div>
@@ -277,16 +250,13 @@
             <div class="s-day"><div class="s-day-name">Ср</div><div class="s-day-num">25</div></div>
             <div class="s-day"><div class="s-day-name">Чт</div><div class="s-day-num">26</div></div>
             <div class="s-day"><div class="s-day-name">Пт</div><div class="s-day-num">27</div></div>
-            <div class="s-day weekend"><div class="s-day-name">Сб</div><div class="s-day-num">28</div></div>
-            <div class="s-day weekend"><div class="s-day-name">Вс</div><div class="s-day-num">29</div></div>
+            <div class="s-day"><div class="s-day-name">Сб</div><div class="s-day-num">28</div></div>
+            <div class="s-day"><div class="s-day-name">Вс</div><div class="s-day-num">29</div></div>
         </div>
 
         <div class="s-filters">
-            <button class="s-filter-btn active">Ноябрь</button>
+            <button class="s-filter-btn">Ноябрь</button>
             <button class="s-filter-btn">Сегодня</button>
-            <div class="s-filter-spacer"></div>
-            <button class="s-filter-icon">PDF</button>
-            <button class="s-filter-icon">•••</button>
         </div>
 
         <div class="s-content" id="studentContent"></div>
@@ -295,12 +265,10 @@
             <button class="s-nav-item active" onclick="switchTab('schedule', this)"><span class="s-nav-icon">📅</span> Расписание</button>
             <button class="s-nav-item" onclick="switchTab('grades', this)"><span class="s-nav-icon">⭐</span> Оценки</button>
             <button class="s-nav-item" onclick="switchTab('tasks', this)"><span class="s-nav-icon">✔️</span> Задания</button>
-            <button class="s-nav-item" onclick="switchTab('school', this)"><span class="s-nav-icon">🏫</span> Школа</button>
-            <button class="s-nav-item" onclick="switchTab('portfolio', this)"><span class="s-nav-icon">💼</span> Портфолио</button>
         </div>
     </div>
 
-    <!-- МОДАЛКИ УЧИТЕЛЯ -->
+    <!-- МОДАЛКИ -->
     <div class="modal-overlay" id="gradeModal">
         <div class="modal">
             <div class="modal-header"><h3 id="modal-student-name">Ученик</h3><span class="modal-close" onclick="closeModal('gradeModal')">&times;</span></div>
@@ -355,7 +323,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ (ДЛЯ УЧЕНИКА) -->
+    <!-- ДЕТАЛИ ОЦЕНКИ УЧЕНИКА -->
     <div class="modal-overlay" id="studentGradeDetailModal">
         <div class="modal" style="background: var(--s-card); color: var(--s-text);">
             <div class="modal-header" style="margin-bottom: 0; padding-bottom: 10px;">
@@ -540,8 +508,7 @@
             thead.innerHTML = `<th>Список учеников</th>`;
             dates.forEach(date => {
                 const th = document.createElement('th');
-                const test = subjectData.tests && subjectData.tests.find(t => t.date === date);
-                th.innerHTML = `${date} ${test ? `<span class="test-icon" title="${test.theme}">К</span>` : ''}`;
+                th.textContent = date;
                 thead.appendChild(th);
             });
             thead.innerHTML += `<th class="total-cell">Ср. балл</th>`;
@@ -557,10 +524,6 @@
                     const td = document.createElement('td');
                     td.className = 'grade-cell';
                     
-                    if (subjectData.tests && subjectData.tests.find(t => t.date === date)) {
-                        td.classList.add('test-cell');
-                    }
-
                     const key = `${student.id}-${date}`;
                     const gradeData = subjectData.grades[key];
 
@@ -574,6 +537,7 @@
                         }
                     }
                     
+                    // Привязка клика
                     td.onclick = () => openGradeModal(student, date);
                     tr.appendChild(td);
                 });
@@ -782,8 +746,6 @@
                 renderStudentGrades(content);
             } else if (tab === 'tasks') {
                 renderStudentTasks(content);
-            } else {
-                content.innerHTML = `<div style="text-align:center; padding: 40px 0; color: #8e8e93;">Раздел в разработке</div>`;
             }
         }
 
@@ -953,4 +915,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
