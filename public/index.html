@@ -124,6 +124,11 @@
         .s-week-label { font-size: 10px; color: var(--s-gray); }
         .s-week-num { font-size: 16px; font-weight: bold; color: var(--s-text); }
         
+        /* Дни недели */
+        .s-days { display: flex; gap: 8px; padding: 0 15px 15px 15px; overflow-x: auto; }
+        .s-day { padding: 6px 12px; border-radius: 8px; background: #2c2c2e; color: var(--s-gray); font-size: 13px; cursor: pointer; white-space: nowrap; }
+        .s-day.active { background: #3a3a3c; color: white; font-weight: bold; border: 1px solid var(--s-gray); }
+        
         .s-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
         
         /* Карточка урока */
@@ -235,7 +240,11 @@
             <button class="btn btn-red" onclick="doLogout()" style="background: #3a3a3c; color: white; border: none; padding: 8px 16px; border-radius: 8px;">Выйти</button>
         </div>
         
+        <!-- 5 Недель -->
         <div class="s-weeks" id="weeksContainer"></div>
+        <!-- Дни выбранной недели -->
+        <div class="s-days" id="daysContainer"></div>
+        
         <div class="s-content" id="studentContent"></div>
         
         <div class="s-bottom-nav">
@@ -345,22 +354,18 @@
                 <h3 id="lesson-title" style="font-size: 20px;">Математика</h3>
                 <button class="btn" style="background: none; color: var(--s-gray); font-size: 24px; padding: 0; line-height: 1;" onclick="closeModal('lessonDetailModal')">&times;</button>
             </div>
-            
             <div class="lesson-detail-row">
                 <div class="lesson-detail-label">Учитель</div>
                 <div id="lesson-teacher" class="lesson-detail-value">Тим Тимофеевич</div>
             </div>
-            
             <div class="lesson-detail-row" id="lesson-test-row">
                 <div class="lesson-detail-label">Контрольная работа</div>
                 <div id="lesson-test-theme" class="lesson-detail-value" style="color: #ff3b30; font-weight: bold;">-</div>
             </div>
-
             <div class="lesson-detail-row" style="border-bottom: none;">
                 <div class="lesson-detail-label">Домашнее задание</div>
                 <div id="lesson-hw" class="lesson-detail-value">-</div>
             </div>
-            
             <button class="btn" style="width: 100%; background: #3a3a3c; color: white; border-radius: 8px; margin-top: 10px;" onclick="closeModal('lessonDetailModal')">Закрыть</button>
         </div>
     </div>
@@ -383,8 +388,15 @@
         let activeDate = null;
         let selectedGrade = null;
         let isDotSelected = false;
-        let currentStudentWeek = 1;
+        
+        let currentStudentWeek = 1; // 1-5
+        let currentStudentDay = 1; // 1-5
+        let activeStudentDate = null; // Выбранная дата для урока
 
+        // Генерация 25 дат (5 недель по 5 дней) для демонстрации
+        // В реальном приложении эти данные должны приходить с сервера
+        const weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт"];
+        
         document.addEventListener('DOMContentLoaded', async () => {
             const savedUser = localStorage.getItem('mesh_user');
             if (savedUser) {
@@ -447,6 +459,7 @@
             } else {
                 document.getElementById('studentScreen').classList.remove('hidden');
                 renderWeeks();
+                renderDays();
                 switchStudentTab('schedule');
             }
         }
@@ -700,10 +713,51 @@
                 div.onclick = () => {
                     currentStudentWeek = i;
                     renderWeeks();
+                    renderDays(); 
+                    // При смене недели выбираем первый день
+                    currentStudentDay = 1;
                     switchStudentTab('schedule');
                 };
                 container.appendChild(div);
             }
+        }
+
+        function renderDays() {
+            const container = document.getElementById('daysContainer');
+            container.innerHTML = '';
+            
+            weekDays.forEach((dayName, index) => {
+                const dayIndex = index + 1;
+                const div = document.createElement('div');
+                div.className = `s-day ${dayIndex === currentStudentDay ? 'active' : ''}`;
+                div.innerText = dayName;
+                div.onclick = () => {
+                    currentStudentDay = dayIndex;
+                    renderDays();
+                    switchStudentTab('schedule');
+                };
+                container.appendChild(div);
+            });
+        }
+
+        // Функция для получения даты на основе недели и дня
+        function getDateForWeekAndDay(week, day) {
+            // В реальном приложении здесь будет сложная логика с календарем
+            // Для демо мы просто генерируем даты: 01.02, 02.02 и т.д.
+            // Но чтобы это работало с текущим appData.dates, мы будем "мапить" 
+            // выбранный день на одну из 5 дат, которые есть в базе.
+            
+            // В текущем appData.dates есть только 5 дат (например, 12-16 февраля).
+            // Чтобы у нас было 25 дат (5 недель), нам нужно их сгенерировать.
+            // Сгенерируем 25 дат на лету: начиная с 12.02 и прибавляя по 1 дню.
+            
+            const startDate = new Date(2024, 1, 12); // 12 февраля 2024
+            const offset = (week - 1) * 5 + (day - 1); // 0..24
+            startDate.setDate(startDate.getDate() + offset);
+            
+            const d = String(startDate.getDate()).padStart(2, '0');
+            const m = String(startDate.getMonth() + 1).padStart(2, '0');
+            return `${d}.${m}`;
         }
 
         function switchStudentTab(tab) {
@@ -715,42 +769,48 @@
             container.innerHTML = '';
 
             if (tab === 'schedule') {
+                // Получаем дату для текущей недели и дня
+                const selectedDate = getDateForWeekAndDay(currentStudentWeek, currentStudentDay);
+                activeStudentDate = selectedDate;
+                
+                // В демо-базе всего 5 дат. Если выбранная дата выходит за их пределы,
+                // мы просто покажем предметы без оценок, но с возможностью открыть карточку.
+                
                 Object.keys(appData.subjects).forEach(subj => {
                     const subjData = appData.subjects[subj];
                     const tests = subjData.tests || [];
-                    const demoDate = appData.dates[0]; 
-                    const hasTest = tests.find(t => t.date === demoDate);
+                    
+                    // Ищем контрольную на выбранный день (если она есть в базе)
+                    const testInfo = tests.find(t => t.date === selectedDate);
 
                     const div = document.createElement('div');
                     div.className = 's-card';
                     
-                    // Клик по всей карточке открывает детали урока
+                    // Клик по карточке урока
                     div.onclick = (e) => {
-                        // Если кликнули на оценку или тест, не открываем карточку урока
                         if(e.target.closest('.s-grade') || e.target.closest('.s-test-badge')) return;
-                        openLessonDetail(subj, demoDate);
+                        openLessonDetail(subj, selectedDate);
                     };
 
                     let gradesHtml = '';
-                    appData.dates.forEach(d => {
-                        const key = `${currentUser.id}-${d}`;
-                        if (subjData.grades[key]) {
-                            const gradeItem = subjData.grades[key];
-                            const g = gradeItem.grade;
-                            const isDot = gradeItem.isDot;
-                            const isTestGrade = gradeItem.type === 'Контрольная работа' || tests.some(t => t.date === d);
-                            const testClass = isTestGrade ? 'test-grade' : '';
-                            const dotHtml = isDot ? '<span class="dot-indicator">.</span>' : '';
+                    // Берем оценку ученика на этот день
+                    const key = `${currentUser.id}-${selectedDate}`;
+                    if (subjData.grades[key]) {
+                        const gradeItem = subjData.grades[key];
+                        const g = gradeItem.grade;
+                        const isDot = gradeItem.isDot;
+                        const isTestGrade = gradeItem.type === 'Контрольная работа' || tests.some(t => t.date === selectedDate);
+                        const testClass = isTestGrade ? 'test-grade' : '';
+                        const dotHtml = isDot ? '<span class="dot-indicator">.</span>' : '';
 
-                            gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="event.stopPropagation(); openStudentGradeDetail('${subj}', '${d}')">
-                                ${dotHtml}
-                                ${g}
-                            </div>`;
-                        }
-                    });
+                        gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="event.stopPropagation(); openStudentGradeDetail('${subj}', '${selectedDate}')">
+                            ${dotHtml}
+                            ${g}
+                        </div>`;
+                    }
 
                     let testBadgeHtml = '';
-                    if (hasTest) {
+                    if (testInfo) {
                         testBadgeHtml = `<div class="s-test-badge" onclick="event.stopPropagation(); showTestAlert()">Контрольная работа</div>`;
                     }
 
@@ -773,11 +833,9 @@
         function openLessonDetail(subject, date) {
             document.getElementById('lesson-title').innerText = subject;
             
-            // Учитель (всегда один в этой демо-базе, можно привязать к предмету)
             const teacherName = appData.teacher ? appData.teacher.name : "Тим Тимофеевич";
             document.getElementById('lesson-teacher').innerText = teacherName;
 
-            // Контрольная
             const tests = appData.subjects[subject].tests || [];
             const testInfo = tests.find(t => t.date === date);
             
@@ -789,7 +847,6 @@
                 testRow.style.display = 'none';
             }
 
-            // ДЗ
             const hw = appData.subjects[subject].homework || 'Не задано';
             document.getElementById('lesson-hw').innerText = hw;
 
