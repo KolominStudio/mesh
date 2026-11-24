@@ -1,10 +1,10 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 
 const app = express();
-const PORT = 8080;
+// ВАЖНО: порт 8080 для работы в контейнере с Traefik (как на вашем скрине)
+const PORT = process.env.PORT || 8080; 
 
 const DATA_DIR = path.join(__dirname, 'data');
 const JOURNAL_FILE = path.join(DATA_DIR, 'journal.json');
@@ -12,12 +12,9 @@ const JOURNAL_FILE = path.join(DATA_DIR, 'journal.json');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-function generatePassword() {
-    return crypto.randomBytes(4).toString('hex');
-}
-
 function initDB() {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    
     if (!fs.existsSync(JOURNAL_FILE)) {
         const studentNames = [
             "Абрамов Артем", "Белова Мария", "Волков Дмитрий", "Гусева Алина", "Дмитриев Иван",
@@ -28,11 +25,12 @@ function initDB() {
             "Яковлев Тимур", "Яковлева Есения", "Антонов Марк", "Борисова Варвара", "Виноградов Владислав"
         ];
 
+        // ЖЕСТКО ЗАДАЕМ ПАРОЛИ: всем ученикам пароль 123456
         const students = studentNames.map((name, index) => ({
             id: index + 1,
             name,
             login: `student${index + 1}`,
-            password: generatePassword()
+            password: "123456"
         }));
 
         const teacher = { login: "Tim", password: "Px+j812ba1", name: "Тим Тимофеевич" };
@@ -55,20 +53,33 @@ function initDB() {
             }
         };
         fs.writeFileSync(JOURNAL_FILE, JSON.stringify(initialData, null, 2));
-        console.log('✅ База данных инициализирована.');
+        console.log('✅ База данных инициализирована. Пароли учеников: 123456');
     } else {
+        // Миграция: если база уже была, принудительно ставим всем ученикам пароль 123456
+        // и добавляем недостающие даты
         const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
+        let changed = false;
+
+        if (data.students) {
+            data.students.forEach(s => {
+                if (s.password !== "123456") {
+                    s.password = "123456";
+                    changed = true;
+                }
+            });
+        }
         if (!data.dates) {
             data.dates = ["12.02", "13.02", "14.02", "15.02", "16.02"];
-            fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
-            console.log('✅ Добавлены даты по умолчанию.');
+            changed = true;
         }
-        if (!data.students || !data.teacher) {
-            console.log('⚠️ В базе отсутствуют students или teacher. Пересоздайте базу.');
+        if (changed) {
+            fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
+            console.log('✅ База обновлена: пароли учеников сброшены на 123456.');
         }
     }
 }
 
+// --- API Авторизации ---
 app.post('/api/login', (req, res) => {
     const { login, password } = req.body;
     if (!login || !password) return res.status(400).json({ error: 'Введите логин и пароль' });
@@ -87,6 +98,7 @@ app.post('/api/login', (req, res) => {
     res.status(401).json({ error: 'Неверный логин или пароль' });
 });
 
+// --- API Данных ---
 app.get('/api/data', (req, res) => {
     const { role, studentId } = req.query;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
@@ -117,7 +129,7 @@ app.get('/api/data', (req, res) => {
         return res.json({
             class: data.class,
             student,
-            students: [student], // <-- всегда массив для единообразия
+            students: [student], // массив из одного для единообразия клиента
             subjects: filteredSubjects,
             dates: data.dates || []
         });
@@ -126,6 +138,7 @@ app.get('/api/data', (req, res) => {
     res.json(data);
 });
 
+// --- API Даты (только учитель) ---
 app.post('/api/date', (req, res) => {
     const { date, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
@@ -148,6 +161,7 @@ app.post('/api/date', (req, res) => {
     res.json({ success: true, dates: data.dates });
 });
 
+// API ДЗ (только учитель)
 app.post('/api/homework', (req, res) => {
     const { subject, text, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
@@ -163,6 +177,7 @@ app.post('/api/homework', (req, res) => {
     }
 });
 
+// API Оценки (только учитель)
 app.post('/api/grade', (req, res) => {
     const { subject, studentId, date, grade, type, comment, theme, isDot, dueDate, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
@@ -189,6 +204,7 @@ app.post('/api/grade', (req, res) => {
     res.json({ success: true });
 });
 
+// API Контрольные (только учитель)
 app.post('/api/test', (req, res) => {
     const { subject, date, theme, action, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
@@ -214,23 +230,5 @@ app.post('/api/test', (req, res) => {
     res.json({ success: true, tests: subjectData.tests });
 });
 
-function exportCredentials() {
-    if (!fs.existsSync(JOURNAL_FILE)) return;
-    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-    if (!data.teacher || !data.students) {
-        console.log('⚠️ Недостаточно данных для экспорта credentials');
-        return;
-    }
-    let output = "=== ДАННЫЕ ДЛЯ ВХОДА ===\n\n";
-    output += `УЧИТЕЛЬ:\nЛогин: ${data.teacher.login}\nПароль: ${data.teacher.password}\n\n`;
-    output += "УЧЕНИКИ:\n";
-    data.students.forEach(s => {
-        output += `${s.name} | Логин: ${s.login} | Пароль: ${s.password}\n`;
-    });
-    fs.writeFileSync(path.join(__dirname, 'credentials.txt'), output);
-    console.log('📄 Логины и пароли сохранены в credentials.txt');
-}
-
 initDB();
-exportCredentials();
-app.listen(PORT, () => console.log(`Сервер запущен: http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
