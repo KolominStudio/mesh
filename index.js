@@ -4,7 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 
 const DATA_DIR = path.join(__dirname, 'data');
 const JOURNAL_FILE = path.join(DATA_DIR, 'journal.json');
