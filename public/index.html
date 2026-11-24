@@ -8,30 +8,29 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         body { background: #f3f4f6; color: #1f2937; }
 
-        /* Общие стили */
         .hidden { display: none !important; }
         .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; border: none; font-weight: bold; }
         .btn-blue { background: #0078d4; color: white; }
         .btn-red { background: #ef4444; color: white; }
         .btn-gray { background: #e5e7eb; color: #333; }
 
-        /* Окно входа */
+        /* Вход */
         #loginScreen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
         #loginScreen input { padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; width: 250px; }
         #loginScreen button { padding: 10px; width: 250px; background: #0078d4; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
-        /* Модальное окно */
+        /* Модальные окна */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 450px; }
         .modal-content h3 { margin-bottom: 15px; }
-        .modal-content label { display: block; margin-top: 10px; font-size: 12px; color: #666; }
+        .modal-content label { display: block; margin-top: 10px; font-size: 12px; color: #666; font-weight: bold; }
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
         .grades-btns { display: flex; gap: 10px; margin-top: 5px; }
-        .grades-btns button { width: 40px; height: 40px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .grades-btns button { width: 45px; height: 45px; border: 1px solid #ccc; background: white; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; color: #333; }
         .grades-btns button.active { background: #0078d4; color: white; border-color: #0078d4; }
 
-        /* Интерфейс учителя */
+        /* Учитель */
         .teacher-layout { display: flex; height: 100vh; }
         .sidebar { width: 250px; background: white; border-right: 1px solid #ddd; padding: 20px; display: flex; flex-direction: column; }
         .sidebar ul { list-style: none; margin-top: 20px; }
@@ -49,17 +48,36 @@
         table { width: 100%; border-collapse: collapse; background: white; min-width: 800px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background: #f9fafb; font-weight: bold; }
+        
+        /* КЛИКАБЕЛЬНАЯ ДАТА В ШАПКЕ */
+        .date-th { cursor: pointer; color: #0078d4; text-decoration: underline; }
+        .date-th:hover { background: #e5f0fa; }
+
         .student-name { text-align: left; font-weight: bold; }
         .cell { cursor: pointer; font-weight: bold; font-size: 16px; }
         .cell:hover { background: #e5f0fa; }
         
         .g2 { color: #ef4444; } .g3 { color: #f97316; } .g4 { color: #22c55e; } .g5 { color: #3b82f6; }
 
-        /* Интерфейс ученика (тёмный) */
+        /* Ученик (тёмный) */
         .student-layout { background: #1c1c1e; color: white; min-height: 100vh; padding-bottom: 70px; }
-        .s-header { padding: 20px; display: flex; justify-content: space-between; }
-        .s-card { background: #2c2c2e; margin: 15px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; }
-        .s-grade { width: 40px; height: 40px; background: #3a3a3c; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; cursor: pointer; }
+        .s-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .s-card { background: #2c2c2e; margin: 15px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; }
+        
+        /* Квадратики оценок у ученика */
+        .s-grades-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .s-grade { 
+            width: 40px; height: 40px; background: #3a3a3c; border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 18px; cursor: pointer;
+            border: 2px solid transparent;
+        }
+        /* КРАСНЫЙ КОНТУР ДЛЯ КОНТРОЛЬНЫХ */
+        .s-grade.test-grade {
+            border-color: #ff3b30;
+            background: rgba(255, 59, 48, 0.1);
+        }
+
         .s-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; }
         .s-nav-btn { background: none; border: none; color: #8e8e93; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
         .s-nav-btn.active { color: white; }
@@ -67,7 +85,7 @@
 </head>
 <body>
 
-    <!-- ЭКРАН ВХОДА -->
+    <!-- ВХОД -->
     <div id="loginScreen">
         <h2 style="color: #0078d4; margin-bottom: 20px;">Журнал МЭШ</h2>
         <div id="loginError" style="color: red; font-size: 12px; margin-bottom: 10px;"></div>
@@ -76,7 +94,7 @@
         <button onclick="doLogin()">Войти</button>
     </div>
 
-    <!-- ИНТЕРФЕЙС УЧИТЕЛЯ -->
+    <!-- УЧИТЕЛЬ -->
     <div id="teacherScreen" class="teacher-layout hidden">
         <div class="sidebar">
             <h3 style="color: #0078d4;">Кабинет учителя</h3>
@@ -90,10 +108,7 @@
         <div class="main">
             <div class="header">
                 <h3>Журнал 5В</h3>
-                <div>
-                    <button class="btn btn-blue" onclick="openHwModal()">Изменить ДЗ</button>
-                    <button class="btn btn-red" onclick="doLogout()">Выйти</button>
-                </div>
+                <button class="btn btn-red" onclick="doLogout()">Выйти</button>
             </div>
             <div class="subjects" id="subjectsBar"></div>
             <div class="table-container">
@@ -105,7 +120,7 @@
         </div>
     </div>
 
-    <!-- ИНТЕРФЕЙС УЧЕНИКА -->
+    <!-- УЧЕНИК -->
     <div id="studentScreen" class="student-layout hidden">
         <div class="s-header">
             <h3>Мой профиль</h3>
@@ -126,6 +141,7 @@
             <select id="inputType">
                 <option>Ответ на уроке</option>
                 <option>Контрольная работа</option>
+                <option>Самостоятельная работа</option>
                 <option>Домашнее задание</option>
                 <option>Тест</option>
             </select>
@@ -144,34 +160,47 @@
             <label>Комментарий</label>
             <input type="text" id="inputComment" placeholder="Комментарий">
             
-            <div class="modal-actions">
-                <button class="btn btn-gray" onclick="closeModal()">Отмена</button>
-                <button class="btn btn-blue" onclick="saveGrade()">Сохранить</button>
+            <div class="modal-actions" style="justify-content: space-between;">
+                <button class="btn btn-red" id="btnDelete" onclick="deleteGrade()" style="display: none;">Удалить</button>
+                <div style="display: flex; gap: 10px; margin-left: auto;">
+                    <button class="btn btn-gray" onclick="closeModal('gradeModal')">Отмена</button>
+                    <button class="btn btn-blue" onclick="saveGrade()">Сохранить</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЗ -->
-    <div id="hwModal" class="modal hidden">
+    <!-- МОДАЛЬНОЕ ОКНО ДАТЫ (ДЗ + Контрольная) -->
+    <div id="dateModal" class="modal hidden">
         <div class="modal-content">
-            <h3>Домашнее задание</h3>
-            <textarea id="hwInput" rows="4"></textarea>
+            <h3 id="dateModalTitle">Настройки дня</h3>
+            
+            <label>Домашнее задание</label>
+            <textarea id="dateHwInput" rows="3" placeholder="Введите ДЗ на этот день..."></textarea>
+            
+            <label style="margin-top: 20px;">Контрольная работа</label>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+                <input type="checkbox" id="isTestCheckbox" style="width: auto;">
+                <span style="font-size: 14px;">Назначить контрольную</span>
+            </div>
+            <input type="text" id="dateTestTheme" placeholder="Тема контрольной" style="display: none; margin-top: 10px;">
+            
             <div class="modal-actions">
-                <button class="btn btn-gray" onclick="closeHwModal()">Отмена</button>
-                <button class="btn btn-blue" onclick="saveHw()">Сохранить</button>
+                <button class="btn btn-gray" onclick="closeModal('dateModal')">Отмена</button>
+                <button class="btn btn-blue" onclick="saveDateSettings()">Сохранить</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let currentUser = null;
         let appData = null;
         let currentSubject = "Математика";
         let activeCell = { studentId: null, date: null };
+        let activeDate = null;
         let selectedGrade = null;
 
-        // --- 1. АВТОРИЗАЦИЯ ---
+        // --- АВТОРИЗАЦИЯ ---
         async function doLogin() {
             const login = document.getElementById('loginInput').value;
             const pass = document.getElementById('passwordInput').value;
@@ -197,16 +226,12 @@
             }
         }
 
-        function doLogout() {
-            location.reload();
-        }
+        function doLogout() { location.reload(); }
 
-        // --- 2. ЗАГРУЗКА ДАННЫХ ---
         async function loadAppData() {
             const url = currentUser.role === 'student' 
                 ? `/api/data?role=student&studentId=${currentUser.id}` 
                 : '/api/data';
-                
             const res = await fetch(url);
             appData = await res.json();
 
@@ -221,7 +246,7 @@
             }
         }
 
-        // --- 3. ЛОГИКА УЧИТЕЛЯ ---
+        // --- УЧИТЕЛЬ ---
         function renderTeacherUI() {
             const subBar = document.getElementById('subjectsBar');
             subBar.innerHTML = '';
@@ -229,16 +254,16 @@
                 const btn = document.createElement('button');
                 btn.className = `subject-btn ${subj === currentSubject ? 'active' : ''}`;
                 btn.innerText = subj;
-                btn.onclick = () => {
-                    currentSubject = subj;
-                    renderTeacherUI();
-                };
+                btn.onclick = () => { currentSubject = subj; renderTeacherUI(); };
                 subBar.appendChild(btn);
             });
 
+            // Шапка таблицы с КЛИКАБЕЛЬНЫМИ ДАТАМИ
             const thead = document.getElementById('tableHead');
-            thead.innerHTML = `<tr><th>Ученик</th>`;
-            appData.dates.forEach(d => thead.innerHTML += `<th>${d}</th>`);
+            thead.innerHTML = `<tr><th style="text-align:left;">Ученик</th>`;
+            appData.dates.forEach(d => {
+                thead.innerHTML += `<th class="date-th" onclick="openDateModal('${d}')" title="Нажмите, чтобы задать ДЗ или контрольную">${d}</th>`;
+            });
             thead.innerHTML += `</tr>`;
 
             const tbody = document.getElementById('tableBody');
@@ -259,7 +284,6 @@
                         td.classList.add(`g${gradeData.grade}`);
                     }
 
-                    // Открытие окна при клике
                     td.onclick = function() {
                         activeCell = { studentId: student.id, date: date };
                         selectedGrade = gradeData ? gradeData.grade : null;
@@ -269,11 +293,13 @@
                         document.getElementById('inputTheme').value = gradeData ? (gradeData.theme || '') : '';
                         document.getElementById('inputComment').value = gradeData ? (gradeData.comment || '') : '';
                         
-                        // Подсветка кнопок
                         document.querySelectorAll('.grades-btns button').forEach(b => {
                             b.classList.remove('active');
                             if (b.innerText == selectedGrade) b.classList.add('active');
                         });
+
+                        // Показываем кнопку "Удалить", если оценка уже есть
+                        document.getElementById('btnDelete').style.display = gradeData ? 'block' : 'none';
 
                         document.getElementById('gradeModal').classList.remove('hidden');
                     };
@@ -283,7 +309,7 @@
             });
         }
 
-        // --- 4. МОДАЛЬНОЕ ОКНО ОЦЕНКИ ---
+        // --- ОКНО ОЦЕНКИ ---
         function selectGrade(g) {
             selectedGrade = g;
             document.querySelectorAll('.grades-btns button').forEach(b => {
@@ -292,59 +318,123 @@
             });
         }
 
-        function closeModal() {
-            document.getElementById('gradeModal').classList.add('hidden');
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
         }
 
         async function saveGrade() {
             if (!selectedGrade) return alert("Выберите оценку!");
 
-            const payload = {
-                role: currentUser.role,
-                subject: currentSubject,
-                studentId: activeCell.studentId,
-                date: activeCell.date,
-                grade: selectedGrade,
-                type: document.getElementById('inputType').value,
-                theme: document.getElementById('inputTheme').value,
-                comment: document.getElementById('inputComment').value
-            };
+            await fetch('/api/grade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    role: currentUser.role,
+                    subject: currentSubject,
+                    studentId: activeCell.studentId,
+                    date: activeCell.date,
+                    grade: selectedGrade,
+                    type: document.getElementById('inputType').value,
+                    theme: document.getElementById('inputTheme').value,
+                    comment: document.getElementById('inputComment').value
+                })
+            });
+
+            closeModal('gradeModal');
+            await loadAppData();
+        }
+
+        async function deleteGrade() {
+            if (!confirm('Вы уверены, что хотите удалить эту оценку?')) return;
 
             await fetch('/api/grade', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({
+                    role: currentUser.role,
+                    subject: currentSubject,
+                    studentId: activeCell.studentId,
+                    date: activeCell.date,
+                    grade: null // Отправляем null для удаления
+                })
             });
 
-            closeModal();
-            await loadAppData(); // Перезагружаем данные, чтобы оценка появилась
+            closeModal('gradeModal');
+            await loadAppData();
         }
 
-        // --- 5. ДОМАШНЕЕ ЗАДАНИЕ ---
-        function openHwModal() {
-            document.getElementById('hwInput').value = appData.subjects[currentSubject].homework || '';
-            document.getElementById('hwModal').classList.remove('hidden');
+        // --- ОКНО ДАТЫ (ДЗ + КОНТРОЛЬНАЯ) ---
+        function openDateModal(date) {
+            activeDate = date;
+            document.getElementById('dateModalTitle').innerText = `День: ${date}`;
+            
+            // Загружаем текущее ДЗ на этот день
+            const hw = appData.subjects[currentSubject].homework;
+            document.getElementById('dateHwInput').value = hw || '';
+            
+            // Проверяем, есть ли контрольная на этот день
+            const tests = appData.subjects[currentSubject].tests || [];
+            const hasTest = tests.find(t => t.date === date);
+            
+            document.getElementById('isTestCheckbox').checked = !!hasTest;
+            document.getElementById('dateTestTheme').value = hasTest ? hasTest.theme : '';
+            document.getElementById('dateTestTheme').style.display = hasTest ? 'block' : 'none';
+
+            document.getElementById('dateModal').classList.remove('hidden');
         }
 
-        function closeHwModal() {
-            document.getElementById('hwModal').classList.add('hidden');
-        }
+        // Показ/скрытие поля темы контрольной при клике на чекбокс
+        document.getElementById('isTestCheckbox').addEventListener('change', function() {
+            document.getElementById('dateTestTheme').style.display = this.checked ? 'block' : 'none';
+        });
 
-        async function saveHw() {
+        async function saveDateSettings() {
+            const hwText = document.getElementById('dateHwInput').value;
+            const isTest = document.getElementById('isTestCheckbox').checked;
+            const testTheme = document.getElementById('dateTestTheme').value;
+
+            // 1. Сохраняем ДЗ
             await fetch('/api/homework', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     role: currentUser.role,
                     subject: currentSubject,
-                    text: document.getElementById('hwInput').value
+                    text: hwText
                 })
             });
-            closeHwModal();
+
+            // 2. Логика с контрольной (удаляем старую, если нужно, создаем новую)
+            if (isTest && testTheme) {
+                await fetch('/api/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        role: currentUser.role,
+                        subject: currentSubject,
+                        date: activeDate,
+                        theme: testTheme,
+                        action: 'add'
+                    })
+                });
+            } else if (!isTest) {
+                await fetch('/api/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        role: currentUser.role,
+                        subject: currentSubject,
+                        date: activeDate,
+                        action: 'remove'
+                    })
+                });
+            }
+
+            closeModal('dateModal');
             await loadAppData();
         }
 
-        // --- 6. ЛОГИКА УЧЕНИКА ---
+        // --- УЧЕНИК ---
         function switchStudentTab(tab) {
             document.querySelectorAll('.s-nav-btn').forEach(b => b.classList.remove('active'));
             if(tab === 'schedule') document.querySelectorAll('.s-nav-btn')[0].classList.add('active');
@@ -360,20 +450,30 @@
                     div.className = 's-card';
                     
                     let gradesHtml = '';
+                    
+                    // Получаем список контрольных для этого предмета
+                    const tests = subjData.tests || [];
+
                     appData.dates.forEach(d => {
                         const key = `${currentUser.id}-${d}`;
                         if (subjData.grades[key]) {
-                            const g = subjData.grades[key].grade;
-                            gradesHtml += `<div class="s-grade g${g}" onclick="alert('Оценка: ${g}\\nЗа что: ${subjData.grades[key].type}\\nТема: ${subjData.grades[key].theme || 'Не указана'}')">${g}</div>`;
+                            const gradeItem = subjData.grades[key];
+                            const g = gradeItem.grade;
+                            
+                            // Проверяем: оценка за контрольную?
+                            const isTestGrade = gradeItem.type === 'Контрольная работа' || tests.some(t => t.date === d);
+                            const testClass = isTestGrade ? 'test-grade' : '';
+
+                            gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="alert('Оценка: ${g}\\nЗа что: ${gradeItem.type}\\nТема: ${gradeItem.theme || 'Не указана'}')">${g}</div>`;
                         }
                     });
 
                     div.innerHTML = `
-                        <div>
+                        <div style="max-width: 60%;">
                             <div style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">${subj}</div>
                             <div style="font-size: 12px; color: #aaa;">ДЗ: ${subjData.homework || 'Нет'}</div>
                         </div>
-                        <div style="display: flex; gap: 5px;">${gradesHtml}</div>
+                        <div class="s-grades-container">${gradesHtml}</div>
                     `;
                     container.appendChild(div);
                 });
