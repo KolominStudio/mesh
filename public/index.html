@@ -2,102 +2,192 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Журнал МЭШ</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #f3f4f6; color: #1f2937; }
+        :root {
+            --t-blue: #0078d4;
+            --t-bg: #f3f4f6;
+            --t-border: #e5e7eb;
+            --t-text: #1f2937;
+            --t-gray: #6b7280;
+            --t-g2: #ef4444;
+            --t-g3: #f97316;
+            --t-g4: #22c55e;
+            --t-g5: #3b82f6;
+
+            --s-bg: #1c1c1e;
+            --s-card: #2c2c2e;
+            --s-text: #ffffff;
+            --s-gray: #8e8e93;
+            --s-red: #ff3b30;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--t-bg); color: var(--t-text); font-size: 14px; overflow: hidden; }
 
         .hidden { display: none !important; }
-        .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; border: none; font-weight: bold; }
-        .btn-blue { background: #0078d4; color: white; }
-        .btn-red { background: #ef4444; color: white; }
-        .btn-gray { background: #e5e7eb; color: #333; }
 
-        /* Вход */
-        #loginScreen { position: fixed; inset: 0; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-        #loginScreen input { padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; width: 250px; }
-        #loginScreen button { padding: 10px; width: 250px; background: #0078d4; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        /* ===== ОБЩИЕ КНОПКИ ===== */
+        .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; border: none; font-weight: 500; font-size: 13px; }
+        .btn-blue { background: var(--t-blue); color: white; }
+        .btn-red { background: #fee2e2; color: #ef4444; }
+        .btn-gray { background: var(--t-border); color: var(--t-text); }
+        .btn-green { background: #dcfce7; color: #16a34a; }
 
-        /* Модальные окна */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 450px; }
-        .modal-content h3 { margin-bottom: 15px; }
-        .modal-content label { display: block; margin-top: 10px; font-size: 12px; color: #666; font-weight: bold; }
-        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        /* ===== ЭКРАН ВХОДА ===== */
+        #loginScreen {
+            position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+        }
+        #loginScreen h2 { color: var(--t-blue); margin-bottom: 20px; font-size: 24px; }
+        #loginScreen input {
+            width: 100%; max-width: 300px; padding: 12px; margin: 5px 0;
+            border: 1px solid var(--t-border); border-radius: 8px; font-size: 14px;
+        }
+        #loginScreen button {
+            width: 100%; max-width: 300px; padding: 12px; margin-top: 15px;
+            background: var(--t-blue); color: white; border: none; border-radius: 8px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+        }
+
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px; }
+        .modal-content { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+        .modal-content h3 { margin-bottom: 15px; font-size: 18px; }
+        .modal-content label { display: block; margin-top: 12px; font-size: 12px; color: var(--t-gray); font-weight: 600; text-transform: uppercase; }
+        .modal-content input, .modal-content select, .modal-content textarea {
+            width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--t-border); border-radius: 6px; font-size: 14px;
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: space-between; }
+        
         .grades-btns { display: flex; gap: 10px; margin-top: 5px; }
-        .grades-btns button { width: 45px; height: 45px; border: 1px solid #ccc; background: white; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; color: #333; }
-        .grades-btns button.active { background: #0078d4; color: white; border-color: #0078d4; }
+        .grades-btns button {
+            flex: 1; height: 45px; border: 1px solid var(--t-border); background: #fff;
+            border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; color: var(--t-text);
+        }
+        .grades-btns button.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
 
-        /* Учитель */
-        .teacher-layout { display: flex; height: 100vh; }
-        .sidebar { width: 250px; background: white; border-right: 1px solid #ddd; padding: 20px; display: flex; flex-direction: column; }
-        .sidebar ul { list-style: none; margin-top: 20px; }
-        .sidebar li { padding: 10px; cursor: pointer; border-radius: 5px; color: #555; }
-        .sidebar li.active { background: #e5f0fa; color: #0078d4; font-weight: bold; }
-        .sidebar .logout { margin-top: auto; background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
-        
+        /* =================================================================
+           ИНТЕРФЕЙС УЧИТЕЛЯ
+           ================================================================= */
+        #teacherScreen { display: flex; height: 100vh; width: 100%; }
+        .sidebar { width: 260px; background: #fff; border-right: 1px solid var(--t-border); padding: 20px; display: flex; flex-direction: column; }
+        .sidebar h3 { color: var(--t-blue); margin-bottom: 20px; }
+        .sidebar ul { list-style: none; }
+        .sidebar li { padding: 10px; cursor: pointer; border-radius: 6px; color: var(--t-text); font-weight: 500; margin-bottom: 5px; }
+        .sidebar li.active { background: #e5f0fa; color: var(--t-blue); }
+        .sidebar .logout { margin-top: auto; background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .header { background: white; padding: 15px 20px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
-        .subjects { background: white; padding: 10px 20px; border-bottom: 1px solid #ddd; display: flex; gap: 10px; overflow-x: auto; }
-        .subject-btn { padding: 5px 15px; border: 1px solid #ddd; background: white; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-        .subject-btn.active { background: #0078d4; color: white; border-color: #0078d4; }
-        
-        .table-container { flex: 1; overflow: auto; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; background: white; min-width: 800px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background: #f9fafb; font-weight: bold; }
-        
-        /* КЛИКАБЕЛЬНАЯ ДАТА В ШАПКЕ */
-        .date-th { cursor: pointer; color: #0078d4; text-decoration: underline; }
-        .date-th:hover { background: #e5f0fa; }
+        .header { background: #fff; padding: 15px 20px; border-bottom: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
+        .header .title { font-size: 18px; font-weight: 700; color: var(--t-blue); }
+        .controls { display: flex; gap: 10px; align-items: center; }
 
-        .student-name { text-align: left; font-weight: bold; }
+        .subjects { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 10px; overflow-x: auto; }
+        .subjects::-webkit-scrollbar { display: none; }
+        .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 500; color: var(--t-text); }
+        .subject-btn.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
+
+        .content-area { flex: 1; overflow: auto; padding: 20px; }
+
+        /* ПК: Таблица */
+        .desktop-table { display: block; width: 100%; }
+        table { width: 100%; border-collapse: collapse; background: #fff; min-width: 800px; }
+        th, td { border: 1px solid var(--t-border); padding: 12px; text-align: center; }
+        th { background: #f9fafb; font-weight: 600; }
+        .date-th { cursor: pointer; color: var(--t-blue); text-decoration: underline; }
+        .date-th:hover { background: #e5f0fa; }
+        .student-name { text-align: left; font-weight: 600; }
         .cell { cursor: pointer; font-weight: bold; font-size: 16px; }
         .cell:hover { background: #e5f0fa; }
-        
-        .g2 { color: #ef4444; } .g3 { color: #f97316; } .g4 { color: #22c55e; } .g5 { color: #3b82f6; }
+        .g2 { color: var(--t-g2); } .g3 { color: var(--t-g3); } .g4 { color: var(--t-g4); } .g5 { color: var(--t-g5); }
 
-        /* Ученик (тёмный) */
-        .student-layout { background: #1c1c1e; color: white; min-height: 100vh; padding-bottom: 70px; }
-        .s-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .s-card { background: #2c2c2e; margin: 15px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; }
-        
-        /* Квадратики оценок у ученика */
-        .s-grades-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-        .s-grade { 
-            width: 40px; height: 40px; background: #3a3a3c; border-radius: 8px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; font-size: 18px; cursor: pointer;
-            border: 2px solid transparent;
+        /* Телефон: Карточки */
+        .mobile-list { display: none; flex-direction: column; gap: 10px; }
+        .mobile-card {
+            background: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--t-border);
+            display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
+        .mobile-card .name { font-weight: 600; font-size: 15px; }
+        .mobile-card .grades-preview { display: flex; gap: 5px; margin-top: 5px; }
+        .mobile-card .grade-preview-item {
+            width: 24px; height: 24px; border-radius: 4px; background: var(--t-bg);
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px;
+        }
+
+        /* =================================================================
+           ИНТЕРФЕЙС УЧЕНИКА (ТЁМНАЯ ТЕМА)
+           ================================================================= */
+        #studentScreen {
+            display: flex; flex-direction: column; background: var(--s-bg); color: var(--s-text);
+            height: 100vh; width: 100%; max-width: 600px; margin: 0 auto; /* Ограничиваем ширину на ПК */
+            position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        
+        .s-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .s-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+        
+        .s-card { background: var(--s-card); margin: 0 15px 15px 15px; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .s-card-title { font-size: 17px; font-weight: 600; margin-bottom: 5px; }
+        .s-card-hw { font-size: 13px; color: var(--s-gray); line-height: 1.4; }
+        
+        .s-grades-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; max-width: 50%; }
+        
+        .s-grade { 
+            width: 42px; height: 42px; background: #3a3a3c; border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; font-size: 18px; cursor: pointer;
+            border: 2px solid transparent; transition: transform 0.1s;
+        }
+        .s-grade:active { transform: scale(0.95); }
+        .s-grade.g5 { color: #34c759; }
+        .s-grade.g4 { color: #ff9500; }
+        .s-grade.g3 { color: #ff3b30; }
+        .s-grade.g2 { color: #ff3b30; }
+
         /* КРАСНЫЙ КОНТУР ДЛЯ КОНТРОЛЬНЫХ */
         .s-grade.test-grade {
             border-color: #ff3b30;
-            background: rgba(255, 59, 48, 0.1);
+            background: rgba(255, 59, 48, 0.15);
         }
 
-        .s-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; }
-        .s-nav-btn { background: none; border: none; color: #8e8e93; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .s-bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0 25px 0; border-top: 1px solid #333; }
+        .s-nav-btn { background: none; border: none; color: var(--s-gray); font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .s-nav-btn.active { color: white; }
+        .s-nav-icon { font-size: 20px; }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            #teacherScreen .sidebar { display: none; }
+            .header { padding: 10px 15px; flex-direction: column; align-items: flex-start; gap: 10px; }
+            .header .title { font-size: 16px; }
+            .controls { width: 100%; justify-content: space-between; }
+            
+            .content-area { padding: 10px; }
+            .desktop-table { display: none; }
+            .mobile-list { display: flex; }
+            
+            #studentScreen { max-width: 100%; box-shadow: none; }
+            .modal-content { padding: 15px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ВХОД -->
+    <!-- ЭКРАН ВХОДА -->
     <div id="loginScreen">
-        <h2 style="color: #0078d4; margin-bottom: 20px;">Журнал МЭШ</h2>
-        <div id="loginError" style="color: red; font-size: 12px; margin-bottom: 10px;"></div>
+        <h2>Журнал МЭШ</h2>
+        <div id="loginError" style="color: red; font-size: 13px; margin-bottom: 10px; text-align: center;"></div>
         <input type="text" id="loginInput" placeholder="Логин">
         <input type="password" id="passwordInput" placeholder="Пароль">
         <button onclick="doLogin()">Войти</button>
     </div>
 
-    <!-- УЧИТЕЛЬ -->
-    <div id="teacherScreen" class="teacher-layout hidden">
+    <!-- ИНТЕРФЕЙС УЧИТЕЛЯ -->
+    <div id="teacherScreen" class="hidden">
         <div class="sidebar">
-            <h3 style="color: #0078d4;">Кабинет учителя</h3>
+            <h3>Кабинет учителя</h3>
             <ul>
                 <li>📊 Расписание</li>
                 <li class="active">📖 Журнал 5В</li>
@@ -107,29 +197,42 @@
         </div>
         <div class="main">
             <div class="header">
-                <h3>Журнал 5В</h3>
-                <button class="btn btn-red" onclick="doLogout()">Выйти</button>
+                <div class="title">Журнал 5В</div>
+                <div class="controls">
+                    <button class="btn btn-blue" onclick="openHwModal()">Изменить общее ДЗ</button>
+                    <button class="btn btn-red" onclick="doLogout()">Выйти</button>
+                </div>
             </div>
             <div class="subjects" id="subjectsBar"></div>
-            <div class="table-container">
-                <table>
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
+            
+            <div class="content-area">
+                <!-- ПК Таблица -->
+                <div class="desktop-table">
+                    <table>
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+                <!-- Телефон Список -->
+                <div class="mobile-list" id="mobileList"></div>
             </div>
         </div>
     </div>
 
-    <!-- УЧЕНИК -->
-    <div id="studentScreen" class="student-layout hidden">
+    <!-- ИНТЕРФЕЙС УЧЕНИКА -->
+    <div id="studentScreen" class="hidden">
         <div class="s-header">
             <h3>Мой профиль</h3>
-            <button class="btn btn-red" onclick="doLogout()">Выйти</button>
+            <button class="btn btn-red" onclick="doLogout()" style="background: #3a3a3c; color: white; border: none; padding: 8px 16px; border-radius: 8px;">Выйти</button>
         </div>
-        <div id="studentContent"></div>
+        <div class="s-content" id="studentContent"></div>
         <div class="s-bottom-nav">
-            <button class="s-nav-btn active" onclick="switchStudentTab('schedule')">📅<br>Расписание</button>
-            <button class="s-nav-btn" onclick="switchStudentTab('grades')">⭐<br>Оценки</button>
+            <button class="s-nav-btn active" onclick="switchStudentTab('schedule')">
+                <span class="s-nav-icon">📅</span>Расписание
+            </button>
+            <button class="s-nav-btn" onclick="switchStudentTab('grades')">
+                <span class="s-nav-icon">⭐</span>Оценки
+            </button>
         </div>
     </div>
 
@@ -137,6 +240,7 @@
     <div id="gradeModal" class="modal hidden">
         <div class="modal-content">
             <h3 id="modalTitle">Выставление оценки</h3>
+            
             <label>За что?</label>
             <select id="inputType">
                 <option>Ответ на уроке</option>
@@ -170,17 +274,17 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДАТЫ (ДЗ + Контрольная) -->
+    <!-- МОДАЛЬНОЕ ОКНО ДАТЫ -->
     <div id="dateModal" class="modal hidden">
         <div class="modal-content">
             <h3 id="dateModalTitle">Настройки дня</h3>
             
-            <label>Домашнее задание</label>
-            <textarea id="dateHwInput" rows="3" placeholder="Введите ДЗ на этот день..."></textarea>
+            <label>Домашнее задание на этот день</label>
+            <textarea id="dateHwInput" rows="3" placeholder="Введите ДЗ..."></textarea>
             
-            <label style="margin-top: 20px;">Контрольная работа</label>
-            <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
-                <input type="checkbox" id="isTestCheckbox" style="width: auto;">
+            <label style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">Контрольная работа</label>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                <input type="checkbox" id="isTestCheckbox" style="width: 18px; height: 18px;">
                 <span style="font-size: 14px;">Назначить контрольную</span>
             </div>
             <input type="text" id="dateTestTheme" placeholder="Тема контрольной" style="display: none; margin-top: 10px;">
@@ -192,7 +296,21 @@
         </div>
     </div>
 
+    <!-- МОДАЛЬНОЕ ОКНО ОБЩЕГО ДЗ -->
+    <div id="hwModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Домашнее задание (Общее)</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Это задание будет отображаться у учеников в разделе "Расписание".</p>
+            <textarea id="hwInput" rows="4"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-gray" onclick="closeModal('hwModal')">Отмена</button>
+                <button class="btn btn-blue" onclick="saveHw()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let currentUser = null;
         let appData = null;
         let currentSubject = "Математика";
@@ -200,7 +318,7 @@
         let activeDate = null;
         let selectedGrade = null;
 
-        // --- АВТОРИЗАЦИЯ ---
+        // --- 1. АВТОРИЗАЦИЯ ---
         async function doLogin() {
             const login = document.getElementById('loginInput').value;
             const pass = document.getElementById('passwordInput').value;
@@ -246,8 +364,9 @@
             }
         }
 
-        // --- УЧИТЕЛЬ ---
+        // --- 2. ИНТЕРФЕЙС УЧИТЕЛЯ ---
         function renderTeacherUI() {
+            // 1. Отрисовка вкладок предметов
             const subBar = document.getElementById('subjectsBar');
             subBar.innerHTML = '';
             Object.keys(appData.subjects).forEach(subj => {
@@ -258,18 +377,24 @@
                 subBar.appendChild(btn);
             });
 
-            // Шапка таблицы с КЛИКАБЕЛЬНЫМИ ДАТАМИ
+            // 2. Отрисовка таблицы (ПК)
             const thead = document.getElementById('tableHead');
             thead.innerHTML = `<tr><th style="text-align:left;">Ученик</th>`;
             appData.dates.forEach(d => {
-                thead.innerHTML += `<th class="date-th" onclick="openDateModal('${d}')" title="Нажмите, чтобы задать ДЗ или контрольную">${d}</th>`;
+                // Кликабельная дата
+                thead.innerHTML += `<th class="date-th" onclick="openDateModal('${d}')" title="Настроить день">${d}</th>`;
             });
             thead.innerHTML += `</tr>`;
 
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
             
+            // 3. Отрисовка мобильного списка
+            const mobileList = document.getElementById('mobileList');
+            mobileList.innerHTML = '';
+
             appData.students.forEach(student => {
+                // --- Десктопная строка ---
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td class="student-name">${student.name}</td>`;
                 
@@ -284,32 +409,63 @@
                         td.classList.add(`g${gradeData.grade}`);
                     }
 
-                    td.onclick = function() {
-                        activeCell = { studentId: student.id, date: date };
-                        selectedGrade = gradeData ? gradeData.grade : null;
-                        
-                        document.getElementById('modalTitle').innerText = `${student.name} — ${date}`;
-                        document.getElementById('inputType').value = gradeData ? gradeData.type : 'Ответ на уроке';
-                        document.getElementById('inputTheme').value = gradeData ? (gradeData.theme || '') : '';
-                        document.getElementById('inputComment').value = gradeData ? (gradeData.comment || '') : '';
-                        
-                        document.querySelectorAll('.grades-btns button').forEach(b => {
-                            b.classList.remove('active');
-                            if (b.innerText == selectedGrade) b.classList.add('active');
-                        });
-
-                        // Показываем кнопку "Удалить", если оценка уже есть
-                        document.getElementById('btnDelete').style.display = gradeData ? 'block' : 'none';
-
-                        document.getElementById('gradeModal').classList.remove('hidden');
-                    };
+                    td.onclick = function() { openGradeModal(student, date); };
                     tr.appendChild(td);
                 });
                 tbody.appendChild(tr);
+
+                // --- Мобильная карточка ---
+                const card = document.createElement('div');
+                card.className = 'mobile-card';
+                
+                let gradesHtml = '';
+                appData.dates.forEach(date => {
+                    const key = `${student.id}-${date}`;
+                    if (appData.subjects[currentSubject].grades[key]) {
+                        const g = appData.subjects[currentSubject].grades[key].grade;
+                        gradesHtml += `<div class="grade-preview-item g${g}">${g}</div>`;
+                    }
+                });
+
+                card.innerHTML = `
+                    <div>
+                        <div class="name">${student.name}</div>
+                        <div class="grades-preview">${gradesHtml || '<span style="font-size:12px;color:#999;">Нет оценок</span>'}</div>
+                    </div>
+                    <button class="btn btn-blue" onclick="openGradeModalForMobile(${student.id})">Оценить</button>
+                `;
+                mobileList.appendChild(card);
             });
         }
 
-        // --- ОКНО ОЦЕНКИ ---
+        // Открытие окна для мобилки (по умолчанию берем первую дату)
+        function openGradeModalForMobile(studentId) {
+            const student = appData.students.find(s => s.id === studentId);
+            const date = appData.dates[0]; // Можно сделать выбор даты, но для простоты берем первую
+            openGradeModal(student, date);
+        }
+
+        // Открытие окна оценки (ПК)
+        function openGradeModal(student, date) {
+            activeCell = { studentId: student.id, date: date };
+            const key = `${student.id}-${date}`;
+            const gradeData = appData.subjects[currentSubject].grades[key];
+            selectedGrade = gradeData ? gradeData.grade : null;
+            
+            document.getElementById('modalTitle').innerText = `${student.name} — ${date}`;
+            document.getElementById('inputType').value = gradeData ? gradeData.type : 'Ответ на уроке';
+            document.getElementById('inputTheme').value = gradeData ? (gradeData.theme || '') : '';
+            document.getElementById('inputComment').value = gradeData ? (gradeData.comment || '') : '';
+            
+            document.querySelectorAll('.grades-btns button').forEach(b => {
+                b.classList.remove('active');
+                if (b.innerText == selectedGrade) b.classList.add('active');
+            });
+
+            document.getElementById('btnDelete').style.display = gradeData ? 'block' : 'none';
+            document.getElementById('gradeModal').classList.remove('hidden');
+        }
+
         function selectGrade(g) {
             selectedGrade = g;
             document.querySelectorAll('.grades-btns button').forEach(b => {
@@ -345,8 +501,7 @@
         }
 
         async function deleteGrade() {
-            if (!confirm('Вы уверены, что хотите удалить эту оценку?')) return;
-
+            if (!confirm('Удалить эту оценку?')) return;
             await fetch('/api/grade', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -355,24 +510,23 @@
                     subject: currentSubject,
                     studentId: activeCell.studentId,
                     date: activeCell.date,
-                    grade: null // Отправляем null для удаления
+                    grade: null
                 })
             });
-
             closeModal('gradeModal');
             await loadAppData();
         }
 
-        // --- ОКНО ДАТЫ (ДЗ + КОНТРОЛЬНАЯ) ---
+        // --- 3. НАСТРОЙКА ДНЯ (ДЗ + КОНТРОЛЬНАЯ) ---
         function openDateModal(date) {
             activeDate = date;
-            document.getElementById('dateModalTitle').innerText = `День: ${date}`;
+            document.getElementById('dateModalTitle').innerText = `Настройки на ${date}`;
             
-            // Загружаем текущее ДЗ на этот день
-            const hw = appData.subjects[currentSubject].homework;
-            document.getElementById('dateHwInput').value = hw || '';
+            // Загружаем общее ДЗ (в текущей реализации ДЗ одно на предмет, 
+            // но мы привязываем его к дате для удобства учителя)
+            document.getElementById('dateHwInput').value = appData.subjects[currentSubject].homework || '';
             
-            // Проверяем, есть ли контрольная на этот день
+            // Проверяем, есть ли контрольная
             const tests = appData.subjects[currentSubject].tests || [];
             const hasTest = tests.find(t => t.date === date);
             
@@ -383,7 +537,6 @@
             document.getElementById('dateModal').classList.remove('hidden');
         }
 
-        // Показ/скрытие поля темы контрольной при клике на чекбокс
         document.getElementById('isTestCheckbox').addEventListener('change', function() {
             document.getElementById('dateTestTheme').style.display = this.checked ? 'block' : 'none';
         });
@@ -393,40 +546,25 @@
             const isTest = document.getElementById('isTestCheckbox').checked;
             const testTheme = document.getElementById('dateTestTheme').value;
 
-            // 1. Сохраняем ДЗ
+            // 1. Сохраняем ДЗ (перезаписываем общее ДЗ предмета)
             await fetch('/api/homework', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    role: currentUser.role,
-                    subject: currentSubject,
-                    text: hwText
-                })
+                body: JSON.stringify({ role: currentUser.role, subject: currentSubject, text: hwText })
             });
 
-            // 2. Логика с контрольной (удаляем старую, если нужно, создаем новую)
+            // 2. Сохраняем/удаляем контрольную
             if (isTest && testTheme) {
                 await fetch('/api/test', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        role: currentUser.role,
-                        subject: currentSubject,
-                        date: activeDate,
-                        theme: testTheme,
-                        action: 'add'
-                    })
+                    body: JSON.stringify({ role: currentUser.role, subject: currentSubject, date: activeDate, theme: testTheme, action: 'add' })
                 });
             } else if (!isTest) {
                 await fetch('/api/test', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        role: currentUser.role,
-                        subject: currentSubject,
-                        date: activeDate,
-                        action: 'remove'
-                    })
+                    body: JSON.stringify({ role: currentUser.role, subject: currentSubject, date: activeDate, action: 'remove' })
                 });
             }
 
@@ -434,7 +572,23 @@
             await loadAppData();
         }
 
-        // --- УЧЕНИК ---
+        // Общее ДЗ (кнопка сверху)
+        function openHwModal() {
+            document.getElementById('hwInput').value = appData.subjects[currentSubject].homework || '';
+            document.getElementById('hwModal').classList.remove('hidden');
+        }
+
+        async function saveHw() {
+            await fetch('/api/homework', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: currentUser.role, subject: currentSubject, text: document.getElementById('hwInput').value })
+            });
+            closeModal('hwModal');
+            await loadAppData();
+        }
+
+        // --- 4. ИНТЕРФЕЙС УЧЕНИКА ---
         function switchStudentTab(tab) {
             document.querySelectorAll('.s-nav-btn').forEach(b => b.classList.remove('active'));
             if(tab === 'schedule') document.querySelectorAll('.s-nav-btn')[0].classList.add('active');
@@ -450,8 +604,6 @@
                     div.className = 's-card';
                     
                     let gradesHtml = '';
-                    
-                    // Получаем список контрольных для этого предмета
                     const tests = subjData.tests || [];
 
                     appData.dates.forEach(d => {
@@ -460,7 +612,7 @@
                             const gradeItem = subjData.grades[key];
                             const g = gradeItem.grade;
                             
-                            // Проверяем: оценка за контрольную?
+                            // Определяем, является ли оценка за контрольную
                             const isTestGrade = gradeItem.type === 'Контрольная работа' || tests.some(t => t.date === d);
                             const testClass = isTestGrade ? 'test-grade' : '';
 
@@ -470,15 +622,15 @@
 
                     div.innerHTML = `
                         <div style="max-width: 60%;">
-                            <div style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">${subj}</div>
-                            <div style="font-size: 12px; color: #aaa;">ДЗ: ${subjData.homework || 'Нет'}</div>
+                            <div class="s-card-title">${subj}</div>
+                            <div class="s-card-hw">ДЗ: ${subjData.homework || 'Нет'}</div>
                         </div>
                         <div class="s-grades-container">${gradesHtml}</div>
                     `;
                     container.appendChild(div);
                 });
             } else if (tab === 'grades') {
-                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8e8e93;">Все оценки отображаются в расписании</div>';
+                container.innerHTML = '<div style="padding: 40px 20px; text-align: center; color: #8e8e93;">Все ваши оценки отображаются в разделе "Расписание"</div>';
             }
         }
     </script>
