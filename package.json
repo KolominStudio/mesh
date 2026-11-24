@@ -1,1 +1,16 @@
-
+{
+  "name": "mesh-journal-final",
+  "version": "1.5.0",
+  "description": "Журнал МЭШ с динамическими датами и причинами",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
