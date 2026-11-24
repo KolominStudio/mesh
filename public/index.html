@@ -335,6 +335,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    role: currentUser.role,
                     subject: currentSubject,
                     text: document.getElementById('hwInput').value
                 })
