@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-// ВАЖНО: порт 8080 для работы в контейнере с Traefik (как на вашем скрине)
 const PORT = process.env.PORT || 8080; 
 
 const DATA_DIR = path.join(__dirname, 'data');
@@ -25,7 +24,6 @@ function initDB() {
             "Яковлев Тимур", "Яковлева Есения", "Антонов Марк", "Борисова Варвара", "Виноградов Владислав"
         ];
 
-        // ЖЕСТКО ЗАДАЕМ ПАРОЛИ: всем ученикам пароль 123456
         const students = studentNames.map((name, index) => ({
             id: index + 1,
             name,
@@ -42,9 +40,9 @@ function initDB() {
             students,
             dates,
             subjects: {
-                "Математика": { grades: {}, homework: "Повторить параграф 24, решить задачи № 15, 16 на стр. 45", tests: [] },
+                "Математика": { grades: {}, homework: "Подготовка к контрольной работе, выполнить задание из файла", tests: [] },
                 "Русский язык": { grades: {}, homework: "Упражнение 154, выучить словарные слова", tests: [] },
-                "Литература": { grades: {}, homework: "Прочитать главу 3", tests: [] },
+                "Литература": { grades: {}, homework: "Выучить наизусть стихотворение М.Ю. Лермонтова 'Парус' (стр. 208).", tests: [] },
                 "История": { grades: {}, homework: "Параграф 12", tests: [] },
                 "Биология": { grades: {}, homework: "§ 24, вопросы устно", tests: [] },
                 "География": { grades: {}, homework: "Нанести на контурную карту", tests: [] },
@@ -53,33 +51,22 @@ function initDB() {
             }
         };
         fs.writeFileSync(JOURNAL_FILE, JSON.stringify(initialData, null, 2));
-        console.log('✅ База данных инициализирована. Пароли учеников: 123456');
     } else {
-        // Миграция: если база уже была, принудительно ставим всем ученикам пароль 123456
-        // и добавляем недостающие даты
         const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
         let changed = false;
-
         if (data.students) {
             data.students.forEach(s => {
-                if (s.password !== "123456") {
-                    s.password = "123456";
-                    changed = true;
-                }
+                if (s.password !== "123456") { s.password = "123456"; changed = true; }
             });
         }
         if (!data.dates) {
             data.dates = ["12.02", "13.02", "14.02", "15.02", "16.02"];
             changed = true;
         }
-        if (changed) {
-            fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
-            console.log('✅ База обновлена: пароли учеников сброшены на 123456.');
-        }
+        if (changed) fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
     }
 }
 
-// --- API Авторизации ---
 app.post('/api/login', (req, res) => {
     const { login, password } = req.body;
     if (!login || !password) return res.status(400).json({ error: 'Введите логин и пароль' });
@@ -98,7 +85,6 @@ app.post('/api/login', (req, res) => {
     res.status(401).json({ error: 'Неверный логин или пароль' });
 });
 
-// --- API Данных ---
 app.get('/api/data', (req, res) => {
     const { role, studentId } = req.query;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
@@ -106,8 +92,6 @@ app.get('/api/data', (req, res) => {
     if (role === 'student') {
         if (!studentId) return res.status(400).json({ error: 'Не передан studentId' });
         const id = parseInt(studentId);
-        if (isNaN(id)) return res.status(400).json({ error: 'Неверный studentId' });
-
         const student = data.students.find(s => s.id === id);
         if (!student) return res.status(404).json({ error: 'Ученик не найден' });
 
@@ -129,7 +113,7 @@ app.get('/api/data', (req, res) => {
         return res.json({
             class: data.class,
             student,
-            students: [student], // массив из одного для единообразия клиента
+            students: [student],
             subjects: filteredSubjects,
             dates: data.dates || []
         });
@@ -138,19 +122,15 @@ app.get('/api/data', (req, res) => {
     res.json(data);
 });
 
-// --- API Даты (только учитель) ---
 app.post('/api/date', (req, res) => {
     const { date, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
-    if (!date || !/^\d{2}\.\d{2}$/.test(date)) {
-        return res.status(400).json({ error: 'Неверный формат даты (ДД.ММ)' });
-    }
+    if (!date || !/^\d{2}\.\d{2}$/.test(date)) return res.status(400).json({ error: 'Неверный формат даты' });
 
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
     if (!data.dates) data.dates = [];
-    if (data.dates.includes(date)) {
-        return res.status(400).json({ error: 'Такая дата уже существует' });
-    }
+    if (data.dates.includes(date)) return res.status(400).json({ error: 'Такая дата уже существует' });
+    
     data.dates.push(date);
     data.dates.sort((a, b) => {
         const [d1, m1] = a.split('.').map(Number);
@@ -161,11 +141,9 @@ app.post('/api/date', (req, res) => {
     res.json({ success: true, dates: data.dates });
 });
 
-// API ДЗ (только учитель)
 app.post('/api/homework', (req, res) => {
     const { subject, text, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
-    if (!subject || !text) return res.status(400).json({ error: 'Не хватает полей' });
 
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
     if (data.subjects[subject]) {
@@ -177,11 +155,9 @@ app.post('/api/homework', (req, res) => {
     }
 });
 
-// API Оценки (только учитель)
 app.post('/api/grade', (req, res) => {
     const { subject, studentId, date, grade, type, comment, theme, isDot, dueDate, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
-    if (!subject || !studentId || !date) return res.status(400).json({ error: 'Не хватает полей' });
 
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
     if (!data.subjects[subject]) return res.status(404).json({ error: 'Предмет не найден' });
@@ -190,26 +166,16 @@ app.post('/api/grade', (req, res) => {
     if (grade === null) {
         delete data.subjects[subject].grades[key];
     } else {
-        data.subjects[subject].grades[key] = { 
-            grade, 
-            type, 
-            comment, 
-            theme: theme || '', 
-            isDot: isDot || false, 
-            dueDate: dueDate || null 
-        };
+        data.subjects[subject].grades[key] = { grade, type, comment, theme: theme || '', isDot: isDot || false, dueDate: dueDate || null };
     }
-    
     fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
     res.json({ success: true });
 });
 
-// API Контрольные (только учитель)
 app.post('/api/test', (req, res) => {
     const { subject, date, theme, action, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
-    if (!subject || !date) return res.status(400).json({ error: 'Не хватает полей' });
-    if (action === 'add' && !theme) return res.status(400).json({ error: 'Введите тему контрольной' });
+    if (action === 'add' && !theme) return res.status(400).json({ error: 'Введите тему' });
 
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
     if (!data.subjects[subject]) return res.status(404).json({ error: 'Предмет не найден' });
@@ -218,14 +184,11 @@ app.post('/api/test', (req, res) => {
     if (!subjectData.tests) subjectData.tests = [];
 
     if (action === 'add') {
-        if (subjectData.tests.find(t => t.date === date)) {
-            return res.status(400).json({ error: 'Контрольная на эту дату уже назначена' });
-        }
+        if (subjectData.tests.find(t => t.date === date)) return res.status(400).json({ error: 'Контрольная уже есть' });
         subjectData.tests.push({ date, theme, type: 'Контрольная работа' });
     } else if (action === 'remove') {
         subjectData.tests = subjectData.tests.filter(t => t.date !== date);
     }
-
     fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
     res.json({ success: true, tests: subjectData.tests });
 });
