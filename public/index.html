@@ -6,109 +6,178 @@
     <title>Журнал МЭШ</title>
     <style>
         :root {
-            --t-blue: #0078d4; --t-bg: #f3f4f6; --t-border: #e5e7eb; --t-text: #1f2937;
-            --t-gray: #6b7280; --t-g2: #ef4444; --t-g3: #f97316; --t-g4: #22c55e; --t-g5: #3b82f6;
-            --s-bg: #1c1c1e; --s-card: #2c2c2e; --s-text: #ffffff; --s-gray: #8e8e93; --s-red: #ff3b30;
+            --t-blue: #0078d4;
+            --t-bg: #f3f4f6;
+            --t-border: #e5e7eb;
+            --t-text: #1f2937;
+            --t-gray: #6b7280;
+            --t-g2: #ef4444;
+            --t-g3: #f97316;
+            --t-g4: #22c55e;
+            --t-g5: #3b82f6;
+
+            --s-bg: #1c1c1e;
+            --s-card: #2c2c2e;
+            --s-text: #ffffff;
+            --s-gray: #8e8e93;
+            --s-red: #ff3b30;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background: var(--t-bg); color: var(--t-text); font-size: 14px; overflow: hidden; }
+
         .hidden { display: none !important; }
+
+        /* ===== КНОПКИ ===== */
         .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; border: none; font-weight: 500; font-size: 13px; }
         .btn-blue { background: var(--t-blue); color: white; }
         .btn-red { background: #fee2e2; color: #ef4444; }
         .btn-gray { background: var(--t-border); color: var(--t-text); }
-        .btn-green { background: #dcfce7; color: #16a34a; }
 
-        /* Вход */
+        /* ===== ВХОД ===== */
         #loginScreen { position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        #loginScreen h2 { color: var(--t-blue); margin-bottom: 20px; }
         #loginScreen input { width: 100%; max-width: 300px; padding: 12px; margin: 5px 0; border: 1px solid var(--t-border); border-radius: 8px; }
         #loginScreen button { width: 100%; max-width: 300px; padding: 12px; margin-top: 15px; background: var(--t-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        /* Модалки */
+        /* ===== МОДАЛКИ ===== */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px; }
-        .modal-content { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+        .modal-content h3 { margin-bottom: 15px; }
         .modal-content label { display: block; margin-top: 12px; font-size: 12px; color: var(--t-gray); font-weight: 600; text-transform: uppercase; }
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--t-border); border-radius: 6px; }
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: space-between; }
         
-        /* Сетка оценок в модалке учителя */
-        .grades-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 5px; }
-        .grades-grid button { height: 50px; border: 1px solid var(--t-border); background: #fff; border-radius: 8px; cursor: pointer; font-size: 20px; font-weight: bold; }
-        .grades-grid button.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
-        .toggle-group { display: flex; align-items: center; gap: 8px; margin-top: 10px; background: #f3f4f6; padding: 8px; border-radius: 8px; cursor: pointer; }
+        .grades-btns { display: flex; gap: 10px; margin-top: 5px; align-items: center; }
+        .grades-btns button { flex: 1; height: 45px; border: 1px solid var(--t-border); background: #fff; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; }
+        .grades-btns button.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
+
+        .toggle-group { display: flex; align-items: center; gap: 8px; margin-left: auto; background: #f3f4f6; padding: 5px 10px; border-radius: 20px; cursor: pointer; }
         .toggle { width: 36px; height: 20px; background: #ccc; border-radius: 10px; position: relative; transition: 0.2s; }
         .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.2s; }
         .toggle.active { background: var(--t-blue); }
         .toggle.active::after { left: 18px; }
 
-        /* Учитель */
+        /* Список дат */
+        .date-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--t-border); cursor: pointer; }
+        .date-list-item:hover { background: #f9fafb; }
+        .date-list-item .date-info { font-weight: 600; font-size: 16px; }
+        .date-list-item .date-badges { display: flex; gap: 5px; }
+        .date-badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .date-badge.hw { background: #dbeafe; color: #1e40af; }
+        .date-badge.test { background: #fee2e2; color: #ef4444; }
+
+        /* ===== УЧИТЕЛЬ ===== */
         #teacherScreen { display: flex; height: 100vh; }
         .sidebar { width: 260px; background: #fff; border-right: 1px solid var(--t-border); padding: 20px; display: flex; flex-direction: column; }
-        .sidebar ul { list-style: none; margin-top: 15px; }
+        .sidebar h3 { color: var(--t-blue); margin-bottom: 20px; }
+        .sidebar ul { list-style: none; }
         .sidebar li { padding: 10px; cursor: pointer; border-radius: 6px; color: var(--t-text); font-weight: 500; margin-bottom: 5px; }
         .sidebar li.active { background: #e5f0fa; color: var(--t-blue); }
         .sidebar .logout { margin-top: auto; background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .header { background: #fff; padding: 15px 20px; border-bottom: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
+        .header .title { font-size: 18px; font-weight: 700; color: var(--t-blue); }
         .controls { display: flex; gap: 10px; }
 
         .subjects { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 10px; overflow-x: auto; }
-        .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; }
+        .subjects::-webkit-scrollbar { display: none; }
+        .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 13px; }
         .subject-btn.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
 
         .content-area { flex: 1; overflow: auto; padding: 20px; }
+
         .desktop-table { display: block; width: 100%; }
-        table { width: 100%; border-collapse: collapse; background: #fff; min-width: 900px; }
-        th, td { border: 1px solid var(--t-border); padding: 0; text-align: center; height: 30px; /* МАЛЕНЬКИЕ КЛЕТКИ */ }
-        th { background: #f9fafb; font-weight: 600; padding: 8px 5px; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; background: #fff; min-width: 800px; }
+        th, td { border: 1px solid var(--t-border); padding: 12px; text-align: center; }
+        th { background: #f9fafb; font-weight: 600; }
         .date-th { cursor: pointer; color: var(--t-blue); text-decoration: underline; }
-        .student-name { text-align: left; font-weight: 600; padding-left: 10px; font-size: 13px; }
+        .student-name { text-align: left; font-weight: 600; }
         
-        .cell { cursor: pointer; font-weight: bold; font-size: 14px; position: relative; width: 40px; }
+        .cell { cursor: pointer; font-weight: bold; font-size: 16px; position: relative; }
         .cell:hover { background: #e5f0fa; }
         .g2 { color: var(--t-g2); } .g3 { color: var(--t-g3); } .g4 { color: var(--t-g4); } .g5 { color: var(--t-g5); }
-        .dot-mark { position: absolute; top: 2px; right: 4px; font-size: 10px; color: #666; font-weight: bold; }
+        
+        .dot-mark { position: absolute; top: 4px; right: 8px; font-size: 14px; color: #666; font-weight: bold; }
 
-        /* Мобильный список учителя */
+        /* Мобильный список */
         .mobile-list { display: none; flex-direction: column; gap: 10px; }
         .mobile-card { background: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
-        .mobile-card .grades-preview { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
-        .mobile-card .grade-preview-item { 
-            width: 36px; height: 36px; border-radius: 8px; background: #3a3a3c; color: #fff;
-            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; 
-            position: relative; cursor: pointer;
-        }
+        .mobile-card .name { font-weight: 600; }
+        .mobile-card .grades-preview { display: flex; gap: 5px; margin-top: 5px; }
+        .mobile-card .grade-preview-item { width: 24px; height: 24px; border-radius: 4px; background: var(--t-bg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; position: relative; }
 
-        /* Ученик */
-        #studentScreen { display: flex; flex-direction: column; background: var(--s-bg); color: var(--s-text); height: 100vh; width: 100%; max-width: 600px; margin: 0 auto; position: relative; }
+        /* ===== УЧЕНИК ===== */
+        #studentScreen {
+            display: flex; flex-direction: column; background: var(--s-bg); color: var(--s-text);
+            height: 100vh; width: 100%; max-width: 600px; margin: 0 auto; position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        
         .s-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* 5 Недель */
         .s-weeks { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 15px 15px; }
         .s-week { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 5px; border-radius: 8px; }
         .s-week.active { background: #3a3a3c; }
         .s-week-label { font-size: 10px; color: var(--s-gray); }
-        .s-week-num { font-size: 16px; font-weight: bold; }
+        .s-week-num { font-size: 16px; font-weight: bold; color: var(--s-text); }
         
+        /* Дни недели */
         .s-days { display: flex; gap: 8px; padding: 0 15px 15px 15px; overflow-x: auto; }
         .s-day { padding: 6px 12px; border-radius: 8px; background: #2c2c2e; color: var(--s-gray); font-size: 13px; cursor: pointer; white-space: nowrap; }
         .s-day.active { background: #3a3a3c; color: white; font-weight: bold; border: 1px solid var(--s-gray); }
-
+        
         .s-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
-        .s-card { background: var(--s-card); margin: 0 15px 15px 15px; padding: 15px; border-radius: 16px; display: flex; flex-direction: column; cursor: pointer; }
+        
+        /* Карточка урока */
+        .s-card { 
+            background: var(--s-card); margin: 0 15px 15px 15px; padding: 15px; border-radius: 16px; 
+            display: flex; flex-direction: column; cursor: pointer; transition: 0.2s;
+        }
+        .s-card:active { transform: scale(0.98); }
+        
         .s-card-header { display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px; }
         .s-card-title { font-size: 17px; font-weight: 600; }
-        .s-test-badge { display: inline-block; background: rgba(255, 59, 48, 0.2); color: #ff3b30; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 5px; border: 1px solid #ff3b30; cursor: pointer; align-self: flex-start; }
-        .s-card-hw { font-size: 13px; color: var(--s-gray); margin-top: 5px; }
         
-        .s-grade { width: 44px; height: 44px; background: #3a3a3c; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; cursor: pointer; border: 2px solid transparent; position: relative; }
-        .s-grade.g5 { color: #34c759; } .s-grade.g4 { color: #ff9500; } .s-grade.g3 { color: #ff3b30; }
+        .s-test-badge { 
+            display: inline-block; background: rgba(255, 59, 48, 0.2); color: #ff3b30; 
+            padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; 
+            margin-top: 5px; border: 1px solid #ff3b30; cursor: pointer; align-self: flex-start;
+        }
+        
+        .s-card-hw { font-size: 13px; color: var(--s-gray); line-height: 1.4; margin-top: 5px; }
+        
+        .s-grades-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; align-self: flex-end; }
+        
+        /* Квадратик оценки */
+        .s-grade { 
+            width: 44px; height: 44px; background: #3a3a3c; border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; font-size: 18px; cursor: pointer;
+            border: 2px solid transparent; position: relative;
+        }
+        .s-grade.g5 { color: #34c759; }
+        .s-grade.g4 { color: #ff9500; }
+        .s-grade.g3 { color: #ff3b30; }
+        
         .s-grade.test-grade { border-color: #ff3b30; background: rgba(255, 59, 48, 0.15); }
-        .s-grade .dot-indicator { position: absolute; top: -4px; right: -2px; font-size: 26px; color: #fff; }
+
+        /* ТОЧКА СВЕРХУ СПРАВА */
+        .s-grade .dot-indicator { position: absolute; top: -4px; right: -2px; font-size: 26px; line-height: 1; color: #fff; }
 
         .s-bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0 25px 0; border-top: 1px solid #333; }
         .s-nav-btn { background: none; border: none; color: var(--s-gray); font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .s-nav-btn.active { color: white; }
+        .s-nav-icon { font-size: 20px; }
 
+        /* Детали урока (для ученика) */
+        .lesson-detail-row { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #444; }
+        .lesson-detail-label { font-size: 12px; color: var(--s-gray); margin-bottom: 4px; }
+        .lesson-detail-value { font-size: 15px; }
+
+        /* ===== АДАПТИВ ===== */
         @media (max-width: 768px) {
             #teacherScreen .sidebar { display: none; }
             .header { padding: 10px 15px; flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -116,6 +185,7 @@
             .content-area { padding: 10px; }
             .desktop-table { display: none; }
             .mobile-list { display: flex; }
+            #studentScreen { max-width: 100%; box-shadow: none; }
         }
     </style>
 </head>
@@ -124,7 +194,7 @@
     <!-- ВХОД -->
     <div id="loginScreen" class="hidden">
         <h2>Журнал МЭШ</h2>
-        <div id="loginError" style="color: red; font-size: 13px;"></div>
+        <div id="loginError" style="color: red; font-size: 13px; margin-bottom: 10px;"></div>
         <input type="text" id="loginInput" placeholder="Логин">
         <input type="password" id="passwordInput" placeholder="Пароль">
         <button onclick="doLogin()">Войти</button>
@@ -133,69 +203,33 @@
     <!-- УЧИТЕЛЬ -->
     <div id="teacherScreen" class="hidden">
         <div class="sidebar">
-            <h3 id="teacherWelcome">Кабинет</h3>
+            <h3>Кабинет учителя</h3>
             <ul>
-                <li onclick="switchTeacherTab('journal')" class="active" id="tab-journal">📖 Журнал</li>
-                <li onclick="switchTeacherTab('schedule')" id="tab-schedule">🗓 Расписание</li>
-                <li onclick="switchTeacherTab('substitutions')" id="tab-substitutions">🔄 Замены</li>
-                <li onclick="switchTeacherTab('admin')" id="tab-admin">⚙️ Настройки</li>
+                <li>📊 Расписание</li>
+                <li class="active">📖 Журнал 5В</li>
+                <li>📝 Задания</li>
             </ul>
             <button class="logout" onclick="doLogout()">Выйти</button>
         </div>
         <div class="main">
             <div class="header">
                 <div class="title">Журнал 5В</div>
-                <div class="controls" id="teacherControls">
+                <div class="controls">
                     <button class="btn btn-blue" onclick="openDatesListModal()">📅 Выбрать день</button>
+                    <button class="btn btn-red" onclick="doLogout()">Выйти</button>
                 </div>
             </div>
+            <div class="subjects" id="subjectsBar"></div>
             
-            <!-- Вкладка Журнал -->
-            <div id="teacherView-journal" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-                <div class="subjects" id="subjectsBar"></div>
-                <div class="content-area">
-                    <div class="desktop-table">
-                        <table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table>
-                    </div>
-                    <div class="mobile-list" id="mobileList"></div>
+            <div class="content-area">
+                <div class="desktop-table">
+                    <table>
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
                 </div>
+                <div class="mobile-list" id="mobileList"></div>
             </div>
-
-            <!-- Вкладка Расписание (Замены) -->
-            <div id="teacherView-schedule" class="hidden" style="padding: 20px; overflow-y: auto;">
-                <h2>Расписание и Замены</h2>
-                <div id="scheduleList" style="margin-top: 20px;"></div>
-            </div>
-
-            <!-- Вкладка Замены -->
-            <div id="teacherView-substitutions" class="hidden" style="padding: 20px; overflow-y: auto;">
-                <h2>Назначить замену</h2>
-                <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <select id="subDate" style="padding: 8px;"></select>
-                    <select id="subSubject" style="padding: 8px;"></select>
-                    <select id="subTeacher" style="padding: 8px;"></select>
-                    <button class="btn btn-blue" onclick="addSubstitution()">Назначить замену</button>
-                </div>
-                <div id="activeSubstitutions" style="margin-top: 20px;"></div>
-            </div>
-
-            <!-- Вкладка Админ -->
-            <div id="teacherView-admin" class="hidden" style="padding: 20px; overflow-y: auto;">
-                <h2>Управление аккаунтом</h2>
-                <div style="margin-top: 20px; max-width: 400px;">
-                    <label>Имя</label><input type="text" id="myName" style="width:100%; padding:8px; margin-top:5px;">
-                    <label>Логин</label><input type="text" id="myLogin" style="width:100%; padding:8px; margin-top:5px;">
-                    <label>Пароль</label><input type="text" id="myPassword" style="width:100%; padding:8px; margin-top:5px;">
-                    <button class="btn btn-green" onclick="updateMyProfile()" style="margin-top:10px;">Обновить профиль</button>
-                </div>
-
-                <h2 style="margin-top:40px;">Ученики</h2>
-                <div style="margin-top: 20px;" id="studentsAdminList"></div>
-
-                <h2 style="margin-top:40px;">Учителя</h2>
-                <div style="margin-top: 20px;" id="teachersAdminList"></div>
-            </div>
-
         </div>
     </div>
 
@@ -203,39 +237,62 @@
     <div id="studentScreen" class="hidden">
         <div class="s-header">
             <h3>Мой профиль</h3>
-            <button class="btn btn-red" onclick="doLogout()">Выйти</button>
+            <button class="btn btn-red" onclick="doLogout()" style="background: #3a3a3c; color: white; border: none; padding: 8px 16px; border-radius: 8px;">Выйти</button>
         </div>
+        
+        <!-- 5 Недель -->
         <div class="s-weeks" id="weeksContainer"></div>
+        <!-- Дни выбранной недели -->
         <div class="s-days" id="daysContainer"></div>
+        
         <div class="s-content" id="studentContent"></div>
+        
         <div class="s-bottom-nav">
-            <button class="s-nav-btn active" onclick="switchStudentTab('schedule')">📅<br>Расписание</button>
-            <button class="s-nav-btn" onclick="switchStudentTab('grades')">⭐<br>Оценки</button>
+            <button class="s-nav-btn active" onclick="switchStudentTab('schedule')">
+                <span class="s-nav-icon">📅</span>Расписание
+            </button>
+            <button class="s-nav-btn" onclick="switchStudentTab('grades')">
+                <span class="s-nav-icon">⭐</span>Оценки
+            </button>
         </div>
     </div>
 
-    <!-- МОДАЛКИ -->
+    <!-- МОДАЛКА СПИСКА ДАТ (УЧИТЕЛЬ) -->
+    <div id="datesListModal" class="modal hidden">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3>Выберите день</h3>
+                <button class="btn" style="background: none; font-size: 24px; padding: 0;" onclick="closeModal('datesListModal')">&times;</button>
+            </div>
+            <div id="datesListContainer"></div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ОЦЕНКИ (УЧИТЕЛЬ) -->
     <div id="gradeModal" class="modal hidden">
         <div class="modal-content">
-            <h3 id="modalTitle">Оценка</h3>
+            <h3 id="modalTitle">Выставление оценки</h3>
             <label>За что?</label>
             <select id="inputType">
-                <option>Ответ на уроке</option><option>Контрольная работа</option><option>Домашнее задание</option>
+                <option>Ответ на уроке</option><option>Контрольная работа</option><option>Самостоятельная работа</option>
+                <option>Домашнее задание</option><option>Тест</option>
             </select>
             <label>Оценка</label>
-            <div class="grades-grid">
-                <button onclick="selectGrade(5)">5</button><button onclick="selectGrade(4)">4</button>
-                <button onclick="selectGrade(3)">3</button><button onclick="selectGrade(2)">2</button>
+            <div class="grades-btns">
+                <button type="button" onclick="selectGrade(5)">5</button><button type="button" onclick="selectGrade(4)">4</button>
+                <button type="button" onclick="selectGrade(3)">3</button><button type="button" onclick="selectGrade(2)">2</button>
+                <div class="toggle-group" onclick="toggleDot()">
+                    <span style="font-size:12px; font-weight:bold;">Точка</span>
+                    <div class="toggle" id="dotToggle"></div>
+                </div>
             </div>
-            <div class="toggle-group" onclick="toggleDot()">
-                <span>Точка</span><div class="toggle" id="dotToggle"></div>
-            </div>
-            <label id="dateLabel" style="display:none;">Исправить до</label>
-            <input type="date" id="inputDate" style="display:none;">
-            <label>Тема</label><input type="text" id="inputTheme">
-            <div class="modal-actions">
-                <button class="btn btn-red" id="btnDelete" onclick="deleteGrade()" style="display:none;">Удалить</button>
-                <div style="display:flex; gap:10px; margin-left:auto;">
+            <label id="dateLabel" style="display: none;">Исправить до</label>
+            <input type="date" id="inputDate" style="display: none;">
+            <label>Тема</label><input type="text" id="inputTheme" placeholder="Тема урока">
+            <label>Комментарий</label><input type="text" id="inputComment" placeholder="Комментарий">
+            <div class="modal-actions" style="justify-content: space-between;">
+                <button class="btn btn-red" id="btnDelete" onclick="deleteGrade()" style="display: none;">Удалить</button>
+                <div style="display: flex; gap: 10px; margin-left: auto;">
                     <button class="btn btn-gray" onclick="closeModal('gradeModal')">Отмена</button>
                     <button class="btn btn-blue" onclick="saveGrade()">Сохранить</button>
                 </div>
@@ -243,37 +300,46 @@
         </div>
     </div>
 
-    <!-- Другие модалки (Уведомления, детали и т.д.) -->
-    <div id="lessonDetailModal" class="modal hidden">
+    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ (УЧЕНИК) -->
+    <div id="studentGradeDetailModal" class="modal hidden">
         <div class="modal-content" style="background: var(--s-card); color: var(--s-text);">
-            <h3 id="lesson-title">Математика</h3>
-            <div class="lesson-detail-row"><div>Учитель</div><div id="lesson-teacher">-</div></div>
-            <div class="lesson-detail-row" id="lesson-test-row"><div>Контрольная</div><div id="lesson-test-theme">-</div></div>
-            <div class="lesson-detail-row"><div>ДЗ</div><div id="lesson-hw">-</div></div>
-            <button class="btn btn-blue" style="width:100%;" onclick="closeModal('lessonDetailModal')">Закрыть</button>
-        </div>
-    </div>
-    
-    <!-- Модалка списка дат для учителя -->
-    <div id="datesListModal" class="modal hidden">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:space-between;">
-                <h3>Даты</h3><button onclick="closeModal('datesListModal')">&times;</button>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <h3 style="font-size: 18px;">Детали оценки</h3>
+                <button class="btn" style="background: none; color: var(--s-gray); font-size: 24px; padding: 0; line-height: 1;" onclick="closeModal('studentGradeDetailModal')">&times;</button>
             </div>
-            <div id="datesListContainer" style="max-height: 60vh; overflow-y:auto; margin-top:10px;"></div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div id="s-detail-grade" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 10px;">5</div>
+                <div id="s-detail-subject" style="font-size: 18px; font-weight: 600;">Математика</div>
+                <div id="s-detail-type" style="font-size: 14px; color: var(--s-gray);">Контрольная работа</div>
+            </div>
+            <div class="lesson-detail-row" id="s-detail-theme-row">
+                <div class="lesson-detail-label">Тема</div><div id="s-detail-theme" class="lesson-detail-value">-</div>
+            </div>
+            <div class="lesson-detail-row" id="s-detail-comment-row">
+                <div class="lesson-detail-label">Комментарий учителя</div><div id="s-detail-comment" class="lesson-detail-value">-</div>
+            </div>
+            <div class="lesson-detail-row" id="s-detail-date-row">
+                <div class="lesson-detail-label">Исправить до</div><div id="s-detail-date" class="lesson-detail-value">-</div>
+            </div>
+            <div class="lesson-detail-row" style="border-bottom: none;">
+                <div class="lesson-detail-label">Дата выставления</div><div id="s-detail-original-date" class="lesson-detail-value">-</div>
+            </div>
+            <button class="btn" style="width: 100%; background: #3a3a3c; color: white; border-radius: 8px;" onclick="closeModal('studentGradeDetailModal')">Закрыть</button>
         </div>
     </div>
 
-    <!-- Модалка настройки дня (ДЗ + Контрольная) -->
+    <!-- МОДАЛКА НАСТРОЙКИ ДНЯ (УЧИТЕЛЬ) -->
     <div id="dateModal" class="modal hidden">
         <div class="modal-content">
-            <h3 id="dateModalTitle">День</h3>
-            <label>Домашнее задание</label><textarea id="dateHwInput" rows="2"></textarea>
-            <div class="toggle-group" onclick="document.getElementById('isTestCheckbox').click()">
-                <input type="checkbox" id="isTestCheckbox" style="width:auto;">
-                <span>Контрольная работа</span>
+            <h3 id="dateModalTitle">Настройки дня</h3>
+            <label>Домашнее задание на этот день</label>
+            <textarea id="dateHwInput" rows="3" placeholder="Введите ДЗ..."></textarea>
+            <label style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">Контрольная работа</label>
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                <input type="checkbox" id="isTestCheckbox" style="width: 18px; height: 18px;">
+                <span style="font-size: 14px;">Назначить контрольную</span>
             </div>
-            <input type="text" id="dateTestTheme" placeholder="Тема контрольной" style="display:none; margin-top:10px;">
+            <input type="text" id="dateTestTheme" placeholder="Тема контрольной" style="display: none; margin-top: 10px;">
             <div class="modal-actions">
                 <button class="btn btn-gray" onclick="closeModal('dateModal')">Отмена</button>
                 <button class="btn btn-blue" onclick="saveDateSettings()">Сохранить</button>
@@ -281,30 +347,36 @@
         </div>
     </div>
 
-    <!-- Админ модалки -->
-    <div id="studentAdminModal" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="studentAdminTitle">Ученик</h3>
-            <label>Имя</label><input type="text" id="adminStudentName">
-            <label>Логин</label><input type="text" id="adminStudentLogin">
-            <label>Пароль</label><input type="text" id="adminStudentPass">
-            <div class="modal-actions">
-                <button class="btn btn-gray" onclick="closeModal('studentAdminModal')">Отмена</button>
-                <button class="btn btn-blue" onclick="saveStudentAdmin()">Сохранить</button>
+    <!-- МОДАЛКА ДЕТАЛЕЙ УРОКА (УЧЕНИК) -->
+    <div id="lessonDetailModal" class="modal hidden">
+        <div class="modal-content" style="background: var(--s-card); color: var(--s-text);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <h3 id="lesson-title" style="font-size: 20px;">Математика</h3>
+                <button class="btn" style="background: none; color: var(--s-gray); font-size: 24px; padding: 0; line-height: 1;" onclick="closeModal('lessonDetailModal')">&times;</button>
             </div>
+            <div class="lesson-detail-row">
+                <div class="lesson-detail-label">Учитель</div>
+                <div id="lesson-teacher" class="lesson-detail-value">Тим Тимофеевич</div>
+            </div>
+            <div class="lesson-detail-row" id="lesson-test-row">
+                <div class="lesson-detail-label">Контрольная работа</div>
+                <div id="lesson-test-theme" class="lesson-detail-value" style="color: #ff3b30; font-weight: bold;">-</div>
+            </div>
+            <div class="lesson-detail-row" style="border-bottom: none;">
+                <div class="lesson-detail-label">Домашнее задание</div>
+                <div id="lesson-hw" class="lesson-detail-value">-</div>
+            </div>
+            <button class="btn" style="width: 100%; background: #3a3a3c; color: white; border-radius: 8px; margin-top: 10px;" onclick="closeModal('lessonDetailModal')">Закрыть</button>
         </div>
     </div>
-    
-    <div id="teacherAdminModal" class="modal hidden">
-        <div class="modal-content">
-            <h3 id="teacherAdminTitle">Учитель</h3>
-            <label>Имя</label><input type="text" id="adminTeacherName">
-            <label>Логин</label><input type="text" id="adminTeacherLogin">
-            <label>Пароль</label><input type="text" id="adminTeacherPass">
-            <div class="modal-actions">
-                <button class="btn btn-gray" onclick="closeModal('teacherAdminModal')">Отмена</button>
-                <button class="btn btn-blue" onclick="saveTeacherAdmin()">Сохранить</button>
-            </div>
+
+    <!-- ОКНО УВЕДОМЛЕНИЯ О КОНТРОЛЬНОЙ -->
+    <div id="studentTestAlertModal" class="modal hidden">
+        <div class="modal-content" style="text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 15px;">📝</div>
+            <h3 style="margin-bottom: 10px;">Контрольная работа</h3>
+            <p style="margin-bottom: 20px; color: #555;">В этот день планируется проведение контрольной работы.</p>
+            <button class="btn btn-blue" style="width: 100%;" onclick="closeModal('studentTestAlertModal')">Понятно</button>
         </div>
     </div>
 
@@ -316,49 +388,74 @@
         let activeDate = null;
         let selectedGrade = null;
         let isDotSelected = false;
-        let currentStudentWeek = 1;
-        let currentStudentDay = 1;
         
-        let adminEditStudentId = null; // null = добавление, иначе ID
-        let adminEditTeacherId = null;
+        let currentStudentWeek = 1; // 1-5
+        let currentStudentDay = 1; // 1-5
+        let activeStudentDate = null; // Выбранная дата для урока
 
+        // Генерация 25 дат (5 недель по 5 дней) для демонстрации
+        // В реальном приложении эти данные должны приходить с сервера
+        const weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт"];
+        
         document.addEventListener('DOMContentLoaded', async () => {
             const savedUser = localStorage.getItem('mesh_user');
             if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                await loadAppData();
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    await loadAppData();
+                } catch (e) {
+                    localStorage.removeItem('mesh_user');
+                    showLoginScreen();
+                }
             } else {
-                document.getElementById('loginScreen').classList.remove('hidden');
+                showLoginScreen();
             }
         });
 
+        function showLoginScreen() { document.getElementById('loginScreen').classList.remove('hidden'); }
+
         async function doLogin() {
-            const res = await fetch('/api/login', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ login: document.getElementById('loginInput').value, password: document.getElementById('passwordInput').value })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                currentUser = data;
-                localStorage.setItem('mesh_user', JSON.stringify(data));
-                document.getElementById('loginScreen').classList.add('hidden');
-                await loadAppData();
-            } else alert(data.error);
+            const login = document.getElementById('loginInput').value;
+            const pass = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login, password: pass })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    currentUser = data;
+                    localStorage.setItem('mesh_user', JSON.stringify(data));
+                    errorDiv.innerText = "";
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    await loadAppData();
+                } else {
+                    errorDiv.innerText = data.error;
+                }
+            } catch (e) {
+                errorDiv.innerText = "Ошибка сервера";
+            }
         }
 
-        function doLogout() { localStorage.removeItem('mesh_user'); location.reload(); }
+        function doLogout() {
+            localStorage.removeItem('mesh_user');
+            location.reload();
+        }
 
         async function loadAppData() {
-            const url = currentUser.role === 'student' ? `/api/data?role=student&studentId=${currentUser.id}` : '/api/data';
+            const url = currentUser.role === 'student' 
+                ? `/api/data?role=student&studentId=${currentUser.id}` 
+                : '/api/data';
             const res = await fetch(url);
             appData = await res.json();
 
             if (currentUser.role === 'teacher') {
                 document.getElementById('teacherScreen').classList.remove('hidden');
-                document.getElementById('teacherWelcome').innerText = `Кабинет: ${currentUser.name}`;
-                renderTeacherJournal();
-                renderAdminPanels();
-                renderSubstitutionsPanel();
+                renderTeacherUI();
             } else {
                 document.getElementById('studentScreen').classList.remove('hidden');
                 renderWeeks();
@@ -368,33 +465,20 @@
         }
 
         // --- УЧИТЕЛЬ ---
-        function switchTeacherTab(tab) {
-            document.querySelectorAll('.sidebar li').forEach(li => li.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            
-            ['journal', 'schedule', 'substitutions', 'admin'].forEach(t => {
-                document.getElementById(`teacherView-${t}`).classList.add('hidden');
-            });
-            document.getElementById(`teacherView-${tab}`).classList.remove('hidden');
-            
-            if (tab === 'journal') document.getElementById('teacherControls').style.display = 'flex';
-            else document.getElementById('teacherControls').style.display = 'none';
-        }
-
-        function renderTeacherJournal() {
+        function renderTeacherUI() {
             const subBar = document.getElementById('subjectsBar');
             subBar.innerHTML = '';
             Object.keys(appData.subjects).forEach(subj => {
                 const btn = document.createElement('button');
                 btn.className = `subject-btn ${subj === currentSubject ? 'active' : ''}`;
                 btn.innerText = subj;
-                btn.onclick = () => { currentSubject = subj; renderTeacherJournal(); };
+                btn.onclick = () => { currentSubject = subj; renderTeacherUI(); };
                 subBar.appendChild(btn);
             });
 
             const thead = document.getElementById('tableHead');
             thead.innerHTML = `<tr><th style="text-align:left;">Ученик</th>`;
-            appData.dates.slice(0, 15).forEach(d => { // Берем первые 15 дат для журнала
+            appData.dates.forEach(d => {
                 thead.innerHTML += `<th class="date-th" onclick="openDateModal('${d}')">${d}</th>`;
             });
             thead.innerHTML += `</tr>`;
@@ -408,7 +492,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td class="student-name">${student.name}</td>`;
                 
-                appData.dates.slice(0, 15).forEach(date => {
+                appData.dates.forEach(date => {
                     const td = document.createElement('td');
                     td.className = 'cell';
                     const key = `${student.id}-${date}`;
@@ -418,44 +502,68 @@
                         td.innerHTML = `${gradeData.grade}${gradeData.isDot ? '<span class="dot-mark">.</span>' : ''}`;
                         td.classList.add(`g${gradeData.grade}`);
                     }
-                    td.onclick = () => openGradeModal(student, date);
+
+                    td.onclick = function() { openGradeModal(student, date); };
                     tr.appendChild(td);
                 });
                 tbody.appendChild(tr);
 
-                // Мобильная карточка
                 const card = document.createElement('div');
                 card.className = 'mobile-card';
                 let gradesHtml = '';
-                appData.dates.slice(0, 15).forEach(date => {
+                appData.dates.forEach(date => {
                     const key = `${student.id}-${date}`;
                     if (appData.subjects[currentSubject].grades[key]) {
                         const g = appData.subjects[currentSubject].grades[key].grade;
                         const isDot = appData.subjects[currentSubject].grades[key].isDot;
-                        gradesHtml += `<div class="grade-preview-item g${g}" onclick="openGradeModalById(${student.id}, '${date}')">${g}${isDot ? '.' : ''}</div>`;
+                        gradesHtml += `<div class="grade-preview-item g${g}">${g}${isDot ? '.' : ''}</div>`;
                     }
                 });
-                
-                // Кнопка "Оценить" на телефоне
+
                 card.innerHTML = `
-                    <div style="flex:1;">
-                        <div style="font-weight:600;">${student.name}</div>
-                        <div class="grades-preview">${gradesHtml}</div>
+                    <div>
+                        <div class="name">${student.name}</div>
+                        <div class="grades-preview">${gradesHtml || '<span style="font-size:12px;color:#999;">Нет оценок</span>'}</div>
                     </div>
-                    <button class="btn btn-blue" onclick="openGradeModalById(${student.id}, '${appData.dates[0]}')">Оценить</button>
+                    <button class="btn btn-blue" onclick="openGradeModalForMobile(${student.id})">Оценить</button>
                 `;
                 mobileList.appendChild(card);
             });
         }
 
-        function openGradeModalById(studentId, date) {
+        function openDatesListModal() {
+            const container = document.getElementById('datesListContainer');
+            container.innerHTML = '';
+
+            appData.dates.forEach(date => {
+                const hw = appData.subjects[currentSubject].homework;
+                const tests = appData.subjects[currentSubject].tests || [];
+                const hasTest = tests.find(t => t.date === date);
+
+                const item = document.createElement('div');
+                item.className = 'date-list-item';
+                
+                let badges = '';
+                if (hw) badges += `<span class="date-badge hw">ДЗ</span>`;
+                if (hasTest) badges += `<span class="date-badge test">К</span>`;
+
+                item.innerHTML = `<div class="date-info">${date}</div><div class="date-badges">${badges}</div>`;
+                item.onclick = () => { closeModal('datesListModal'); openDateModal(date); };
+                container.appendChild(item);
+            });
+
+            document.getElementById('datesListModal').classList.remove('hidden');
+        }
+
+        function openGradeModalForMobile(studentId) {
             const student = appData.students.find(s => s.id === studentId);
-            openGradeModal(student, date);
+            openGradeModal(student, appData.dates[0]);
         }
 
         function openGradeModal(student, date) {
             activeCell = { studentId: student.id, date: date };
-            const gradeData = appData.subjects[currentSubject].grades[`${student.id}-${date}`];
+            const key = `${student.id}-${date}`;
+            const gradeData = appData.subjects[currentSubject].grades[key];
             
             selectedGrade = gradeData ? gradeData.grade : null;
             isDotSelected = gradeData ? (gradeData.isDot || false) : false;
@@ -463,18 +571,25 @@
             document.getElementById('modalTitle').innerText = `${student.name} — ${date}`;
             document.getElementById('inputType').value = gradeData ? gradeData.type : 'Ответ на уроке';
             document.getElementById('inputTheme').value = gradeData ? (gradeData.theme || '') : '';
+            document.getElementById('inputComment').value = gradeData ? (gradeData.comment || '') : '';
             
-            document.querySelectorAll('.grades-grid button').forEach(b => {
+            document.querySelectorAll('.grades-btns button').forEach(b => {
                 b.classList.remove('active');
                 if (b.innerText == selectedGrade) b.classList.add('active');
             });
 
-            if (isDotSelected) document.getElementById('dotToggle').classList.add('active');
-            else document.getElementById('dotToggle').classList.remove('active');
+            const dotToggle = document.getElementById('dotToggle');
+            if (isDotSelected) dotToggle.classList.add('active'); else dotToggle.classList.remove('active');
+
+            const dateLabel = document.getElementById('dateLabel');
+            const dateInput = document.getElementById('inputDate');
             
-            document.getElementById('dateLabel').style.display = isDotSelected ? 'block' : 'none';
-            document.getElementById('inputDate').style.display = isDotSelected ? 'block' : 'none';
-            if (gradeData && gradeData.dueDate) document.getElementById('inputDate').value = gradeData.dueDate;
+            if (isDotSelected) {
+                dateLabel.style.display = 'block'; dateInput.style.display = 'block';
+                dateInput.value = gradeData && gradeData.dueDate ? gradeData.dueDate : '';
+            } else {
+                dateLabel.style.display = 'none'; dateInput.style.display = 'none';
+            }
 
             document.getElementById('btnDelete').style.display = gradeData ? 'block' : 'none';
             document.getElementById('gradeModal').classList.remove('hidden');
@@ -482,7 +597,7 @@
 
         function selectGrade(g) {
             selectedGrade = g;
-            document.querySelectorAll('.grades-grid button').forEach(b => {
+            document.querySelectorAll('.grades-btns button').forEach(b => {
                 b.classList.remove('active');
                 if (b.innerText == g) b.classList.add('active');
             });
@@ -490,23 +605,36 @@
 
         function toggleDot() {
             isDotSelected = !isDotSelected;
-            document.getElementById('dotToggle').classList.toggle('active');
-            document.getElementById('dateLabel').style.display = isDotSelected ? 'block' : 'none';
-            document.getElementById('inputDate').style.display = isDotSelected ? 'block' : 'none';
+            const dotToggle = document.getElementById('dotToggle');
+            const dateLabel = document.getElementById('dateLabel');
+            const dateInput = document.getElementById('inputDate');
+            
+            if (isDotSelected) {
+                dotToggle.classList.add('active');
+                dateLabel.style.display = 'block'; dateInput.style.display = 'block';
+            } else {
+                dotToggle.classList.remove('active');
+                dateLabel.style.display = 'none'; dateInput.style.display = 'none';
+            }
         }
 
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
         async function saveGrade() {
-            if (!selectedGrade) return alert('Выберите оценку');
+            if (!selectedGrade) return alert("Выберите оценку!");
             const dueDate = isDotSelected ? document.getElementById('inputDate').value : null;
 
             await fetch('/api/grade', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    subject: currentSubject, studentId: activeCell.studentId, date: activeCell.date,
+                    role: currentUser.role, subject: currentSubject, studentId: activeCell.studentId, date: activeCell.date,
                     grade: selectedGrade, type: document.getElementById('inputType').value,
-                    theme: document.getElementById('inputTheme').value, isDot: isDotSelected, dueDate
+                    theme: document.getElementById('inputTheme').value, comment: document.getElementById('inputComment').value,
+                    isDot: isDotSelected, dueDate: dueDate
                 })
             });
+
             closeModal('gradeModal');
             await loadAppData();
         }
@@ -514,219 +642,59 @@
         async function deleteGrade() {
             if (!confirm('Удалить?')) return;
             await fetch('/api/grade', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject: currentSubject, studentId: activeCell.studentId, date: activeCell.date, grade: null })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: currentUser.role, subject: currentSubject, studentId: activeCell.studentId, date: activeCell.date, grade: null })
             });
             closeModal('gradeModal');
             await loadAppData();
         }
 
         // --- ДАТА / КОНТРОЛЬНАЯ ---
-        function openDatesListModal() {
-            const container = document.getElementById('datesListContainer');
-            container.innerHTML = '';
-            appData.dates.forEach(date => {
-                const hasTest = appData.subjects[currentSubject].tests?.find(t => t.date === date);
-                const item = document.createElement('div');
-                item.className = 'date-list-item';
-                item.innerHTML = `<div style="font-weight:600;">${date}</div> ${hasTest ? '<span style="color:red;font-size:12px;">Контрольная</span>' : ''}`;
-                item.style = "padding:10px; border-bottom:1px solid #eee; cursor:pointer;";
-                item.onclick = () => { closeModal('datesListModal'); openDateModal(date); };
-                container.appendChild(item);
-            });
-            document.getElementById('datesListModal').classList.remove('hidden');
-        }
-
         function openDateModal(date) {
             activeDate = date;
-            document.getElementById('dateModalTitle').innerText = `Настройки: ${date}`;
+            document.getElementById('dateModalTitle').innerText = `Настройки на ${date}`;
             document.getElementById('dateHwInput').value = appData.subjects[currentSubject].homework || '';
             
-            const hasTest = appData.subjects[currentSubject].tests?.find(t => t.date === date);
+            const tests = appData.subjects[currentSubject].tests || [];
+            const hasTest = tests.find(t => t.date === date);
+            
             document.getElementById('isTestCheckbox').checked = !!hasTest;
             document.getElementById('dateTestTheme').value = hasTest ? hasTest.theme : '';
             document.getElementById('dateTestTheme').style.display = hasTest ? 'block' : 'none';
-            
             document.getElementById('dateModal').classList.remove('hidden');
         }
 
+        document.getElementById('isTestCheckbox').addEventListener('change', function() {
+            document.getElementById('dateTestTheme').style.display = this.checked ? 'block' : 'none';
+        });
+
         async function saveDateSettings() {
-            const hw = document.getElementById('dateHwInput').value;
+            const hwText = document.getElementById('dateHwInput').value;
             const isTest = document.getElementById('isTestCheckbox').checked;
             const testTheme = document.getElementById('dateTestTheme').value;
 
             await fetch('/api/homework', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject: currentSubject, text: hw })
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: currentUser.role, subject: currentSubject, text: hwText })
             });
 
             if (isTest && testTheme) {
-                await fetch('/api/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subject: currentSubject, date: activeDate, theme: testTheme, action: 'add' }) });
+                await fetch('/api/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: currentUser.role, subject: currentSubject, date: activeDate, theme: testTheme, action: 'add' })
+                });
             } else if (!isTest) {
-                await fetch('/api/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subject: currentSubject, date: activeDate, action: 'remove' }) });
+                await fetch('/api/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: currentUser.role, subject: currentSubject, date: activeDate, action: 'remove' })
+                });
             }
+
             closeModal('dateModal');
-            await loadAppData();
-        }
-
-        // --- АДМИНИСТРИРОВАНИЕ ---
-        function renderAdminPanels() {
-            // Профиль
-            document.getElementById('myName').value = currentUser.name;
-            document.getElementById('myLogin').value = currentUser.login;
-            document.getElementById('myPassword').value = ""; // Не показываем текущий пароль
-
-            // Ученики
-            const sList = document.getElementById('studentsAdminList');
-            sList.innerHTML = '<table style="width:100%; border-collapse:collapse;"><tr><th>Имя</th><th>Логин</th><th>Пароль</th><th>Действия</th></tr>' + 
-                appData.students.map(s => `<tr><td style="border:1px solid #ddd;padding:5px;">${s.name}</td><td style="border:1px solid #ddd;padding:5px;">${s.login}</td><td style="border:1px solid #ddd;padding:5px;">${s.password}</td>
-                <td style="border:1px solid #ddd;padding:5px;">
-                    <button onclick="editStudent(${s.id})">✏️</button>
-                    <button onclick="deleteStudent(${s.id})">🗑</button>
-                </td></tr>`).join('') + '</table>' +
-                `<button class="btn btn-green" style="margin-top:10px;" onclick="addNewStudent()">+ Добавить ученика</button>`;
-
-            // Учителя
-            const tList = document.getElementById('teachersAdminList');
-            tList.innerHTML = '<table style="width:100%; border-collapse:collapse;"><tr><th>Имя</th><th>Логин</th><th>Пароль</th><th>Действия</th></tr>' + 
-                appData.teachers.map(t => `<tr><td style="border:1px solid #ddd;padding:5px;">${t.name}</td><td style="border:1px solid #ddd;padding:5px;">${t.login}</td><td style="border:1px solid #ddd;padding:5px;">${t.password}</td>
-                <td style="border:1px solid #ddd;padding:5px;">
-                    <button onclick="editTeacher(${t.id})">✏️</button>
-                    ${t.id !== currentUser.id ? `<button onclick="deleteTeacher(${t.id})">🗑</button>` : ''}
-                </td></tr>`).join('') + '</table>' +
-                `<button class="btn btn-green" style="margin-top:10px;" onclick="addNewTeacher()">+ Добавить учителя</button>`;
-        }
-
-        async function updateMyProfile() {
-            const name = document.getElementById('myName').value;
-            const login = document.getElementById('myLogin').value;
-            const pass = document.getElementById('myPassword').value;
-            if (!pass) return alert('Введите новый пароль');
-            
-            const res = await fetch('/api/admin/my-profile', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ teacherId: currentUser.id, newData: { name, login, password: pass } })
-            });
-            if (res.ok) {
-                const data = await res.json();
-                currentUser.name = data.updatedTeacher.name;
-                currentUser.login = data.updatedTeacher.login;
-                localStorage.setItem('mesh_user', JSON.stringify(currentUser));
-                alert('Профиль обновлен');
-                await loadAppData();
-            }
-        }
-
-        function addNewStudent() {
-            adminEditStudentId = null;
-            document.getElementById('studentAdminTitle').innerText = "Новый ученик";
-            document.getElementById('adminStudentName').value = '';
-            document.getElementById('adminStudentLogin').value = '';
-            document.getElementById('adminStudentPass').value = '123456';
-            document.getElementById('studentAdminModal').classList.remove('hidden');
-        }
-
-        function editStudent(id) {
-            const s = appData.students.find(x => x.id === id);
-            adminEditStudentId = id;
-            document.getElementById('studentAdminTitle').innerText = "Редактировать ученика";
-            document.getElementById('adminStudentName').value = s.name;
-            document.getElementById('adminStudentLogin').value = s.login;
-            document.getElementById('adminStudentPass').value = s.password;
-            document.getElementById('studentAdminModal').classList.remove('hidden');
-        }
-
-        async function saveStudentAdmin() {
-            const name = document.getElementById('adminStudentName').value;
-            const login = document.getElementById('adminStudentLogin').value;
-            const pass = document.getElementById('adminStudentPass').value;
-            await fetch('/api/admin/student', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: adminEditStudentId ? 'edit' : 'add', studentData: { name, login, password: pass }, studentId: adminEditStudentId })
-            });
-            closeModal('studentAdminModal');
-            await loadAppData();
-        }
-
-        async function deleteStudent(id) {
-            if (!confirm('Удалить ученика?')) return;
-            await fetch('/api/admin/student', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', studentId: id }) });
-            await loadAppData();
-        }
-
-        function addNewTeacher() {
-            adminEditTeacherId = null;
-            document.getElementById('teacherAdminTitle').innerText = "Новый учитель";
-            document.getElementById('adminTeacherName').value = '';
-            document.getElementById('adminTeacherLogin').value = '';
-            document.getElementById('adminTeacherPass').value = '123456';
-            document.getElementById('teacherAdminModal').classList.remove('hidden');
-        }
-
-        function editTeacher(id) {
-            const t = appData.teachers.find(x => x.id === id);
-            adminEditTeacherId = id;
-            document.getElementById('teacherAdminTitle').innerText = "Редактировать учителя";
-            document.getElementById('adminTeacherName').value = t.name;
-            document.getElementById('adminTeacherLogin').value = t.login;
-            document.getElementById('adminTeacherPass').value = t.password;
-            document.getElementById('teacherAdminModal').classList.remove('hidden');
-        }
-
-        async function saveTeacherAdmin() {
-            const name = document.getElementById('adminTeacherName').value;
-            const login = document.getElementById('adminTeacherLogin').value;
-            const pass = document.getElementById('adminTeacherPass').value;
-            await fetch('/api/admin/teacher', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: adminEditTeacherId ? 'edit' : 'add', teacherData: { name, login, password: pass }, teacherId: adminEditTeacherId })
-            });
-            closeModal('teacherAdminModal');
-            await loadAppData();
-        }
-
-        async function deleteTeacher(id) {
-            if (!confirm('Удалить учителя?')) return;
-            await fetch('/api/admin/teacher', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', teacherId: id }) });
-            await loadAppData();
-        }
-
-        // --- ЗАМЕНЫ ---
-        function renderSubstitutionsPanel() {
-            const dateSel = document.getElementById('subDate');
-            const subjSel = document.getElementById('subSubject');
-            const teachSel = document.getElementById('subTeacher');
-
-            dateSel.innerHTML = appData.dates.map(d => `<option value="${d}">${d}</option>`).join('');
-            subjSel.innerHTML = Object.keys(appData.subjects).map(s => `<option value="${s}">${s}</option>`).join('');
-            teachSel.innerHTML = appData.teachers.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-
-            const activeDiv = document.getElementById('activeSubstitutions');
-            activeDiv.innerHTML = '<h3>Активные замены</h3>' + appData.substitutions.map(s => {
-                const teacher = appData.teachers.find(t => t.id === s.newTeacherId);
-                return `<div style="padding:10px; border:1px solid #eee; margin-top:5px; display:flex; justify-content:space-between;">
-                    <span>${s.date} — ${s.subject} (Замена: ${teacher ? teacher.name : '?'})</span>
-                    <button onclick="removeSub(${s.date}, '${s.subject}')">Удалить</button>
-                </div>`;
-            }).join('');
-        }
-
-        async function addSubstitution() {
-            const date = document.getElementById('subDate').value;
-            const subject = document.getElementById('subSubject').value;
-            const newTeacherId = document.getElementById('subTeacher').value;
-            await fetch('/api/admin/substitution', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'add', date, subject, newTeacherId })
-            });
-            await loadAppData();
-        }
-
-        async function removeSub(date, subject) {
-            await fetch('/api/admin/substitution', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'remove', date, subject })
-            });
             await loadAppData();
         }
 
@@ -734,11 +702,22 @@
         function renderWeeks() {
             const container = document.getElementById('weeksContainer');
             container.innerHTML = '';
+            
             for (let i = 1; i <= 5; i++) {
                 const div = document.createElement('div');
                 div.className = `s-week ${i === currentStudentWeek ? 'active' : ''}`;
-                div.innerHTML = `<div class="s-week-label">Нед.</div><div class="s-week-num">${i}</div>`;
-                div.onclick = () => { currentStudentWeek = i; renderWeeks(); switchStudentTab('schedule'); };
+                div.innerHTML = `
+                    <div class="s-week-label">Нед.</div>
+                    <div class="s-week-num">${i}</div>
+                `;
+                div.onclick = () => {
+                    currentStudentWeek = i;
+                    renderWeeks();
+                    renderDays(); 
+                    // При смене недели выбираем первый день
+                    currentStudentDay = 1;
+                    switchStudentTab('schedule');
+                };
                 container.appendChild(div);
             }
         }
@@ -746,84 +725,165 @@
         function renderDays() {
             const container = document.getElementById('daysContainer');
             container.innerHTML = '';
-            const weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт"];
+            
             weekDays.forEach((dayName, index) => {
+                const dayIndex = index + 1;
                 const div = document.createElement('div');
-                div.className = `s-day ${index + 1 === currentStudentDay ? 'active' : ''}`;
+                div.className = `s-day ${dayIndex === currentStudentDay ? 'active' : ''}`;
                 div.innerText = dayName;
-                div.onclick = () => { currentStudentDay = index + 1; renderDays(); switchStudentTab('schedule'); };
+                div.onclick = () => {
+                    currentStudentDay = dayIndex;
+                    renderDays();
+                    switchStudentTab('schedule');
+                };
                 container.appendChild(div);
             });
         }
 
+        // Функция для получения даты на основе недели и дня
         function getDateForWeekAndDay(week, day) {
-            // Генерируем дату для демо
-            const startDate = new Date(2026, 10, 24); // 24.11.2026
-            const offset = (week - 1) * 5 + (day - 1);
+            // В реальном приложении здесь будет сложная логика с календарем
+            // Для демо мы просто генерируем даты: 01.02, 02.02 и т.д.
+            // Но чтобы это работало с текущим appData.dates, мы будем "мапить" 
+            // выбранный день на одну из 5 дат, которые есть в базе.
+            
+            // В текущем appData.dates есть только 5 дат (например, 12-16 февраля).
+            // Чтобы у нас было 25 дат (5 недель), нам нужно их сгенерировать.
+            // Сгенерируем 25 дат на лету: начиная с 12.02 и прибавляя по 1 дню.
+            
+            const startDate = new Date(2024, 1, 12); // 12 февраля 2024
+            const offset = (week - 1) * 5 + (day - 1); // 0..24
             startDate.setDate(startDate.getDate() + offset);
+            
             const d = String(startDate.getDate()).padStart(2, '0');
             const m = String(startDate.getMonth() + 1).padStart(2, '0');
             return `${d}.${m}`;
         }
 
         function switchStudentTab(tab) {
+            document.querySelectorAll('.s-nav-btn').forEach(b => b.classList.remove('active'));
+            if(tab === 'schedule') document.querySelectorAll('.s-nav-btn')[0].classList.add('active');
+            if(tab === 'grades') document.querySelectorAll('.s-nav-btn')[1].classList.add('active');
+
             const container = document.getElementById('studentContent');
             container.innerHTML = '';
+
             if (tab === 'schedule') {
+                // Получаем дату для текущей недели и дня
                 const selectedDate = getDateForWeekAndDay(currentStudentWeek, currentStudentDay);
+                activeStudentDate = selectedDate;
+                
+                // В демо-базе всего 5 дат. Если выбранная дата выходит за их пределы,
+                // мы просто покажем предметы без оценок, но с возможностью открыть карточку.
                 
                 Object.keys(appData.subjects).forEach(subj => {
                     const subjData = appData.subjects[subj];
                     const tests = subjData.tests || [];
+                    
+                    // Ищем контрольную на выбранный день (если она есть в базе)
                     const testInfo = tests.find(t => t.date === selectedDate);
-                    const sub = appData.substitutions.find(s => s.date === selectedDate && s.subject === subj);
 
                     const div = document.createElement('div');
                     div.className = 's-card';
-                    div.onclick = () => openLessonDetail(subj, selectedDate, sub, subjData);
                     
-                    const key = `${currentUser.id}-${selectedDate}`;
+                    // Клик по карточке урока
+                    div.onclick = (e) => {
+                        if(e.target.closest('.s-grade') || e.target.closest('.s-test-badge')) return;
+                        openLessonDetail(subj, selectedDate);
+                    };
+
                     let gradesHtml = '';
+                    // Берем оценку ученика на этот день
+                    const key = `${currentUser.id}-${selectedDate}`;
                     if (subjData.grades[key]) {
-                        const gItem = subjData.grades[key];
-                        const isTest = gItem.type === 'Контрольная работа' || !!testInfo;
-                        gradesHtml = `<div class="s-grade g${gItem.grade} ${isTest ? 'test-grade' : ''}" onclick="event.stopPropagation(); alert('Оценка: ${gItem.grade}')">
-                            ${gItem.isDot ? '<span class="dot-indicator">.</span>' : ''}${gItem.grade}
+                        const gradeItem = subjData.grades[key];
+                        const g = gradeItem.grade;
+                        const isDot = gradeItem.isDot;
+                        const isTestGrade = gradeItem.type === 'Контрольная работа' || tests.some(t => t.date === selectedDate);
+                        const testClass = isTestGrade ? 'test-grade' : '';
+                        const dotHtml = isDot ? '<span class="dot-indicator">.</span>' : '';
+
+                        gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="event.stopPropagation(); openStudentGradeDetail('${subj}', '${selectedDate}')">
+                            ${dotHtml}
+                            ${g}
                         </div>`;
                     }
 
-                    let testBadge = testInfo ? `<div class="s-test-badge">Контрольная работа</div>` : '';
-                    
-                    let subBadge = sub ? `<div style="font-size:11px; color:#ff9500; margin-top:5px;">Замена: ${appData.teachers.find(t=>t.id===sub.newTeacherId)?.name}</div>` : '';
+                    let testBadgeHtml = '';
+                    if (testInfo) {
+                        testBadgeHtml = `<div class="s-test-badge" onclick="event.stopPropagation(); showTestAlert()">Контрольная работа</div>`;
+                    }
 
                     div.innerHTML = `
                         <div class="s-card-header">
                             <div class="s-card-title">${subj}</div>
                             <div class="s-grades-container">${gradesHtml}</div>
                         </div>
-                        ${testBadge} ${subBadge}
+                        ${testBadgeHtml}
                         <div class="s-card-hw">ДЗ: ${subjData.homework || 'Нет'}</div>
                     `;
                     container.appendChild(div);
                 });
+            } else if (tab === 'grades') {
+                container.innerHTML = '<div style="padding: 40px 20px; text-align: center; color: #8e8e93;">Все ваши оценки отображаются в разделе "Расписание"</div>';
             }
         }
 
-        function openLessonDetail(subject, date, sub, subjData) {
+        // ОТКРЫТИЕ ДЕТАЛЕЙ УРОКА
+        function openLessonDetail(subject, date) {
             document.getElementById('lesson-title').innerText = subject;
-            const teacher = appData.teachers.find(t => t.id === subjData.teacherId);
-            document.getElementById('lesson-teacher').innerText = sub ? `Замена: ${appData.teachers.find(t=>t.id===sub.newTeacherId)?.name}` : (teacher ? teacher.name : 'Не назначен');
             
-            const tests = subjData.tests || [];
-            const testInfo = tests.find(t => t.date === date);
-            document.getElementById('lesson-test-row').style.display = testInfo ? 'block' : 'none';
-            if (testInfo) document.getElementById('lesson-test-theme').innerText = testInfo.theme;
+            const teacherName = appData.teacher ? appData.teacher.name : "Тим Тимофеевич";
+            document.getElementById('lesson-teacher').innerText = teacherName;
 
-            document.getElementById('lesson-hw').innerText = subjData.homework || 'Не задано';
+            const tests = appData.subjects[subject].tests || [];
+            const testInfo = tests.find(t => t.date === date);
+            
+            const testRow = document.getElementById('lesson-test-row');
+            if (testInfo) {
+                document.getElementById('lesson-test-theme').innerText = testInfo.theme;
+                testRow.style.display = 'block';
+            } else {
+                testRow.style.display = 'none';
+            }
+
+            const hw = appData.subjects[subject].homework || 'Не задано';
+            document.getElementById('lesson-hw').innerText = hw;
+
             document.getElementById('lessonDetailModal').classList.remove('hidden');
         }
 
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function showTestAlert() {
+            document.getElementById('studentTestAlertModal').classList.remove('hidden');
+        }
+
+        function openStudentGradeDetail(subject, date) {
+            const gradeItem = appData.subjects[subject].grades[`${currentUser.id}-${date}`];
+            if (!gradeItem) return;
+
+            const gradeNum = document.getElementById('s-detail-grade');
+            gradeNum.innerText = gradeItem.grade; 
+            gradeNum.style.color = gradeItem.grade === 5 ? '#34c759' : gradeItem.grade === 4 ? '#ff9500' : '#ff3b30';
+            gradeNum.style.background = gradeItem.grade === 5 ? 'rgba(52, 199, 89, 0.2)' : gradeItem.grade === 4 ? 'rgba(255, 149, 0, 0.2)' : 'rgba(255, 59, 48, 0.2)';
+            
+            document.getElementById('s-detail-subject').innerText = subject;
+            document.getElementById('s-detail-type').innerText = gradeItem.type || 'Ответ на уроке';
+            document.getElementById('s-detail-theme').innerText = gradeItem.theme || 'Не указана';
+            document.getElementById('s-detail-comment').innerText = gradeItem.comment ? `«${gradeItem.comment}»` : 'Нет комментария';
+            
+            const dateRow = document.getElementById('s-detail-date-row');
+            if (gradeItem.isDot && gradeItem.dueDate) {
+                const parts = gradeItem.dueDate.split('-');
+                const formattedDate = parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : gradeItem.dueDate;
+                document.getElementById('s-detail-date').innerText = formattedDate;
+                dateRow.style.display = 'block';
+            } else {
+                dateRow.style.display = 'none';
+            }
+
+            document.getElementById('s-detail-original-date').innerText = date;
+            document.getElementById('studentGradeDetailModal').classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
