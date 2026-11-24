@@ -7,7 +7,6 @@
     <style>
         /* ================= ОБЩИЕ ПЕРЕМЕННЫЕ ================= */
         :root {
-            /* Учитель (Светлая тема) */
             --t-blue: #0078d4;
             --t-blue-dark: #005a9e;
             --t-bg: #f3f4f6;
@@ -21,7 +20,6 @@
             --t-sidebar: 260px;
             --t-cell: 38px;
 
-            /* Ученик (Темная тема) */
             --s-bg: #1c1c1e;
             --s-card: #2c2c2e;
             --s-text: #ffffff;
@@ -145,12 +143,11 @@
         .s-nav-icon { font-size: 20px; }
 
         /* ================= МОДАЛЬНЫЕ ОКНА ================= */
-        /* По умолчанию окна скрыты */
         .modal-overlay { 
             display: none; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.5); z-index: 1000; 
-            justify-content: center; align-items: center; /* Центрируем на ПК */
+            background: rgba(0,0,0,0.5); z-index: 9999; 
+            justify-content: center; align-items: center; 
         }
         
         .modal { 
@@ -200,7 +197,6 @@
         .s-detail-label { font-size: 12px; color: var(--s-gray); margin-bottom: 4px; }
         .s-detail-value { font-size: 15px; }
 
-        /* Адаптив для мобильных (модалки выезжают снизу) */
         @media (max-width: 768px) {
             .modal-overlay { align-items: flex-end; }
             .modal { border-radius: 20px 20px 0 0; margin: 0; max-height: 85vh; }
@@ -210,13 +206,14 @@
 </head>
 <body>
 
-    <div id="authScreen">
-        <div class="auth-box">
-            <h1>Журнал МЭШ</h1>
-            <div id="authError" class="error" style="display:none;"></div>
-            <input type="text" id="loginInput" placeholder="Логин">
-            <input type="password" id="passwordInput" placeholder="Пароль">
-            <button onclick="login()">Войти</button>
+    <!-- ЭКРАН АВТОРИЗАЦИИ -->
+    <div id="authScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 1000; justify-content: center; align-items: center;">
+        <div style="width: 100%; max-width: 400px; padding: 30px; text-align: center;">
+            <h1 style="font-size: 24px; margin-bottom: 20px; color: #0078d4;">Журнал МЭШ</h1>
+            <div id="authError" style="color: #ef4444; font-size: 13px; margin-bottom: 10px; display: none;"></div>
+            <input type="text" id="loginInput" placeholder="Логин" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px;">
+            <input type="password" id="passwordInput" placeholder="Пароль" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px;">
+            <button onclick="login()" style="width: 100%; padding: 12px; background: #0078d4; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">Войти</button>
         </div>
     </div>
 
@@ -263,17 +260,11 @@
         </main>
     </div>
 
-    <!-- ИНТЕРФЕЙС УЧЕНИКА (ТЕМНАЯ ТЕМА) -->
+    <!-- ИНТЕРФЕЙС УЧЕНИКА (МОБИЛЬНЫЙ) -->
     <div id="studentApp" class="student-layout">
-        
         <div class="s-top-bar">
-            <div class="s-avatar">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Аватар">
-            </div>
-            <div class="s-top-center">
-                <div class="s-icon-btn">🔥</div>
-                <div class="s-icon-btn">🐢</div>
-            </div>
+            <div class="s-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Аватар"></div>
+            <div class="s-top-center"><div class="s-icon-btn">🔥</div><div class="s-icon-btn">🐢</div></div>
             <div style="display:flex; gap:10px;">
                 <div class="s-icon-btn">🔔<div class="s-badge">49</div></div>
                 <button class="s-icon-btn" onclick="logout()" title="Выйти">🚪</button>
@@ -298,26 +289,14 @@
             <button class="s-filter-icon">•••</button>
         </div>
 
-        <div class="s-content" id="studentContent">
-            <!-- Сюда рендерится контент -->
-        </div>
+        <div class="s-content" id="studentContent"></div>
 
         <div class="s-bottom-nav">
-            <button class="s-nav-item active" onclick="switchTab('schedule', this)">
-                <span class="s-nav-icon">📅</span> Расписание
-            </button>
-            <button class="s-nav-item" onclick="switchTab('grades', this)">
-                <span class="s-nav-icon">⭐</span> Оценки
-            </button>
-            <button class="s-nav-item" onclick="switchTab('tasks', this)">
-                <span class="s-nav-icon">✔️</span> Задания
-            </button>
-            <button class="s-nav-item" onclick="switchTab('school', this)">
-                <span class="s-nav-icon">🏫</span> Школа
-            </button>
-            <button class="s-nav-item" onclick="switchTab('portfolio', this)">
-                <span class="s-nav-icon">💼</span> Портфолио
-            </button>
+            <button class="s-nav-item active" onclick="switchTab('schedule', this)"><span class="s-nav-icon">📅</span> Расписание</button>
+            <button class="s-nav-item" onclick="switchTab('grades', this)"><span class="s-nav-icon">⭐</span> Оценки</button>
+            <button class="s-nav-item" onclick="switchTab('tasks', this)"><span class="s-nav-icon">✔️</span> Задания</button>
+            <button class="s-nav-item" onclick="switchTab('school', this)"><span class="s-nav-icon">🏫</span> Школа</button>
+            <button class="s-nav-item" onclick="switchTab('portfolio', this)"><span class="s-nav-icon">💼</span> Портфолио</button>
         </div>
     </div>
 
@@ -376,7 +355,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ ДЛЯ УЧЕНИКА -->
+    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ (ДЛЯ УЧЕНИКА) -->
     <div class="modal-overlay" id="studentGradeDetailModal">
         <div class="modal" style="background: var(--s-card); color: var(--s-text);">
             <div class="modal-header" style="margin-bottom: 0; padding-bottom: 10px;">
@@ -423,9 +402,8 @@
         let isDot = false;
         let existingGradeKey = null;
         let dates = [];
-        let currentStudentTab = 'schedule';
 
-        // Инициализация при загрузке
+        // 1. Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('mesh_user');
             if (savedUser) {
@@ -460,6 +438,7 @@
             }
         }
 
+        // 2. Авторизация
         async function login() {
             const login = document.getElementById('loginInput').value;
             const password = document.getElementById('passwordInput').value;
@@ -499,6 +478,7 @@
             location.reload();
         }
 
+        // 3. Загрузка данных
         async function loadData() {
             try {
                 const url = userRole === 'student' 
@@ -594,7 +574,6 @@
                         }
                     }
                     
-                    // Обработчик клика
                     td.onclick = () => openGradeModal(student, date);
                     tr.appendChild(td);
                 });
@@ -789,8 +768,6 @@
 
         // ================= ЛОГИКА УЧЕНИКА =================
         function switchTab(tab, btn) {
-            currentStudentTab = tab;
-            
             if (btn) {
                 document.querySelectorAll('.s-nav-item').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
@@ -813,7 +790,6 @@
         function renderStudentSchedule(container) {
             const subjects = Object.keys(appData.subjects);
             
-            // Создаем искусственное расписание
             const schedule = subjects.map((subj, index) => {
                 const timeStart = 9 + Math.floor(index * 1.5);
                 const timeEnd = timeStart + 1;
