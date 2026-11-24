@@ -7,6 +7,7 @@
     <style>
         /* ================= ОБЩИЕ ПЕРЕМЕННЫЕ ================= */
         :root {
+            /* Учитель (Светлая тема) */
             --t-blue: #0078d4;
             --t-blue-dark: #005a9e;
             --t-bg: #f3f4f6;
@@ -20,6 +21,7 @@
             --t-sidebar: 260px;
             --t-cell: 38px;
 
+            /* Ученик (Темная тема) */
             --s-bg: #1c1c1e;
             --s-card: #2c2c2e;
             --s-text: #ffffff;
@@ -143,13 +145,26 @@
         .s-nav-icon { font-size: 20px; }
 
         /* ================= МОДАЛЬНЫЕ ОКНА ================= */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: flex-end; }
-        @media (min-width: 769px) { .modal-overlay { align-items: center; } }
+        /* По умолчанию окна скрыты */
+        .modal-overlay { 
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); z-index: 1000; 
+            justify-content: center; align-items: center; /* Центрируем на ПК */
+        }
+        
+        .modal { 
+            background: #fff; 
+            border-radius: 12px; 
+            width: 100%; max-width: 480px; 
+            padding: 24px; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            color: var(--t-text); 
+            animation: slideIn 0.2s ease-out;
+            margin: 15px;
+        }
 
-        .modal { background: #fff; border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; padding: 24px; max-height: 90vh; overflow-y: auto; color: var(--t-text); animation: slideUp 0.3s ease-out; }
-        @media (min-width: 769px) { .modal { border-radius: 12px; margin: 15px; animation: slideIn 0.2s ease-out; } }
-
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
@@ -173,7 +188,7 @@
         .modal-footer .btn-save { background: var(--t-blue); color: white; }
         .modal-footer .btn-delete { background: #fee2e2; color: #ef4444; margin-right: auto; }
 
-        /* Детали оценки (темная тема) */
+        /* Детали оценки (для ученика) */
         .s-detail-header { text-align: center; margin-bottom: 20px; }
         .s-detail-grade { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 10px; }
         .s-detail-grade.g5 { background: rgba(52, 199, 89, 0.2); color: var(--s-green); }
@@ -181,18 +196,21 @@
         .s-detail-grade.g3 { background: rgba(255, 59, 48, 0.2); color: var(--s-red); }
         .s-detail-subject { font-size: 18px; font-weight: 600; }
         .s-detail-type { font-size: 14px; color: var(--s-gray); }
-        .s-detail-row { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .s-detail-row { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #444; }
         .s-detail-label { font-size: 12px; color: var(--s-gray); margin-bottom: 4px; }
         .s-detail-value { font-size: 15px; }
 
+        /* Адаптив для мобильных (модалки выезжают снизу) */
         @media (max-width: 768px) {
-            .teacher-layout .sidebar { display: none; }
+            .modal-overlay { align-items: flex-end; }
+            .modal { border-radius: 20px 20px 0 0; margin: 0; max-height: 85vh; }
+            .sidebar { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div id="authScreen" style="display:none;">
+    <div id="authScreen">
         <div class="auth-box">
             <h1>Журнал МЭШ</h1>
             <div id="authError" class="error" style="display:none;"></div>
@@ -245,7 +263,7 @@
         </main>
     </div>
 
-    <!-- ИНТЕРФЕЙС УЧЕНИКА (МОБИЛЬНЫЙ) -->
+    <!-- ИНТЕРФЕЙС УЧЕНИКА (ТЕМНАЯ ТЕМА) -->
     <div id="studentApp" class="student-layout">
         
         <div class="s-top-bar">
@@ -358,9 +376,9 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ (ДЛЯ УЧЕНИКА) -->
-    <div class="modal-overlay" id="studentGradeDetailModal" style="background: rgba(0,0,0,0.8);">
-        <div class="modal" style="background: var(--s-card); color: var(--s-text); border-radius: 20px 20px 0 0;">
+    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ ДЛЯ УЧЕНИКА -->
+    <div class="modal-overlay" id="studentGradeDetailModal">
+        <div class="modal" style="background: var(--s-card); color: var(--s-text);">
             <div class="modal-header" style="margin-bottom: 0; padding-bottom: 10px;">
                 <h3 style="font-size: 18px;">Детали оценки</h3>
                 <span class="modal-close" style="color: var(--s-gray);" onclick="closeModal('studentGradeDetailModal')">&times;</span>
@@ -394,6 +412,7 @@
     </div>
 
     <script>
+        // Глобальные переменные
         let appData = null;
         let userRole = null;
         let userStudentId = null;
@@ -406,6 +425,7 @@
         let dates = [];
         let currentStudentTab = 'schedule';
 
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('mesh_user');
             if (savedUser) {
@@ -574,6 +594,7 @@
                         }
                     }
                     
+                    // Обработчик клика
                     td.onclick = () => openGradeModal(student, date);
                     tr.appendChild(td);
                 });
@@ -790,16 +811,14 @@
         }
 
         function renderStudentSchedule(container) {
-            // Берем предметы и сортируем по алфавиту для красоты
             const subjects = Object.keys(appData.subjects);
             
-            // Создаем искусственное расписание на основе предметов
+            // Создаем искусственное расписание
             const schedule = subjects.map((subj, index) => {
-                const timeStart = 9 + Math.floor(index * 1.5); // просто для красоты
+                const timeStart = 9 + Math.floor(index * 1.5);
                 const timeEnd = timeStart + 1;
                 const cabinet = 10 + index;
                 
-                // Ищем оценки ученика по этому предмету
                 const subjectData = appData.subjects[subj];
                 const studentGrades = [];
                 dates.forEach(d => {
@@ -809,9 +828,7 @@
                     }
                 });
 
-                // Есть ли контрольная
                 const hasTest = subjectData.tests && subjectData.tests.length > 0;
-
                 return { subj, timeStart, timeEnd, cabinet, studentGrades, hasTest, homework: subjectData.homework };
             });
 
@@ -819,7 +836,6 @@
                 const card = document.createElement('div');
                 card.className = 's-card';
                 
-                // Оценка в квадрате (если есть)
                 let gradeBox = '';
                 if (lesson.studentGrades.length > 0) {
                     const lastGrade = lesson.studentGrades[lesson.studentGrades.length - 1];
@@ -849,12 +865,6 @@
                     ${gradeBox}
                 `;
                 container.appendChild(card);
-
-                // Добавляем перемену (визуально)
-                const breakDiv = document.createElement('div');
-                breakDiv.style.cssText = "display:flex; justify-content:space-between; color:#8e8e93; font-size:13px; padding: 5px 15px 15px 15px;";
-                breakDiv.innerHTML = `<span>🏃 Перемена 20 минут</span><span>${lesson.timeEnd}:15 – ${lesson.timeEnd}:35</span>`;
-                container.appendChild(breakDiv);
             });
         }
 
@@ -889,7 +899,6 @@
             }
 
             document.getElementById('s-detail-date').textContent = date;
-
             document.getElementById('studentGradeDetailModal').style.display = 'flex';
         }
 
@@ -901,16 +910,11 @@
                 dates.forEach(d => {
                     const key = `${userStudentId}-${d}`;
                     if (subjectData.grades[key]) {
-                        allGrades.push({
-                            subject: subj,
-                            date: d,
-                            ...subjectData.grades[key]
-                        });
+                        allGrades.push({ subject: subj, date: d, ...subjectData.grades[key] });
                     }
                 });
             });
 
-            // Сортируем по дате (по убыванию)
             allGrades.sort((a, b) => {
                 const [d1, m1] = a.date.split('.').map(Number);
                 const [d2, m2] = b.date.split('.').map(Number);
@@ -973,4 +977,4 @@
         });
     </script>
 </body>
-            </html> 
+</html> 
