@@ -7,7 +7,6 @@
     <style>
         /* ================= ОБЩИЕ ПЕРЕМЕННЫЕ ================= */
         :root {
-            /* Учитель (Светлая тема) */
             --t-blue: #0078d4;
             --t-blue-dark: #005a9e;
             --t-bg: #f3f4f6;
@@ -21,7 +20,6 @@
             --t-sidebar: 260px;
             --t-cell: 38px;
 
-            /* Ученик (Темная тема) */
             --s-bg: #1c1c1e;
             --s-card: #2c2c2e;
             --s-text: #ffffff;
@@ -29,7 +27,6 @@
             --s-accent: #ff2d55;
             --s-green: #34c759;
             --s-red: #ff3b30;
-            --s-blue: #0a84ff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -37,7 +34,7 @@
         /* ================= АВТОРИЗАЦИЯ ================= */
         #authScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; display: flex; justify-content: center; align-items: center; z-index: 1000;
+            background: #fff; display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .auth-box { width: 100%; max-width: 400px; padding: 30px; text-align: center; }
         .auth-box h1 { font-size: 24px; margin-bottom: 20px; color: var(--t-blue); }
@@ -90,7 +87,6 @@
         .student-layout { display: none; background-color: var(--s-bg); color: var(--s-text); min-height: 100vh; padding-bottom: 70px; flex-direction: column; width: 100%; }
         .student-layout.active { display: flex; }
 
-        /* Верхняя панель студента */
         .s-top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: var(--s-bg); position: sticky; top: 0; z-index: 50; }
         .s-avatar { width: 36px; height: 36px; border-radius: 50%; background: #555; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .s-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -98,7 +94,6 @@
         .s-icon-btn { width: 36px; height: 36px; border-radius: 10px; background: var(--s-card); display: flex; align-items: center; justify-content: center; position: relative; border: none; color: white; font-size: 16px; cursor: pointer; }
         .s-badge { position: absolute; top: -5px; right: -5px; background: var(--s-accent); color: white; font-size: 10px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         
-        /* Календарь */
         .s-calendar { padding: 0 15px; display: flex; justify-content: space-between; margin-bottom: 15px; }
         .s-day { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .s-day-name { font-size: 12px; color: var(--s-gray); }
@@ -106,17 +101,14 @@
         .s-day.active .s-day-num { background: var(--s-accent); color: white; }
         .s-day.weekend .s-day-num { color: var(--s-red); }
 
-        /* Кнопки фильтров */
         .s-filters { padding: 0 15px; display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
         .s-filter-btn { padding: 8px 16px; background: #333; border-radius: 10px; font-size: 14px; font-weight: 500; border: none; color: white; cursor: pointer; }
         .s-filter-btn.active { background: #444; }
-        .s-filter-icon { width: 38px; height: 38px; background: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: none; color: white; cursor: pointer; }
+        .s-filter-icon { width: 38px; height: 38px; background: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: none; color: white; cursor: pointer; font-size: 12px; }
         .s-filter-spacer { flex: 1; }
 
-        /* Контент */
         .s-content { padding: 0 15px; flex: 1; overflow-y: auto; }
         
-        /* Карточка расписания */
         .s-card { background: var(--s-card); border-radius: 16px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--s-gray); display: flex; justify-content: space-between; gap: 10px; }
         .s-card-main { flex: 1; }
         .s-card-header { display: flex; justify-content: space-between; font-size: 13px; color: var(--s-gray); margin-bottom: 10px; }
@@ -126,7 +118,6 @@
         .s-hw-label { display: flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 500; color: #ccc; }
         .s-hw-text { font-size: 14px; color: #999; line-height: 1.4; }
 
-        /* Квадрат с оценкой в расписании */
         .s-grade-box { 
             width: 40px; height: 40px; 
             background: #3a3a3c; border-radius: 10px; 
@@ -139,21 +130,18 @@
         .s-grade-box.g5 .val { color: var(--s-green); }
         .s-grade-box.g4 .val { color: #ff9500; }
         .s-grade-box.g3 .val { color: var(--s-red); }
-        .s-grade-box.g2 .val { color: var(--s-red); }
 
-        /* Нижнее меню */
-        .s-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; border-top: 1px solid #333; display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 100; }
-        .s-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--s-gray); font-size: 10px; cursor: pointer; border: none; background: none; }
-        .s-nav-item.active { color: white; }
-        .s-nav-icon { font-size: 20px; }
-
-        /* Вкладка "Оценки" */
         .s-grade-card-list { background: var(--s-card); border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; align-items: center; }
         .s-grade-num-big { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; flex-shrink: 0; }
         .s-grade-num-big.g5 { background: rgba(52, 199, 89, 0.2); color: var(--s-green); }
         .s-grade-num-big.g4 { background: rgba(255, 149, 0, 0.2); color: #ff9500; }
         .s-grade-num-big.g3 { background: rgba(255, 59, 48, 0.2); color: var(--s-red); }
-        
+
+        .s-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; border-top: 1px solid #333; display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 100; }
+        .s-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--s-gray); font-size: 10px; cursor: pointer; border: none; background: none; }
+        .s-nav-item.active { color: white; }
+        .s-nav-icon { font-size: 20px; }
+
         /* ================= МОДАЛЬНЫЕ ОКНА ================= */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: flex-end; }
         @media (min-width: 769px) { .modal-overlay { align-items: center; } }
@@ -185,7 +173,7 @@
         .modal-footer .btn-save { background: var(--t-blue); color: white; }
         .modal-footer .btn-delete { background: #fee2e2; color: #ef4444; margin-right: auto; }
 
-        /* Детали оценки (для ученика в темной теме) */
+        /* Детали оценки (темная тема) */
         .s-detail-header { text-align: center; margin-bottom: 20px; }
         .s-detail-grade { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 10px; }
         .s-detail-grade.g5 { background: rgba(52, 199, 89, 0.2); color: var(--s-green); }
@@ -197,11 +185,13 @@
         .s-detail-label { font-size: 12px; color: var(--s-gray); margin-bottom: 4px; }
         .s-detail-value { font-size: 15px; }
 
+        @media (max-width: 768px) {
+            .teacher-layout .sidebar { display: none; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ЭКРАН АВТОРИЗАЦИИ -->
     <div id="authScreen" style="display:none;">
         <div class="auth-box">
             <h1>Журнал МЭШ</h1>
@@ -255,7 +245,7 @@
         </main>
     </div>
 
-    <!-- ИНТЕРФЕЙС УЧЕНИКА (ТЕМНАЯ ТЕМА) -->
+    <!-- ИНТЕРФЕЙС УЧЕНИКА (МОБИЛЬНЫЙ) -->
     <div id="studentApp" class="student-layout">
         
         <div class="s-top-bar">
@@ -291,10 +281,9 @@
         </div>
 
         <div class="s-content" id="studentContent">
-            <!-- Сюда рендерится расписание -->
+            <!-- Сюда рендерится контент -->
         </div>
 
-        <!-- Нижнее меню -->
         <div class="s-bottom-nav">
             <button class="s-nav-item active" onclick="switchTab('schedule', this)">
                 <span class="s-nav-icon">📅</span> Расписание
@@ -314,7 +303,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛКИ ДЛЯ УЧИТЕЛЯ -->
+    <!-- МОДАЛКИ УЧИТЕЛЯ -->
     <div class="modal-overlay" id="gradeModal">
         <div class="modal">
             <div class="modal-header"><h3 id="modal-student-name">Ученик</h3><span class="modal-close" onclick="closeModal('gradeModal')">&times;</span></div>
@@ -369,9 +358,14 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ ДЛЯ УЧЕНИКА -->
-    <div class="modal-overlay" id="studentGradeDetailModal">
-        <div class="modal" style="background: var(--s-card); color: var(--s-text);">
+    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ (ДЛЯ УЧЕНИКА) -->
+    <div class="modal-overlay" id="studentGradeDetailModal" style="background: rgba(0,0,0,0.8);">
+        <div class="modal" style="background: var(--s-card); color: var(--s-text); border-radius: 20px 20px 0 0;">
+            <div class="modal-header" style="margin-bottom: 0; padding-bottom: 10px;">
+                <h3 style="font-size: 18px;">Детали оценки</h3>
+                <span class="modal-close" style="color: var(--s-gray);" onclick="closeModal('studentGradeDetailModal')">&times;</span>
+            </div>
+            
             <div class="s-detail-header">
                 <div id="s-detail-grade-num" class="s-detail-grade">5</div>
                 <div id="s-detail-subject" class="s-detail-subject">Математика</div>
@@ -384,4 +378,599 @@
             </div>
             
             <div class="s-detail-row" id="s-detail-comment-row">
-                <div class="s-detail-label">Ком 
+                <div class="s-detail-label">Комментарий учителя</div>
+                <div id="s-detail-comment" class="s-detail-value">-</div>
+            </div>
+
+            <div class="s-detail-row" style="border-bottom: none;">
+                <div class="s-detail-label">Дата</div>
+                <div id="s-detail-date" class="s-detail-value">-</div>
+            </div>
+            
+            <div class="modal-footer" style="border-top: none; padding-top: 0; justify-content: center;">
+                <button class="btn-cancel" style="width: 100%; background: #3a3a3c; color: white;" onclick="closeModal('studentGradeDetailModal')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let appData = null;
+        let userRole = null;
+        let userStudentId = null;
+        let currentSubject = "Математика";
+        let currentStudent = null;
+        let currentDate = null;
+        let selectedGrade = null;
+        let isDot = false;
+        let existingGradeKey = null;
+        let dates = [];
+        let currentStudentTab = 'schedule';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('mesh_user');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    userRole = user.role;
+                    userStudentId = user.id;
+                    showInterface(user);
+                    loadData();
+                } catch (e) {
+                    localStorage.removeItem('mesh_user');
+                    showAuth();
+                }
+            } else {
+                showAuth();
+            }
+        });
+
+        function showAuth() {
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('teacherApp').classList.remove('active');
+            document.getElementById('studentApp').classList.remove('active');
+        }
+
+        function showInterface(user) {
+            document.getElementById('authScreen').style.display = 'none';
+            if (user.role === 'teacher') {
+                document.getElementById('teacherApp').classList.add('active');
+                document.getElementById('userRoleDisplayTeacher').textContent = user.name;
+            } else {
+                document.getElementById('studentApp').classList.add('active');
+            }
+        }
+
+        async function login() {
+            const login = document.getElementById('loginInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('authError');
+            
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login, password })
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    userRole = data.role;
+                    userStudentId = data.id;
+                    
+                    localStorage.setItem('mesh_user', JSON.stringify({
+                        role: data.role, id: data.id, name: data.name
+                    }));
+                    
+                    showInterface(data);
+                    await loadData();
+                } else {
+                    errorDiv.textContent = data.error;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (e) {
+                errorDiv.textContent = 'Ошибка соединения с сервером';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('mesh_user');
+            location.reload();
+        }
+
+        async function loadData() {
+            try {
+                const url = userRole === 'student' 
+                    ? `/api/data?role=student&studentId=${userStudentId}` 
+                    : '/api/data';
+                const response = await fetch(url);
+                appData = await response.json();
+                dates = appData.dates || [];
+                
+                if (userRole === 'teacher') {
+                    initTeacherUI();
+                } else {
+                    switchTab('schedule');
+                }
+            } catch (e) {
+                console.error("Ошибка загрузки:", e);
+            }
+        }
+
+        // ================= ЛОГИКА УЧИТЕЛЯ =================
+        function initTeacherUI() {
+            renderSubjects();
+            updateHomework();
+            renderTable();
+        }
+
+        function renderSubjects() {
+            const bar = document.getElementById('subjectsBar');
+            bar.innerHTML = '';
+            Object.keys(appData.subjects).forEach(subject => {
+                const btn = document.createElement('button');
+                btn.className = `subject-btn ${subject === currentSubject ? 'active' : ''}`;
+                btn.textContent = subject;
+                btn.onclick = () => {
+                    currentSubject = subject;
+                    renderSubjects();
+                    updateHomework();
+                    renderTable();
+                };
+                bar.appendChild(btn);
+            });
+        }
+
+        function updateHomework() {
+            document.getElementById('homeworkText').textContent = appData.subjects[currentSubject].homework || 'Не задано';
+        }
+
+        function renderTable() {
+            const thead = document.getElementById('tableHeadRow');
+            const tbody = document.getElementById('journalBody');
+            const subjectData = appData.subjects[currentSubject];
+
+            if (dates.length === 0) {
+                thead.innerHTML = `<th>Список учеников</th>`;
+                tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#999;padding:20px;">Нет дат для оценок.</td></tr>`;
+                return;
+            }
+
+            thead.innerHTML = `<th>Список учеников</th>`;
+            dates.forEach(date => {
+                const th = document.createElement('th');
+                const test = subjectData.tests && subjectData.tests.find(t => t.date === date);
+                th.innerHTML = `${date} ${test ? `<span class="test-icon" title="${test.theme}">К</span>` : ''}`;
+                thead.appendChild(th);
+            });
+            thead.innerHTML += `<th class="total-cell">Ср. балл</th>`;
+
+            tbody.innerHTML = '';
+            appData.students.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td class="student-name">${index + 1}. ${student.name}</td>`;
+                
+                let sum = 0, count = 0;
+
+                dates.forEach(date => {
+                    const td = document.createElement('td');
+                    td.className = 'grade-cell';
+                    
+                    if (subjectData.tests && subjectData.tests.find(t => t.date === date)) {
+                        td.classList.add('test-cell');
+                    }
+
+                    const key = `${student.id}-${date}`;
+                    const gradeData = subjectData.grades[key];
+
+                    if (gradeData) {
+                        if (gradeData.isDot) {
+                            td.innerHTML = `<span class="grade-dot grade-${gradeData.grade}">${gradeData.grade}</span>`;
+                        } else {
+                            td.innerHTML = `<span class="grade-${gradeData.grade}">${gradeData.grade}</span>`;
+                            sum += gradeData.grade;
+                            count++;
+                        }
+                    }
+                    
+                    td.onclick = () => openGradeModal(student, date);
+                    tr.appendChild(td);
+                });
+
+                const avg = count > 0 ? (sum / count).toFixed(2) : '';
+                tr.innerHTML += `<td class="total-cell">${avg}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openGradeModal(student, date) {
+            currentStudent = student;
+            currentDate = date;
+            existingGradeKey = `${student.id}-${date}`;
+            
+            document.getElementById('modal-student-name').textContent = `${student.name} на ${date}.2024`;
+            
+            selectedGrade = null;
+            isDot = false;
+            document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('dotToggle').classList.remove('active');
+            document.getElementById('modal-comment').value = '';
+            document.getElementById('modal-theme').value = '';
+            
+            const [day, month] = date.split('.');
+            const year = new Date().getFullYear();
+            document.getElementById('modal-date').value = `${year}-${month}-${day}`;
+
+            const subjectData = appData.subjects[currentSubject];
+            const existing = subjectData.grades[existingGradeKey];
+            
+            if (existing) {
+                selectedGrade = existing.grade;
+                isDot = existing.isDot || false;
+                
+                document.querySelectorAll('.grade-btn').forEach(btn => {
+                    if (parseInt(btn.textContent) === existing.grade) btn.classList.add('active');
+                });
+                if (isDot) document.getElementById('dotToggle').classList.add('active');
+                
+                document.getElementById('modal-comment').value = existing.comment || '';
+                document.getElementById('modal-work-type').value = existing.type || 'Ответ на уроке';
+                document.getElementById('modal-theme').value = existing.theme || '';
+                document.getElementById('btnDeleteGrade').style.display = 'block';
+            } else {
+                document.getElementById('btnDeleteGrade').style.display = 'none';
+            }
+
+            document.getElementById('gradeModal').style.display = 'flex';
+        }
+
+        function selectGrade(grade) {
+            selectedGrade = grade;
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.textContent) === grade) btn.classList.add('active');
+            });
+        }
+
+        function toggleDot() {
+            isDot = !isDot;
+            document.getElementById('dotToggle').classList.toggle('active');
+        }
+
+        async function saveGrade() {
+            if (!selectedGrade) return alert('Выберите оценку');
+            
+            const gradeData = {
+                subject: currentSubject,
+                studentId: currentStudent.id,
+                date: currentDate,
+                grade: selectedGrade,
+                type: document.getElementById('modal-work-type').value,
+                comment: document.getElementById('modal-comment').value,
+                theme: document.getElementById('modal-theme').value,
+                isDot: isDot,
+                dueDate: document.getElementById('modal-date').value,
+                role: userRole
+            };
+
+            const res = await fetch('/api/grade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(gradeData)
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                alert('Ошибка: ' + (err.error || 'Неизвестная ошибка'));
+                return;
+            }
+
+            await loadData();
+            closeModal('gradeModal');
+        }
+
+        async function deleteGrade() {
+            if (!confirm('Удалить оценку?')) return;
+            
+            await fetch('/api/grade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subject: currentSubject,
+                    studentId: currentStudent.id,
+                    date: currentDate,
+                    grade: null,
+                    role: userRole
+                })
+            });
+
+            await loadData();
+            closeModal('gradeModal');
+        }
+
+        function openHomeworkModal() {
+            document.getElementById('hw-input').value = appData.subjects[currentSubject].homework || '';
+            document.getElementById('homeworkModal').style.display = 'flex';
+        }
+
+        async function saveHomework() {
+            await fetch('/api/homework', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject: currentSubject, text: document.getElementById('hw-input').value, role: userRole })
+            });
+            await loadData();
+            closeModal('homeworkModal');
+        }
+
+        function openTestModal() {
+            if (dates.length === 0) return alert('Сначала добавьте дату');
+            const subjectSelect = document.getElementById('test-subject');
+            const dateSelect = document.getElementById('test-date');
+            
+            subjectSelect.innerHTML = Object.keys(appData.subjects).map(s => 
+                `<option value="${s}" ${s === currentSubject ? 'selected' : ''}>${s}</option>`
+            ).join('');
+            dateSelect.innerHTML = dates.map(d => `<option value="${d}">${d}</option>`).join('');
+            
+            document.getElementById('testModal').style.display = 'flex';
+        }
+
+        async function saveTest() {
+            const res = await fetch('/api/test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    subject: document.getElementById('test-subject').value, 
+                    date: document.getElementById('test-date').value, 
+                    theme: document.getElementById('test-theme').value, 
+                    action: 'add', role: userRole 
+                })
+            });
+            
+            if (!res.ok) {
+                const result = await res.json();
+                return alert(result.error);
+            }
+            
+            await loadData();
+            closeModal('testModal');
+        }
+
+        function openAddDateModal() {
+            document.getElementById('new-date-input').value = '';
+            document.getElementById('addDateModal').style.display = 'flex';
+        }
+
+        async function addDate() {
+            const date = document.getElementById('new-date-input').value.trim();
+            if (!/^\d{2}\.\d{2}$/.test(date)) return alert('Формат даты: ДД.ММ');
+            
+            const res = await fetch('/api/date', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date, role: userRole })
+            });
+            
+            if (!res.ok) {
+                const result = await res.json();
+                return alert(result.error);
+            }
+            
+            await loadData();
+            closeModal('addDateModal');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // ================= ЛОГИКА УЧЕНИКА =================
+        function switchTab(tab, btn) {
+            currentStudentTab = tab;
+            
+            if (btn) {
+                document.querySelectorAll('.s-nav-item').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            const content = document.getElementById('studentContent');
+            content.innerHTML = '';
+
+            if (tab === 'schedule') {
+                renderStudentSchedule(content);
+            } else if (tab === 'grades') {
+                renderStudentGrades(content);
+            } else if (tab === 'tasks') {
+                renderStudentTasks(content);
+            } else {
+                content.innerHTML = `<div style="text-align:center; padding: 40px 0; color: #8e8e93;">Раздел в разработке</div>`;
+            }
+        }
+
+        function renderStudentSchedule(container) {
+            // Берем предметы и сортируем по алфавиту для красоты
+            const subjects = Object.keys(appData.subjects);
+            
+            // Создаем искусственное расписание на основе предметов
+            const schedule = subjects.map((subj, index) => {
+                const timeStart = 9 + Math.floor(index * 1.5); // просто для красоты
+                const timeEnd = timeStart + 1;
+                const cabinet = 10 + index;
+                
+                // Ищем оценки ученика по этому предмету
+                const subjectData = appData.subjects[subj];
+                const studentGrades = [];
+                dates.forEach(d => {
+                    const key = `${userStudentId}-${d}`;
+                    if (subjectData.grades[key]) {
+                        studentGrades.push({ date: d, ...subjectData.grades[key] });
+                    }
+                });
+
+                // Есть ли контрольная
+                const hasTest = subjectData.tests && subjectData.tests.length > 0;
+
+                return { subj, timeStart, timeEnd, cabinet, studentGrades, hasTest, homework: subjectData.homework };
+            });
+
+            schedule.forEach(lesson => {
+                const card = document.createElement('div');
+                card.className = 's-card';
+                
+                // Оценка в квадрате (если есть)
+                let gradeBox = '';
+                if (lesson.studentGrades.length > 0) {
+                    const lastGrade = lesson.studentGrades[lesson.studentGrades.length - 1];
+                    gradeBox = `
+                        <div class="s-grade-box g${lastGrade.grade}" onclick="openStudentGradeDetail('${lesson.subj}', '${lastGrade.date}')">
+                            <div class="val">${lastGrade.grade}</div>
+                            <div class="count">${lesson.studentGrades.length}</div>
+                        </div>
+                    `;
+                }
+
+                let testTag = lesson.hasTest ? `<div class="s-tag">Контрольная работа</div>` : '';
+
+                card.innerHTML = `
+                    <div class="s-card-main">
+                        <div class="s-card-header">
+                            <span>${lesson.timeStart}:30 – ${lesson.timeEnd}:15</span>
+                            <span>каб. ${lesson.cabinet}</span>
+                        </div>
+                        <div class="s-card-title">${lesson.subj}</div>
+                        ${testTag}
+                        <div class="s-hw-block">
+                            <div class="s-hw-label">🏠 Домашнее задание</div>
+                            <div class="s-hw-text">${lesson.homework || 'Не задано'}</div>
+                        </div>
+                    </div>
+                    ${gradeBox}
+                `;
+                container.appendChild(card);
+
+                // Добавляем перемену (визуально)
+                const breakDiv = document.createElement('div');
+                breakDiv.style.cssText = "display:flex; justify-content:space-between; color:#8e8e93; font-size:13px; padding: 5px 15px 15px 15px;";
+                breakDiv.innerHTML = `<span>🏃 Перемена 20 минут</span><span>${lesson.timeEnd}:15 – ${lesson.timeEnd}:35</span>`;
+                container.appendChild(breakDiv);
+            });
+        }
+
+        function openStudentGradeDetail(subject, date) {
+            const subjectData = appData.subjects[subject];
+            const key = `${userStudentId}-${date}`;
+            const grade = subjectData.grades[key];
+
+            if (!grade) return;
+
+            const gradeNum = document.getElementById('s-detail-grade-num');
+            gradeNum.textContent = grade.grade;
+            gradeNum.className = `s-detail-grade g${grade.grade}`;
+
+            document.getElementById('s-detail-subject').textContent = subject;
+            document.getElementById('s-detail-type').textContent = grade.type || 'Ответ на уроке';
+            
+            const themeRow = document.getElementById('s-detail-theme-row');
+            if (grade.theme) {
+                document.getElementById('s-detail-theme').textContent = grade.theme;
+                themeRow.style.display = 'block';
+            } else {
+                themeRow.style.display = 'none';
+            }
+
+            const commentRow = document.getElementById('s-detail-comment-row');
+            if (grade.comment) {
+                document.getElementById('s-detail-comment').textContent = `«${grade.comment}»`;
+                commentRow.style.display = 'block';
+            } else {
+                commentRow.style.display = 'none';
+            }
+
+            document.getElementById('s-detail-date').textContent = date;
+
+            document.getElementById('studentGradeDetailModal').style.display = 'flex';
+        }
+
+        function renderStudentGrades(container) {
+            let allGrades = [];
+            
+            Object.keys(appData.subjects).forEach(subj => {
+                const subjectData = appData.subjects[subj];
+                dates.forEach(d => {
+                    const key = `${userStudentId}-${d}`;
+                    if (subjectData.grades[key]) {
+                        allGrades.push({
+                            subject: subj,
+                            date: d,
+                            ...subjectData.grades[key]
+                        });
+                    }
+                });
+            });
+
+            // Сортируем по дате (по убыванию)
+            allGrades.sort((a, b) => {
+                const [d1, m1] = a.date.split('.').map(Number);
+                const [d2, m2] = b.date.split('.').map(Number);
+                return (m2 * 100 + d2) - (m1 * 100 + d1);
+            });
+
+            if (allGrades.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding: 40px 0; color: #8e8e93;">Оценок пока нет</div>`;
+                return;
+            }
+
+            allGrades.forEach(g => {
+                const card = document.createElement('div');
+                card.className = 's-grade-card-list';
+                card.innerHTML = `
+                    <div class="s-grade-num-big g${g.grade}">${g.grade}</div>
+                    <div style="flex:1;">
+                        <div style="font-size:12px; color:#8e8e93; margin-bottom:4px;">${g.date}</div>
+                        <div style="font-size:16px; font-weight:500; margin-bottom:4px;">${g.subject}</div>
+                        <div style="font-size:13px; color:#aaa;">${g.type} ${g.theme ? '— ' + g.theme : ''}</div>
+                        ${g.comment ? `<div style="font-size:12px; color:#8e8e93; margin-top:4px; font-style:italic;">«${g.comment}»</div>` : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderStudentTasks(container) {
+            Object.keys(appData.subjects).forEach(subj => {
+                const subjectData = appData.subjects[subj];
+                if (subjectData.homework || (subjectData.tests && subjectData.tests.length > 0)) {
+                    const card = document.createElement('div');
+                    card.className = 's-card';
+                    
+                    let testHtml = '';
+                    if (subjectData.tests && subjectData.tests.length > 0) {
+                        testHtml = `<div class="s-tag" style="background: rgba(255,59,48,0.2); color: #ff3b30; margin-top:10px;">📝 Скоро контрольная: ${subjectData.tests[0].date}</div>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="s-card-main">
+                            <div class="s-card-title" style="margin-bottom:10px;">${subj}</div>
+                            <div class="s-hw-block">
+                                <div class="s-hw-label">🏠 Домашнее задание</div>
+                                <div class="s-hw-text">${subjectData.homework || 'Не задано'}</div>
+                            </div>
+                            ${testHtml}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        // Закрытие модалок по клику вне окна
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+            </html> 
