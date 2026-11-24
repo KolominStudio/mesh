@@ -5,208 +5,235 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Журнал МЭШ</title>
     <style>
+        /* ================= ОБЩИЕ ПЕРЕМЕННЫЕ ================= */
         :root {
-            --blue: #0078d4;
-            --blue-dark: #005a9e;
-            --bg: #f3f4f6;
-            --border: #e5e7eb;
-            --text: #1f2937;
-            --gray: #6b7280;
-            --g2: #ef4444;
-            --g3: #f97316;
-            --g4: #22c55e;
-            --g5: #3b82f6;
-            --sidebar-width: 260px;
-            --cell-size: 38px;
+            /* Учитель (Светлая тема) */
+            --t-blue: #0078d4;
+            --t-blue-dark: #005a9e;
+            --t-bg: #f3f4f6;
+            --t-border: #e5e7eb;
+            --t-text: #1f2937;
+            --t-gray: #6b7280;
+            --t-g2: #ef4444;
+            --t-g3: #f97316;
+            --t-g4: #22c55e;
+            --t-g5: #3b82f6;
+            --t-sidebar: 260px;
+            --t-cell: 38px;
+
+            /* Ученик (Темная тема) */
+            --s-bg: #1c1c1e;
+            --s-card: #2c2c2e;
+            --s-text: #ffffff;
+            --s-gray: #8e8e93;
+            --s-accent: #ff2d55;
+            --s-green: #34c759;
+            --s-red: #ff3b30;
+            --s-blue: #0a84ff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; font-size: 14px; }
-
+        
+        /* ================= АВТОРИЗАЦИЯ ================= */
         #authScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; display: flex; justify-content: center; align-items: center;
-            z-index: 1000;
+            background: #fff; display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
         .auth-box { width: 100%; max-width: 400px; padding: 30px; text-align: center; }
-        .auth-box h1 { font-size: 24px; margin-bottom: 20px; color: var(--blue); }
-        .auth-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
-        .auth-box button { width: 100%; padding: 12px; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .auth-box .error { color: var(--g2); font-size: 13px; margin-bottom: 10px; }
+        .auth-box h1 { font-size: 24px; margin-bottom: 20px; color: var(--t-blue); }
+        .auth-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid var(--t-border); border-radius: 8px; font-size: 14px; }
+        .auth-box button { width: 100%; padding: 12px; background: var(--t-blue); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .auth-box .error { color: var(--t-g2); font-size: 13px; margin-bottom: 10px; }
 
-        #appScreen { display: none; width: 100%; height: 100%; }
+        /* ================= ИНТЕРФЕЙС УЧИТЕЛЯ (ПК) ================= */
+        .teacher-layout { display: none; background-color: var(--t-bg); color: var(--t-text); height: 100vh; overflow: hidden; font-size: 14px; width: 100%; }
+        .teacher-layout.active { display: flex; }
 
-        .sidebar { width: var(--sidebar-width); background-color: #fff; border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 15px 10px; overflow-y: auto; flex-shrink: 0; }
-        .sidebar h2 { font-size: 11px; color: var(--gray); margin: 15px 10px 8px; text-transform: uppercase; font-weight: 600; }
+        .sidebar { width: var(--t-sidebar); background-color: #fff; border-right: 1px solid var(--t-border); display: flex; flex-direction: column; padding: 15px 10px; overflow-y: auto; flex-shrink: 0; }
+        .sidebar h2 { font-size: 11px; color: var(--t-gray); margin: 15px 10px 8px; text-transform: uppercase; font-weight: 600; }
         .sidebar ul { list-style: none; }
         .sidebar li { padding: 8px 12px; cursor: pointer; border-radius: 6px; display: flex; align-items: center; gap: 10px; color: #4b5563; font-weight: 500; }
         .sidebar li:hover { background-color: #f3f4f6; }
-        .sidebar li.active { background-color: #e5f0fa; color: var(--blue); }
-        .sidebar .help-box { margin-top: auto; padding: 15px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; text-align: center; font-size: 12px; }
-        .sidebar .help-box button { margin-top: 10px; width: 100%; padding: 8px; background: var(--blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .sidebar li.active { background-color: #e5f0fa; color: var(--t-blue); }
+        .sidebar .help-box { margin-top: auto; padding: 15px; background: #f8fafc; border: 1px solid var(--t-border); border-radius: 8px; text-align: center; font-size: 12px; }
+        .sidebar .help-box button { margin-top: 10px; width: 100%; padding: 8px; background: var(--t-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .t-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .t-header { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .t-header .title { font-size: 18px; font-weight: 700; }
+        .t-header .title span { color: var(--t-blue); }
+        .t-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .t-controls select { padding: 6px 10px; border: 1px solid var(--t-border); border-radius: 4px; font-size: 13px; background: #fff; }
+        .btn-primary { background: var(--t-blue); color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
+        .btn-outline { background: #fff; color: var(--t-blue); border: 1px solid var(--t-blue); padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
 
-        .header { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .header .title { font-size: 18px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px; }
-        .header .title span { color: var(--blue); }
-        .header .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .header select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 4px; font-size: 13px; color: #333; background: #fff; }
-        .btn-primary { background: var(--blue); color: white; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
-        .btn-primary:hover { background: var(--blue-dark); }
-        .btn-outline { background: #fff; color: var(--blue); border: 1px solid var(--blue); padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
-        .btn-outline:hover { background: #e5f0fa; }
+        .subjects-bar { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 8px; overflow-x: auto; }
+        .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; font-size: 13px; cursor: pointer; color: #4b5563; font-weight: 500; white-space: nowrap; }
+        .subject-btn.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
+
+        .homework-bar { background: #f8fafc; padding: 10px 20px; border-bottom: 1px solid var(--t-border); font-size: 13px; display: flex; gap: 10px; align-items: center; color: #4b5563; flex-wrap: wrap; }
+        .hw-edit-btn { background: none; border: none; color: var(--t-blue); cursor: pointer; font-size: 12px; font-weight: 500; padding: 4px 8px; }
         
-        /* Кнопка выхода для мобильных (в шапке) */
-        .btn-logout-mobile { display: none; background: #fee2e2; color: #ef4444; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 13px; }
-        .btn-logout-mobile:hover { background: #fecaca; }
-
-        .subjects-bar { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-        .subjects-bar::-webkit-scrollbar { display: none; }
-        .subject-btn { padding: 6px 16px; border: 1px solid var(--border); background: #fff; border-radius: 20px; font-size: 13px; cursor: pointer; color: #4b5563; font-weight: 500; white-space: nowrap; }
-        .subject-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
-
-        .homework-bar { background: #f8fafc; padding: 10px 20px; border-bottom: 1px solid var(--border); font-size: 13px; display: flex; gap: 10px; align-items: center; color: #4b5563; flex-wrap: wrap; }
-        .homework-bar strong { color: var(--text); font-weight: 600; }
-        .hw-text { flex: 1; min-width: 200px; }
-        .hw-edit-btn { background: none; border: none; color: var(--blue); cursor: pointer; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 4px; }
-        .hw-edit-btn:hover { background: #e5f0fa; }
-
         .journal-container { flex: 1; overflow: auto; padding: 15px; background: #fff; margin: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-
-        .table-wrapper { display: block; }
         table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 13px; table-layout: fixed; }
-        th, td { border: 1px solid var(--border); text-align: center; height: var(--cell-size); vertical-align: middle; padding: 0; }
+        th, td { border: 1px solid var(--t-border); text-align: center; height: var(--t-cell); vertical-align: middle; padding: 0; }
         th { background: #f8fafc; font-weight: 600; color: #4b5563; padding: 8px 5px; font-size: 12px; position: sticky; top: 0; z-index: 10; }
         th:first-child { text-align: left; padding-left: 12px; width: 220px; }
-        td.student-name { text-align: left; padding-left: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: #fff; }
-        td.student-name:hover { background: #f9fafb; }
-        
-        .grade-cell { cursor: pointer; transition: background 0.15s; position: relative; width: 42px; font-size: 15px; font-weight: 600; }
+        td.student-name { text-align: left; padding-left: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .grade-cell { cursor: pointer; width: 42px; font-size: 15px; font-weight: 600; }
         .grade-cell:hover { background: #f0f7ff; }
-        .grade-2 { color: var(--g2); }
-        .grade-3 { color: var(--g3); }
-        .grade-4 { color: var(--g4); }
-        .grade-5 { color: var(--g5); }
-        .grade-dot { display: inline-block; font-size: 10px; color: #6b7280; border: 1px dashed #9ca3af; border-radius: 50%; width: 18px; height: 18px; line-height: 16px; text-align: center; background: #fff; }
+        .grade-2 { color: var(--t-g2); } .grade-3 { color: var(--t-g3); } .grade-4 { color: var(--t-g4); } .grade-5 { color: var(--t-g5); }
+        .grade-dot { font-size: 10px; border: 1px dashed #9ca3af; border-radius: 50%; width: 18px; height: 18px; line-height: 16px; display: inline-block; }
+        .test-cell { background: #fef2f2; } .test-icon { font-size: 10px; color: #ef4444; font-weight: 700; margin-top: 2px; display: block; }
 
-        .test-icon { display: block; font-size: 10px; color: #ef4444; font-weight: 700; margin-top: 2px; cursor: help; }
-        .test-cell { background: #fef2f2; }
+        /* ================= ИНТЕРФЕЙС УЧЕНИКА (ТЕЛЕФОН) ================= */
+        .student-layout { display: none; background-color: var(--s-bg); color: var(--s-text); min-height: 100vh; padding-bottom: 70px; flex-direction: column; width: 100%; }
+        .student-layout.active { display: flex; }
 
-        .total-cell { background: #f8fafc; font-weight: 700; color: #1f2937; width: 60px; }
+        /* Верхняя панель студента */
+        .s-top-bar { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: var(--s-bg); position: sticky; top: 0; z-index: 50; }
+        .s-avatar { width: 36px; height: 36px; border-radius: 50%; background: #555; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .s-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .s-top-center { display: flex; gap: 10px; }
+        .s-icon-btn { width: 36px; height: 36px; border-radius: 10px; background: var(--s-card); display: flex; align-items: center; justify-content: center; position: relative; border: none; color: white; font-size: 16px; cursor: pointer; }
+        .s-badge { position: absolute; top: -5px; right: -5px; background: var(--s-accent); color: white; font-size: 10px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        
+        /* Календарь */
+        .s-calendar { padding: 0 15px; display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .s-day { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .s-day-name { font-size: 12px; color: var(--s-gray); }
+        .s-day-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; }
+        .s-day.active .s-day-num { background: var(--s-accent); color: white; }
+        .s-day.weekend .s-day-num { color: var(--s-red); }
 
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .header { padding: 10px 15px; flex-direction: column; align-items: flex-start; gap: 10px; }
-            .header .title { font-size: 16px; width: 100%; justify-content: space-between; }
-            .header .controls { width: 100%; justify-content: space-between; }
-            .btn-logout-mobile { display: block; } /* Показываем мобильную кнопку выхода */
-            .journal-container { padding: 0; margin: 10px; border-radius: 0; box-shadow: none; background: transparent; }
-            .table-wrapper { display: none; }
-            .homework-bar { flex-direction: column; align-items: flex-start; gap: 5px; padding: 10px 15px; }
-            .mobile-list { display: block; }
-            .mobile-card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: flex-start; }
-            .mobile-card .info b { display: block; font-size: 15px; color: #111; margin-bottom: 4px; }
-            .mobile-card .grades-preview { font-size: 12px; color: var(--gray); }
-            .mobile-card .dates-preview { font-size: 11px; color: #999; margin-top: 6px; }
-            .mobile-card .dates-preview span { display: inline-block; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; margin-right: 4px; margin-bottom: 4px; }
-            .mobile-card .actions { display: flex; gap: 5px; flex-direction: column; }
-            .mobile-card button { background: var(--blue); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; white-space: nowrap; }
-            .mobile-card button.btn-edit { background: #f3f4f6; color: #4b5563; }
-            .mobile-test-badge { display: inline-block; background: #fef2f2; color: #ef4444; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 4px; font-weight: 600; }
-            .no-dates { font-size: 12px; color: #999; text-align: center; padding: 10px; }
+        /* Кнопки фильтров */
+        .s-filters { padding: 0 15px; display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+        .s-filter-btn { padding: 8px 16px; background: #333; border-radius: 10px; font-size: 14px; font-weight: 500; border: none; color: white; cursor: pointer; }
+        .s-filter-btn.active { background: #444; }
+        .s-filter-icon { width: 38px; height: 38px; background: #333; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: none; color: white; cursor: pointer; }
+        .s-filter-spacer { flex: 1; }
+
+        /* Контент */
+        .s-content { padding: 0 15px; flex: 1; overflow-y: auto; }
+        
+        /* Карточка расписания */
+        .s-card { background: var(--s-card); border-radius: 16px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--s-gray); display: flex; justify-content: space-between; gap: 10px; }
+        .s-card-main { flex: 1; }
+        .s-card-header { display: flex; justify-content: space-between; font-size: 13px; color: var(--s-gray); margin-bottom: 10px; }
+        .s-card-title { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+        .s-tag { display: inline-block; background: #444; padding: 4px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 15px; }
+        .s-hw-block { display: flex; flex-direction: column; gap: 5px; }
+        .s-hw-label { display: flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 500; color: #ccc; }
+        .s-hw-text { font-size: 14px; color: #999; line-height: 1.4; }
+
+        /* Квадрат с оценкой в расписании */
+        .s-grade-box { 
+            width: 40px; height: 40px; 
+            background: #3a3a3c; border-radius: 10px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            cursor: pointer; transition: transform 0.1s; flex-shrink: 0;
         }
-        @media (min-width: 769px) { .mobile-list { display: none; } }
+        .s-grade-box:active { transform: scale(0.95); }
+        .s-grade-box .val { font-size: 18px; font-weight: 700; line-height: 1; }
+        .s-grade-box .count { font-size: 10px; color: var(--s-gray); margin-top: 2px; }
+        .s-grade-box.g5 .val { color: var(--s-green); }
+        .s-grade-box.g4 .val { color: #ff9500; }
+        .s-grade-box.g3 .val { color: var(--s-red); }
+        .s-grade-box.g2 .val { color: var(--s-red); }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
-        .modal { background: #fff; border-radius: 12px; width: 100%; max-width: 480px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); margin: 15px; animation: slideIn 0.2s ease-out; max-height: 90vh; overflow-y: auto; }
+        /* Нижнее меню */
+        .s-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; border-top: 1px solid #333; display: flex; justify-content: space-around; padding: 10px 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 100; }
+        .s-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--s-gray); font-size: 10px; cursor: pointer; border: none; background: none; }
+        .s-nav-item.active { color: white; }
+        .s-nav-icon { font-size: 20px; }
+
+        /* Вкладка "Оценки" */
+        .s-grade-card-list { background: var(--s-card); border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; align-items: center; }
+        .s-grade-num-big { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; flex-shrink: 0; }
+        .s-grade-num-big.g5 { background: rgba(52, 199, 89, 0.2); color: var(--s-green); }
+        .s-grade-num-big.g4 { background: rgba(255, 149, 0, 0.2); color: #ff9500; }
+        .s-grade-num-big.g3 { background: rgba(255, 59, 48, 0.2); color: var(--s-red); }
+        
+        /* ================= МОДАЛЬНЫЕ ОКНА ================= */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: flex-end; }
+        @media (min-width: 769px) { .modal-overlay { align-items: center; } }
+
+        .modal { background: #fff; border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; padding: 24px; max-height: 90vh; overflow-y: auto; color: var(--t-text); animation: slideUp 0.3s ease-out; }
+        @media (min-width: 769px) { .modal { border-radius: 12px; margin: 15px; animation: slideIn 0.2s ease-out; } }
+
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-        .modal-header h3 { font-size: 16px; color: #111; font-weight: 600; line-height: 1.4; }
-        .modal-close { cursor: pointer; font-size: 24px; color: #9ca3af; line-height: 1; padding: 5px; }
-        .modal-close:hover { color: #4b5563; }
 
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .modal-header h3 { font-size: 16px; }
+        .modal-close { cursor: pointer; font-size: 24px; color: #9ca3af; line-height: 1; }
         .modal-row { margin-bottom: 16px; }
-        .modal-row label { display: block; font-size: 12px; color: var(--gray); margin-bottom: 6px; font-weight: 500; }
-        .modal-row select, .modal-row input, .modal-row textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #f9fafb; color: #333; }
-        .modal-row select:focus, .modal-row input:focus, .modal-row textarea:focus { outline: none; border-color: var(--blue); background: #fff; box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1); }
-        .modal-row textarea { resize: vertical; height: 70px; }
-
+        .modal-row label { display: block; font-size: 12px; color: var(--t-gray); margin-bottom: 6px; }
+        .modal-row select, .modal-row input, .modal-row textarea { width: 100%; padding: 10px; border: 1px solid var(--t-border); border-radius: 6px; font-size: 14px; background: #f9fafb; }
+        .modal-row textarea { height: 70px; resize: vertical; }
         .grades-selector { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .grades-selector button { width: 44px; height: 44px; border: 1px solid var(--border); background: #fff; border-radius: 6px; font-size: 18px; font-weight: 700; cursor: pointer; color: #4b5563; }
-        .grades-selector button.active { background: var(--blue); color: white; border-color: var(--blue); transform: scale(1.05); }
-        .grades-selector button:hover:not(.active) { background: #f3f4f6; }
-        
+        .grades-selector button { width: 44px; height: 44px; border: 1px solid var(--t-border); background: #fff; border-radius: 6px; font-size: 18px; font-weight: 700; cursor: pointer; color: #4b5563; }
+        .grades-selector button.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
         .toggle-group { display: flex; align-items: center; gap: 8px; margin-left: 10px; background: #f3f4f6; padding: 5px 10px; border-radius: 20px; }
         .toggle { width: 38px; height: 20px; background: #d1d5db; border-radius: 10px; position: relative; cursor: pointer; transition: 0.2s; }
-        .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        .toggle.active { background: var(--blue); }
+        .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.2s; }
+        .toggle.active { background: var(--t-blue); }
         .toggle.active::after { left: 20px; }
-
-        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
-        .modal-footer button { padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; font-size: 14px; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; border-top: 1px solid var(--t-border); padding-top: 16px; }
+        .modal-footer button { padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; }
         .modal-footer .btn-cancel { background: #f3f4f6; color: #4b5563; }
-        .modal-footer .btn-cancel:hover { background: #e5e7eb; }
-        .modal-footer .btn-save { background: var(--blue); color: white; }
-        .modal-footer .btn-save:hover { background: var(--blue-dark); }
+        .modal-footer .btn-save { background: var(--t-blue); color: white; }
         .modal-footer .btn-delete { background: #fee2e2; color: #ef4444; margin-right: auto; }
-        .modal-footer .btn-delete:hover { background: #fecaca; }
+
+        /* Детали оценки (для ученика в темной теме) */
+        .s-detail-header { text-align: center; margin-bottom: 20px; }
+        .s-detail-grade { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 10px; }
+        .s-detail-grade.g5 { background: rgba(52, 199, 89, 0.2); color: var(--s-green); }
+        .s-detail-grade.g4 { background: rgba(255, 149, 0, 0.2); color: #ff9500; }
+        .s-detail-grade.g3 { background: rgba(255, 59, 48, 0.2); color: var(--s-red); }
+        .s-detail-subject { font-size: 18px; font-weight: 600; }
+        .s-detail-type { font-size: 14px; color: var(--s-gray); }
+        .s-detail-row { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+        .s-detail-label { font-size: 12px; color: var(--s-gray); margin-bottom: 4px; }
+        .s-detail-value { font-size: 15px; }
+
     </style>
 </head>
 <body>
 
+    <!-- ЭКРАН АВТОРИЗАЦИИ -->
     <div id="authScreen" style="display:none;">
         <div class="auth-box">
             <h1>Журнал МЭШ</h1>
             <div id="authError" class="error" style="display:none;"></div>
-            <input type="text" id="loginInput" placeholder="Логин (например, student1)">
-            <input type="password" id="passwordInput" placeholder="Пароль (123456)">
+            <input type="text" id="loginInput" placeholder="Логин">
+            <input type="password" id="passwordInput" placeholder="Пароль">
             <button onclick="login()">Войти</button>
         </div>
     </div>
 
-    <div id="appScreen" style="display:none;">
+    <!-- ИНТЕРФЕЙС УЧИТЕЛЯ (ПК) -->
+    <div id="teacherApp" class="teacher-layout">
         <aside class="sidebar">
             <h2>Мои инструменты</h2>
-            <ul>
-                <li>📊 Расписание</li>
-                <li>📢 Новости</li>
-                <li>🎉 Мероприятия</li>
-            </ul>
+            <ul><li>📊 Расписание</li><li>📢 Новости</li><li>🎉 Мероприятия</li></ul>
             <h2>Учебный процесс</h2>
-            <ul>
-                <li>📚 Учебный план</li>
-                <li>👨‍🎓 Мои классы</li>
-                <li>📝 Домашние задания</li>
-                <li>🚀 Проекты</li>
-            </ul>
+            <ul><li>📚 Учебный план</li><li>👨‍🎓 Мои классы</li><li>📝 Домашние задания</li><li>🚀 Проекты</li></ul>
             <h2>Классное руководство</h2>
-            <ul>
-                <li class="active">📖 Журналы классов</li>
-                <li>🗓 Расписание класса</li>
-                <li>👥 Мой класс</li>
-            </ul>
+            <ul><li class="active">📖 Журналы классов</li><li>🗓 Расписание класса</li><li>👥 Мой класс</li></ul>
             <div class="help-box">
-                <p>Вы вошли как: <strong id="userRoleDisplay"></strong></p>
+                <p>Вы вошли как: <strong id="userRoleDisplayTeacher">Учитель</strong></p>
                 <button onclick="logout()">Выйти</button>
             </div>
         </aside>
 
-        <main class="main-content">
-            <header class="header">
-                <div class="title">
-                    <span>Журнал 5В</span>
-                    <!-- Кнопка выхода для мобильных (скрыта на ПК) -->
-                    <button class="btn-logout-mobile" onclick="logout()">Выйти</button>
-                </div>
-                <div class="controls">
-                    <select id="monthSelect">
-                        <option>Февраль 2024</option>
-                        <option>Март 2024</option>
-                    </select>
-                    <button class="btn-outline" id="btnAddDate" onclick="openAddDateModal()" style="display:none;">📅 Добавить дату</button>
-                    <button class="btn-outline" id="btnTest" onclick="openTestModal()" style="display:none;">📝 Контрольная</button>
+        <main class="t-main">
+            <header class="t-header">
+                <div class="title"><span>Журнал 5В</span></div>
+                <div class="t-controls">
+                    <select id="monthSelect"><option>Февраль 2024</option></select>
+                    <button class="btn-outline" onclick="openAddDateModal()">📅 Добавить дату</button>
+                    <button class="btn-outline" onclick="openTestModal()">📝 Контрольная</button>
                     <button class="btn-primary">Быстрый режим</button>
                 </div>
             </header>
@@ -215,74 +242,99 @@
 
             <div class="homework-bar">
                 <strong>ДЗ:</strong>
-                <span id="homeworkText" class="hw-text">Загрузка...</span>
-                <button class="hw-edit-btn" id="btnEditHw" onclick="openHomeworkModal()" style="display:none;">✏️ Изменить</button>
+                <span id="homeworkText" style="flex:1;">Загрузка...</span>
+                <button class="hw-edit-btn" onclick="openHomeworkModal()">✏️ Изменить</button>
             </div>
 
             <div class="journal-container">
-                <div class="table-wrapper">
-                    <table id="journalTable">
-                        <thead><tr id="tableHeadRow"></tr></thead>
-                        <tbody id="journalBody"></tbody>
-                    </table>
-                </div>
-                <div class="mobile-list" id="mobileList"></div>
+                <table id="journalTable">
+                    <thead><tr id="tableHeadRow"></tr></thead>
+                    <tbody id="journalBody"></tbody>
+                </table>
             </div>
         </main>
     </div>
 
-    <!-- Модалки (без изменений) -->
+    <!-- ИНТЕРФЕЙС УЧЕНИКА (ТЕМНАЯ ТЕМА) -->
+    <div id="studentApp" class="student-layout">
+        
+        <div class="s-top-bar">
+            <div class="s-avatar">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Аватар">
+            </div>
+            <div class="s-top-center">
+                <div class="s-icon-btn">🔥</div>
+                <div class="s-icon-btn">🐢</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <div class="s-icon-btn">🔔<div class="s-badge">49</div></div>
+                <button class="s-icon-btn" onclick="logout()" title="Выйти">🚪</button>
+            </div>
+        </div>
+
+        <div class="s-calendar">
+            <div class="s-day"><div class="s-day-name">Пн</div><div class="s-day-num">23</div></div>
+            <div class="s-day active"><div class="s-day-name">Вт</div><div class="s-day-num">24</div></div>
+            <div class="s-day"><div class="s-day-name">Ср</div><div class="s-day-num">25</div></div>
+            <div class="s-day"><div class="s-day-name">Чт</div><div class="s-day-num">26</div></div>
+            <div class="s-day"><div class="s-day-name">Пт</div><div class="s-day-num">27</div></div>
+            <div class="s-day weekend"><div class="s-day-name">Сб</div><div class="s-day-num">28</div></div>
+            <div class="s-day weekend"><div class="s-day-name">Вс</div><div class="s-day-num">29</div></div>
+        </div>
+
+        <div class="s-filters">
+            <button class="s-filter-btn active">Ноябрь</button>
+            <button class="s-filter-btn">Сегодня</button>
+            <div class="s-filter-spacer"></div>
+            <button class="s-filter-icon">PDF</button>
+            <button class="s-filter-icon">•••</button>
+        </div>
+
+        <div class="s-content" id="studentContent">
+            <!-- Сюда рендерится расписание -->
+        </div>
+
+        <!-- Нижнее меню -->
+        <div class="s-bottom-nav">
+            <button class="s-nav-item active" onclick="switchTab('schedule', this)">
+                <span class="s-nav-icon">📅</span> Расписание
+            </button>
+            <button class="s-nav-item" onclick="switchTab('grades', this)">
+                <span class="s-nav-icon">⭐</span> Оценки
+            </button>
+            <button class="s-nav-item" onclick="switchTab('tasks', this)">
+                <span class="s-nav-icon">✔️</span> Задания
+            </button>
+            <button class="s-nav-item" onclick="switchTab('school', this)">
+                <span class="s-nav-icon">🏫</span> Школа
+            </button>
+            <button class="s-nav-item" onclick="switchTab('portfolio', this)">
+                <span class="s-nav-icon">💼</span> Портфолио
+            </button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКИ ДЛЯ УЧИТЕЛЯ -->
     <div class="modal-overlay" id="gradeModal">
         <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-student-name">Иванов Иван</h3>
-                <span class="modal-close" onclick="closeModal('gradeModal')">&times;</span>
-            </div>
-            <div class="modal-row">
-                <label>Отметка за</label>
+            <div class="modal-header"><h3 id="modal-student-name">Ученик</h3><span class="modal-close" onclick="closeModal('gradeModal')">&times;</span></div>
+            <div class="modal-row"><label>Отметка за</label>
                 <select id="modal-work-type">
-                    <option>Независимая диагностика</option>
-                    <option>Контрольная работа</option>
-                    <option>Самостоятельная работа</option>
-                    <option>Ответ на уроке</option>
-                    <option>Домашнее задание</option>
-                    <option>Диктант</option>
-                    <option>Изложение</option>
-                    <option>Сочинение</option>
-                    <option>Практическая работа</option>
-                    <option>Лабораторная работа</option>
-                    <option>Тест</option>
-                    <option>Проект</option>
-                    <option>Реферат</option>
-                    <option>Зачет</option>
-                    <option>Устный счет</option>
+                    <option>Независимая диагностика</option><option>Контрольная работа</option><option>Самостоятельная работа</option>
+                    <option>Ответ на уроке</option><option>Домашнее задание</option><option>Диктант</option><option>Изложение</option>
+                    <option>Сочинение</option><option>Практическая работа</option><option>Лабораторная работа</option><option>Тест</option>
                 </select>
             </div>
-            <div class="modal-row">
-                <label>Отметка</label>
+            <div class="modal-row"><label>Отметка</label>
                 <div class="grades-selector">
-                    <button class="grade-btn" onclick="selectGrade(5)">5</button>
-                    <button class="grade-btn" onclick="selectGrade(4)">4</button>
-                    <button class="grade-btn" onclick="selectGrade(3)">3</button>
-                    <button class="grade-btn" onclick="selectGrade(2)">2</button>
-                    <div class="toggle-group">
-                        <span style="font-size: 13px; color: #4b5563; font-weight: 500;">Точка</span>
-                        <div class="toggle" id="dotToggle" onclick="toggleDot()"></div>
-                    </div>
+                    <button class="grade-btn" onclick="selectGrade(5)">5</button><button class="grade-btn" onclick="selectGrade(4)">4</button>
+                    <button class="grade-btn" onclick="selectGrade(3)">3</button><button class="grade-btn" onclick="selectGrade(2)">2</button>
+                    <div class="toggle-group"><span style="font-size:12px;">Точка</span><div class="toggle" id="dotToggle" onclick="toggleDot()"></div></div>
                 </div>
             </div>
-            <div class="modal-row">
-                <label>Исправить до</label>
-                <input type="date" id="modal-date" value="2024-02-12">
-            </div>
-            <div class="modal-row">
-                <label>Тема (введите вручную)</label>
-                <input type="text" id="modal-theme" placeholder="Например: Квадратные уравнения">
-            </div>
-            <div class="modal-row">
-                <label>Комментарий к отметке</label>
-                <textarea id="modal-comment" placeholder="Введите здесь комментарий..."></textarea>
-            </div>
+            <div class="modal-row"><label>Исправить до</label><input type="date" id="modal-date"></div>
+            <div class="modal-row"><label>Тема</label><input type="text" id="modal-theme" placeholder="Тема"></div>
+            <div class="modal-row"><label>Комментарий</label><textarea id="modal-comment"></textarea></div>
             <div class="modal-footer">
                 <button class="btn-delete" id="btnDeleteGrade" onclick="deleteGrade()" style="display:none;">Удалить</button>
                 <button class="btn-cancel" onclick="closeModal('gradeModal')">Отмена</button>
@@ -293,550 +345,43 @@
 
     <div class="modal-overlay" id="homeworkModal">
         <div class="modal">
-            <div class="modal-header">
-                <h3>Изменить домашнее задание</h3>
-                <span class="modal-close" onclick="closeModal('homeworkModal')">&times;</span>
-            </div>
-            <div class="modal-row">
-                <label>Предмет</label>
-                <input type="text" id="hw-subject-display" disabled style="background:#eee;">
-            </div>
-            <div class="modal-row">
-                <label>Текст ДЗ</label>
-                <textarea id="hw-input" placeholder="Введите домашнее задание..."></textarea>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('homeworkModal')">Отмена</button>
-                <button class="btn-save" onclick="saveHomework()">Сохранить</button>
-            </div>
+            <div class="modal-header"><h3>Домашнее задание</h3><span class="modal-close" onclick="closeModal('homeworkModal')">&times;</span></div>
+            <div class="modal-row"><label>Текст ДЗ</label><textarea id="hw-input" style="height:100px;"></textarea></div>
+            <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('homeworkModal')">Отмена</button><button class="btn-save" onclick="saveHomework()">Сохранить</button></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="testModal">
         <div class="modal">
-            <div class="modal-header">
-                <h3>Назначить контрольную работу</h3>
-                <span class="modal-close" onclick="closeModal('testModal')">&times;</span>
-            </div>
-            <div class="modal-row">
-                <label>Предмет</label>
-                <select id="test-subject"></select>
-            </div>
-            <div class="modal-row">
-                <label>Дата</label>
-                <select id="test-date"></select>
-            </div>
-            <div class="modal-row">
-                <label>Тема</label>
-                <input type="text" id="test-theme" placeholder="Например: Квадратные уравнения">
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('testModal')">Отмена</button>
-                <button class="btn-save" onclick="saveTest()">Назначить</button>
-            </div>
+            <div class="modal-header"><h3>Назначить контрольную</h3><span class="modal-close" onclick="closeModal('testModal')">&times;</span></div>
+            <div class="modal-row"><label>Предмет</label><select id="test-subject"></select></div>
+            <div class="modal-row"><label>Дата</label><select id="test-date"></select></div>
+            <div class="modal-row"><label>Тема</label><input type="text" id="test-theme"></div>
+            <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('testModal')">Отмена</button><button class="btn-save" onclick="saveTest()">Назначить</button></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="addDateModal">
         <div class="modal">
-            <div class="modal-header">
-                <h3>Добавить новую дату</h3>
-                <span class="modal-close" onclick="closeModal('addDateModal')">&times;</span>
-            </div>
-            <div class="modal-row">
-                <label>Дата (ДД.ММ)</label>
-                <input type="text" id="new-date-input" placeholder="Например: 17.02">
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('addDateModal')">Отмена</button>
-                <button class="btn-save" onclick="addDate()">Добавить</button>
-            </div>
+            <div class="modal-header"><h3>Добавить дату</h3><span class="modal-close" onclick="closeModal('addDateModal')">&times;</span></div>
+            <div class="modal-row"><label>Дата (ДД.ММ)</label><input type="text" id="new-date-input" placeholder="Например: 17.02"></div>
+            <div class="modal-footer"><button class="btn-cancel" onclick="closeModal('addDateModal')">Отмена</button><button class="btn-save" onclick="addDate()">Добавить</button></div>
         </div>
     </div>
 
-    <script>
-        let appData = null;
-        let userRole = null;
-        let userStudentId = null;
-        let currentSubject = "Математика";
-        let currentStudent = null;
-        let currentDate = null;
-        let selectedGrade = null;
-        let isDot = false;
-        let existingGradeKey = null;
-        let dates = [];
-
-        // При загрузке страницы проверяем, сохранен ли вход
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedUser = localStorage.getItem('mesh_user');
-            if (savedUser) {
-                try {
-                    const user = JSON.parse(savedUser);
-                    userRole = user.role;
-                    userStudentId = user.id;
-                    
-                    document.getElementById('authScreen').style.display = 'none';
-                    document.getElementById('appScreen').style.display = 'flex';
-                    document.getElementById('userRoleDisplay').textContent = user.name;
-                    
-                    if (userRole === 'teacher') {
-                        document.getElementById('btnTest').style.display = 'block';
-                        document.getElementById('btnEditHw').style.display = 'flex';
-                        document.getElementById('btnAddDate').style.display = 'block';
-                    } else {
-                        document.getElementById('btnTest').style.display = 'none';
-                        document.getElementById('btnEditHw').style.display = 'none';
-                        document.getElementById('btnAddDate').style.display = 'none';
-                    }
-                    
-                    loadData();
-                } catch (e) {
-                    localStorage.removeItem('mesh_user');
-                    document.getElementById('authScreen').style.display = 'flex';
-                }
-            } else {
-                document.getElementById('authScreen').style.display = 'flex';
-            }
-        });
-
-        async function login() {
-            const login = document.getElementById('loginInput').value;
-            const password = document.getElementById('passwordInput').value;
-            const errorDiv = document.getElementById('authError');
+    <!-- МОДАЛКА ДЕТАЛЕЙ ОЦЕНКИ ДЛЯ УЧЕНИКА -->
+    <div class="modal-overlay" id="studentGradeDetailModal">
+        <div class="modal" style="background: var(--s-card); color: var(--s-text);">
+            <div class="s-detail-header">
+                <div id="s-detail-grade-num" class="s-detail-grade">5</div>
+                <div id="s-detail-subject" class="s-detail-subject">Математика</div>
+                <div id="s-detail-type" class="s-detail-type">Контрольная работа</div>
+            </div>
             
-            try {
-                const res = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ login, password })
-                });
-                
-                const data = await res.json();
-                
-                if (res.ok) {
-                    userRole = data.role;
-                    userStudentId = data.id;
-                    
-                    // Сохраняем данные для автоматического входа
-                    localStorage.setItem('mesh_user', JSON.stringify({
-                        role: data.role,
-                        id: data.id,
-                        name: data.name
-                    }));
-                    
-                    document.getElementById('authScreen').style.display = 'none';
-                    document.getElementById('appScreen').style.display = 'flex';
-                    document.getElementById('userRoleDisplay').textContent = data.name;
-                    
-                    if (userRole === 'teacher') {
-                        document.getElementById('btnTest').style.display = 'block';
-                        document.getElementById('btnEditHw').style.display = 'flex';
-                        document.getElementById('btnAddDate').style.display = 'block';
-                    } else {
-                        document.getElementById('btnTest').style.display = 'none';
-                        document.getElementById('btnEditHw').style.display = 'none';
-                        document.getElementById('btnAddDate').style.display = 'none';
-                    }
-                    
-                    await loadData();
-                } else {
-                    errorDiv.textContent = data.error;
-                    errorDiv.style.display = 'block';
-                }
-            } catch (e) {
-                errorDiv.textContent = 'Ошибка соединения с сервером';
-                errorDiv.style.display = 'block';
-            }
-        }
-
-        function logout() {
-            // Очищаем сохраненные данные
-            localStorage.removeItem('mesh_user');
-            // Перезагружаем страницу, чтобы вернуться на экран входа
-            location.reload();
-        }
-
-        async function loadData() {
-            try {
-                const url = userRole === 'student' 
-                    ? `/api/data?role=student&studentId=${userStudentId}` 
-                    : '/api/data';
-                const response = await fetch(url);
-                appData = await response.json();
-                dates = appData.dates || [];
-                initUI();
-            } catch (e) {
-                console.error("Ошибка загрузки:", e);
-            }
-        }
-
-        function initUI() {
-            renderSubjects();
-            updateHomework();
-            renderTable();
-            renderMobileList();
+            <div class="s-detail-row" id="s-detail-theme-row">
+                <div class="s-detail-label">Тема</div>
+                <div id="s-detail-theme" class="s-detail-value">-</div>
+            </div>
             
-            if (userRole === 'teacher' && dates.length === 0) {
-                document.getElementById('btnTest').style.display = 'none';
-            }
-        }
-
-        function renderSubjects() {
-            const bar = document.getElementById('subjectsBar');
-            bar.innerHTML = '';
-            Object.keys(appData.subjects).forEach(subject => {
-                const btn = document.createElement('button');
-                btn.className = `subject-btn ${subject === currentSubject ? 'active' : ''}`;
-                btn.textContent = subject;
-                btn.onclick = () => {
-                    currentSubject = subject;
-                    renderSubjects();
-                    updateHomework();
-                    renderTable();
-                    renderMobileList();
-                };
-                bar.appendChild(btn);
-            });
-        }
-
-        function updateHomework() {
-            document.getElementById('homeworkText').textContent = appData.subjects[currentSubject].homework || 'Не задано';
-        }
-
-        function renderTable() {
-            const thead = document.getElementById('tableHeadRow');
-            const tbody = document.getElementById('journalBody');
-            const subjectData = appData.subjects[currentSubject];
-
-            if (dates.length === 0) {
-                thead.innerHTML = `<th>Список учеников</th>`;
-                tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:#999;padding:20px;">Нет дат для оценок. Учитель должен добавить даты.</td></tr>`;
-                return;
-            }
-
-            thead.innerHTML = `<th>Список учеников</th>`;
-            dates.forEach(date => {
-                const th = document.createElement('th');
-                const test = subjectData.tests && subjectData.tests.find(t => t.date === date);
-                th.innerHTML = `${date} ${test ? `<span class="test-icon" title="${test.theme}">К</span>` : ''}`;
-                thead.appendChild(th);
-            });
-            thead.innerHTML += `<th class="total-cell">Ср. балл</th>`;
-
-            tbody.innerHTML = '';
-
-            let studentsToShow = userRole === 'student' 
-                ? appData.students.filter(s => s.id === userStudentId)
-                : appData.students;
-
-            studentsToShow.forEach((student, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td class="student-name">${index + 1}. ${student.name}</td>`;
-                
-                let sum = 0, count = 0;
-
-                dates.forEach(date => {
-                    const td = document.createElement('td');
-                    td.className = 'grade-cell';
-                    
-                    if (subjectData.tests && subjectData.tests.find(t => t.date === date)) {
-                        td.classList.add('test-cell');
-                    }
-
-                    const key = `${student.id}-${date}`;
-                    const gradeData = subjectData.grades[key];
-
-                    if (gradeData) {
-                        if (gradeData.isDot) {
-                            td.innerHTML = `<span class="grade-dot grade-${gradeData.grade}">${gradeData.grade}</span>`;
-                        } else {
-                            td.innerHTML = `<span class="grade-${gradeData.grade}">${gradeData.grade}</span>`;
-                            sum += gradeData.grade;
-                            count++;
-                        }
-                    }
-                    
-                    if (userRole === 'teacher') {
-                        td.onclick = () => openGradeModal(student, date);
-                    }
-                    tr.appendChild(td);
-                });
-
-                const avg = count > 0 ? (sum / count).toFixed(2) : '';
-                tr.innerHTML += `<td class="total-cell">${avg}</td>`;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderMobileList() {
-            const list = document.getElementById('mobileList');
-            list.innerHTML = '';
-            const subjectData = appData.subjects[currentSubject];
-
-            let studentsToShow = userRole === 'student' 
-                ? appData.students.filter(s => s.id === userStudentId)
-                : appData.students;
-
-            if (dates.length === 0) {
-                list.innerHTML = '<div class="no-dates">Нет дат для оценок. Учитель должен добавить даты.</div>';
-                return;
-            }
-
-            studentsToShow.forEach((student, index) => {
-                const card = document.createElement('div');
-                card.className = 'mobile-card';
-                
-                let preview = [];
-                let datesPreview = '';
-                dates.forEach(date => {
-                    const key = `${student.id}-${date}`;
-                    if (subjectData.grades[key]) {
-                        preview.push(`<span class="grade-${subjectData.grades[key].grade}">${subjectData.grades[key].grade}</span>`);
-                    }
-                    datesPreview += `<span>${date}</span>`;
-                });
-
-                let testBadge = '';
-                if (subjectData.tests && subjectData.tests.length > 0) {
-                    const validTest = subjectData.tests.find(t => dates.includes(t.date));
-                    if (validTest) {
-                        testBadge = `<span class="mobile-test-badge">📝 Контрольная: ${validTest.date}</span>`;
-                    }
-                }
-
-                let actionsHtml = '';
-                if (userRole === 'teacher' && dates.length > 0) {
-                    actionsHtml = `
-                        <div class="actions">
-                            <button class="btn-edit" onclick="openGradeModalById(${student.id}, '${dates[0]}')">✏️</button>
-                            <button onclick="openGradeModalById(${student.id}, '${dates[0]}')">Оценить</button>
-                        </div>`;
-                }
-
-                card.innerHTML = `
-                    <div class="info">
-                        <b>${index + 1}. ${student.name}</b>
-                        <span class="grades-preview">Оценки: ${preview.length ? preview.join(', ') : 'нет'}</span>
-                        <div class="dates-preview">${datesPreview}</div>
-                        ${testBadge}
-                    </div>
-                    ${actionsHtml}
-                `;
-                list.appendChild(card);
-            });
-        }
-
-        function openGradeModalById(studentId, date) {
-            const student = appData.students.find(s => s.id === studentId);
-            if (!student) return alert('Ученик не найден');
-            openGradeModal(student, date);
-        }
-
-        function openGradeModal(student, date) {
-            if (userRole !== 'teacher') return;
-            
-            currentStudent = student;
-            currentDate = date;
-            existingGradeKey = `${student.id}-${date}`;
-            
-            document.getElementById('modal-student-name').textContent = `${student.name} на ${date}.2024`;
-            
-            selectedGrade = null;
-            isDot = false;
-            document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('dotToggle').classList.remove('active');
-            document.getElementById('modal-comment').value = '';
-            document.getElementById('modal-theme').value = '';
-            
-            const [day, month] = date.split('.');
-            const year = new Date().getFullYear();
-            document.getElementById('modal-date').value = `${year}-${month}-${day}`;
-
-            const subjectData = appData.subjects[currentSubject];
-            const existing = subjectData.grades[existingGradeKey];
-            
-            if (existing) {
-                selectedGrade = existing.grade;
-                isDot = existing.isDot || false;
-                
-                document.querySelectorAll('.grade-btn').forEach(btn => {
-                    if (parseInt(btn.textContent) === existing.grade) btn.classList.add('active');
-                });
-                if (isDot) document.getElementById('dotToggle').classList.add('active');
-                
-                document.getElementById('modal-comment').value = existing.comment || '';
-                document.getElementById('modal-work-type').value = existing.type || 'Ответ на уроке';
-                document.getElementById('modal-theme').value = existing.theme || '';
-                document.getElementById('btnDeleteGrade').style.display = 'block';
-            } else {
-                document.getElementById('btnDeleteGrade').style.display = 'none';
-            }
-
-            document.getElementById('gradeModal').style.display = 'flex';
-        }
-
-        function closeModal(id) {
-            if (!id) return;
-            document.getElementById(id).style.display = 'none';
-        }
-
-        function selectGrade(grade) {
-            selectedGrade = grade;
-            document.querySelectorAll('.grade-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.textContent) === grade) btn.classList.add('active');
-            });
-        }
-
-        function toggleDot() {
-            isDot = !isDot;
-            document.getElementById('dotToggle').classList.toggle('active');
-        }
-
-        async function saveGrade() {
-            if (!selectedGrade) return alert('Выберите оценку');
-            if (!currentStudent || !currentDate) return alert('Ошибка: не выбран ученик или дата');
-            
-            const gradeData = {
-                subject: currentSubject,
-                studentId: currentStudent.id,
-                date: currentDate,
-                grade: selectedGrade,
-                type: document.getElementById('modal-work-type').value,
-                comment: document.getElementById('modal-comment').value,
-                theme: document.getElementById('modal-theme').value,
-                isDot: isDot,
-                dueDate: document.getElementById('modal-date').value,
-                role: userRole
-            };
-
-            const res = await fetch('/api/grade', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(gradeData)
-            });
-
-            if (!res.ok) {
-                const err = await res.json();
-                alert('Ошибка сохранения: ' + (err.error || 'Неизвестная ошибка'));
-                return;
-            }
-
-            await loadData();
-            closeModal('gradeModal');
-        }
-
-        async function deleteGrade() {
-            if (!confirm('Удалить оценку?')) return;
-            
-            const gradeData = {
-                subject: currentSubject,
-                studentId: currentStudent.id,
-                date: currentDate,
-                grade: null,
-                role: userRole
-            };
-
-            await fetch('/api/grade', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(gradeData)
-            });
-
-            await loadData();
-            closeModal('gradeModal');
-        }
-
-        function openHomeworkModal() {
-            if (userRole !== 'teacher') return;
-            document.getElementById('hw-subject-display').value = currentSubject;
-            document.getElementById('hw-input').value = appData.subjects[currentSubject].homework || '';
-            document.getElementById('homeworkModal').style.display = 'flex';
-        }
-
-        async function saveHomework() {
-            const text = document.getElementById('hw-input').value;
-            await fetch('/api/homework', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject: currentSubject, text, role: userRole })
-            });
-            await loadData();
-            closeModal('homeworkModal');
-        }
-
-        function openTestModal() {
-            if (userRole !== 'teacher') return;
-            if (dates.length === 0) return alert('Сначала добавьте дату');
-            
-            const subjectSelect = document.getElementById('test-subject');
-            const dateSelect = document.getElementById('test-date');
-            
-            subjectSelect.innerHTML = Object.keys(appData.subjects).map(s => 
-                `<option value="${s}" ${s === currentSubject ? 'selected' : ''}>${s}</option>`
-            ).join('');
-            
-            dateSelect.innerHTML = dates.map(d => `<option value="${d}">${d}</option>`).join('');
-            
-            document.getElementById('testModal').style.display = 'flex';
-        }
-
-        async function saveTest() {
-            const subject = document.getElementById('test-subject').value;
-            const date = document.getElementById('test-date').value;
-            const theme = document.getElementById('test-theme').value;
-
-            const res = await fetch('/api/test', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject, date, theme, action: 'add', role: userRole })
-            });
-            
-            const result = await res.json();
-            if (!res.ok) {
-                alert(result.error);
-                return;
-            }
-            
-            await loadData();
-            closeModal('testModal');
-        }
-
-        function openAddDateModal() {
-            if (userRole !== 'teacher') return;
-            document.getElementById('new-date-input').value = '';
-            document.getElementById('addDateModal').style.display = 'flex';
-        }
-
-        async function addDate() {
-            const date = document.getElementById('new-date-input').value.trim();
-            if (!date) return alert('Введите дату');
-            
-            if (!/^\d{2}\.\d{2}$/.test(date)) {
-                return alert('Формат даты: ДД.ММ (например, 17.02)');
-            }
-
-            const res = await fetch('/api/date', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ date, role: userRole })
-            });
-            
-            const result = await res.json();
-            if (!res.ok) {
-                alert(result.error);
-                return;
-            }
-            
-            await loadData();
-            closeModal('addDateModal');
-        }
-
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', function(e) {
-                if (e.target === this) this.style.display = 'none';
-            });
-        });
-    </script>
-</body>
-</html>
+            <div class="s-detail-row" id="s-detail-comment-row">
+                <div class="s-detail-label">Ком 
