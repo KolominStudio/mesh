@@ -3,14 +3,17 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 8080; 
+// ВАЖНО: Для работы в облаке/докере нужен process.env.PORT
+const PORT = process.env.PORT || 3000; 
 
 const DATA_DIR = path.join(__dirname, 'data');
 const JOURNAL_FILE = path.join(DATA_DIR, 'journal.json');
 
+// Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Инициализация БД
 function initDB() {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
     
@@ -40,9 +43,9 @@ function initDB() {
             students,
             dates,
             subjects: {
-                "Математика": { grades: {}, homework: "Подготовка к контрольной работе, выполнить задание из файла", tests: [] },
-                "Русский язык": { grades: {}, homework: "Упражнение 154, выучить словарные слова", tests: [] },
-                "Литература": { grades: {}, homework: "Выучить наизусть стихотворение М.Ю. Лермонтова 'Парус' (стр. 208).", tests: [] },
+                "Математика": { grades: {}, homework: "Повторить параграф 24", tests: [] },
+                "Русский язык": { grades: {}, homework: "Упражнение 154", tests: [] },
+                "Литература": { grades: {}, homework: "Прочитать главу 3", tests: [] },
                 "История": { grades: {}, homework: "Параграф 12", tests: [] },
                 "Биология": { grades: {}, homework: "§ 24, вопросы устно", tests: [] },
                 "География": { grades: {}, homework: "Нанести на контурную карту", tests: [] },
@@ -51,26 +54,15 @@ function initDB() {
             }
         };
         fs.writeFileSync(JOURNAL_FILE, JSON.stringify(initialData, null, 2));
-    } else {
-        const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-        let changed = false;
-        if (data.students) {
-            data.students.forEach(s => {
-                if (s.password !== "123456") { s.password = "123456"; changed = true; }
-            });
-        }
-        if (!data.dates) {
-            data.dates = ["12.02", "13.02", "14.02", "15.02", "16.02"];
-            changed = true;
-        }
-        if (changed) fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
+        console.log('✅ База данных создана.');
     }
 }
 
+// --- API ---
+
+// 1. Вход
 app.post('/api/login', (req, res) => {
     const { login, password } = req.body;
-    if (!login || !password) return res.status(400).json({ error: 'Введите логин и пароль' });
-
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
 
     if (data.teacher && data.teacher.login === login && data.teacher.password === password) {
@@ -85,12 +77,12 @@ app.post('/api/login', (req, res) => {
     res.status(401).json({ error: 'Неверный логин или пароль' });
 });
 
+// 2. Получение данных
 app.get('/api/data', (req, res) => {
     const { role, studentId } = req.query;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
 
     if (role === 'student') {
-        if (!studentId) return res.status(400).json({ error: 'Не передан studentId' });
         const id = parseInt(studentId);
         const student = data.students.find(s => s.id === id);
         if (!student) return res.status(404).json({ error: 'Ученик не найден' });
@@ -119,28 +111,52 @@ app.get('/api/data', (req, res) => {
         });
     }
 
+    // Для учителя отдаем всё
     res.json(data);
 });
 
-app.post('/api/date', (req, res) => {
-    const { date, role } = req.body;
-    if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
-    if (!date || !/^\d{2}\.\d{2}$/.test(date)) return res.status(400).json({ error: 'Неверный формат даты' });
+// 3. Сохранение ОЦЕНКИ (Главный фикс)
+app.post('/api/grade', (req, res) => {
+    try {
+        const { subject, studentId, date, grade, type, comment, theme, isDot, dueDate, role } = req.body;
+        
+        // Проверка прав
+        if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
+        if (!subject || !studentId || !date) return res.status(400).json({ error: 'Не хватает полей' });
 
-    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-    if (!data.dates) data.dates = [];
-    if (data.dates.includes(date)) return res.status(400).json({ error: 'Такая дата уже существует' });
-    
-    data.dates.push(date);
-    data.dates.sort((a, b) => {
-        const [d1, m1] = a.split('.').map(Number);
-        const [d2, m2] = b.split('.').map(Number);
-        return (m1 * 100 + d1) - (m2 * 100 + d2);
-    });
-    fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
-    res.json({ success: true, dates: data.dates });
+        const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
+        
+        if (!data.subjects[subject]) return res.status(404).json({ error: 'Предмет не найден' });
+        
+        const key = `${studentId}-${date}`;
+        
+        // Если grade === null, значит удаляем
+        if (grade === null) {
+            delete data.subjects[subject].grades[key];
+            console.log(`🗑 Оценка удалена: ${subject}, ученик ${studentId}, ${date}`);
+        } else {
+            // Сохраняем или обновляем
+            data.subjects[subject].grades[key] = { 
+                grade: Number(grade), 
+                type: type || '', 
+                comment: comment || '', 
+                theme: theme || '', 
+                isDot: isDot || false, 
+                dueDate: dueDate || null 
+            };
+            console.log(`✅ Оценка сохранена: ${subject}, ученик ${studentId}, ${date} -> ${grade}`);
+        }
+        
+        // Записываем обратно в файл
+        fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Ошибка при сохранении оценки:', error);
+        res.status(500).json({ error: 'Ошибка сервера при сохранении' });
+    }
 });
 
+// 4. Домашнее задание
 app.post('/api/homework', (req, res) => {
     const { subject, text, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
@@ -155,23 +171,28 @@ app.post('/api/homework', (req, res) => {
     }
 });
 
-app.post('/api/grade', (req, res) => {
-    const { subject, studentId, date, grade, type, comment, theme, isDot, dueDate, role } = req.body;
+// 5. Даты
+app.post('/api/date', (req, res) => {
+    const { date, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
+    if (!date || !/^\d{2}\.\d{2}$/.test(date)) return res.status(400).json({ error: 'Неверный формат даты' });
 
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-    if (!data.subjects[subject]) return res.status(404).json({ error: 'Предмет не найден' });
+    if (!data.dates) data.dates = [];
+    if (data.dates.includes(date)) return res.status(400).json({ error: 'Такая дата уже есть' });
     
-    const key = `${studentId}-${date}`;
-    if (grade === null) {
-        delete data.subjects[subject].grades[key];
-    } else {
-        data.subjects[subject].grades[key] = { grade, type, comment, theme: theme || '', isDot: isDot || false, dueDate: dueDate || null };
-    }
+    data.dates.push(date);
+    data.dates.sort((a, b) => {
+        const [d1, m1] = a.split('.').map(Number);
+        const [d2, m2] = b.split('.').map(Number);
+        return (m1 * 100 + d1) - (m2 * 100 + d2);
+    });
+    
     fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
-    res.json({ success: true });
+    res.json({ success: true, dates: data.dates });
 });
 
+// 6. Контрольные
 app.post('/api/test', (req, res) => {
     const { subject, date, theme, action, role } = req.body;
     if (role !== 'teacher') return res.status(403).json({ error: 'Доступ запрещен' });
@@ -184,14 +205,16 @@ app.post('/api/test', (req, res) => {
     if (!subjectData.tests) subjectData.tests = [];
 
     if (action === 'add') {
-        if (subjectData.tests.find(t => t.date === date)) return res.status(400).json({ error: 'Контрольная уже есть' });
+        if (subjectData.tests.find(t => t.date === date)) return res.status(400).json({ error: 'Уже есть' });
         subjectData.tests.push({ date, theme, type: 'Контрольная работа' });
     } else if (action === 'remove') {
         subjectData.tests = subjectData.tests.filter(t => t.date !== date);
     }
+    
     fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
     res.json({ success: true, tests: subjectData.tests });
 });
 
+// Запуск
 initDB();
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
