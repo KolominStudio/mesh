@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Журнал МЭШ</title>
+    <title>Журнал/Дневник МЭШ</title>
     <style>
         :root {
             --t-blue: #0078d4;
@@ -85,18 +85,20 @@
         th { background: #f9fafb; font-weight: 600; }
         .date-th { cursor: pointer; color: var(--t-blue); text-decoration: underline; }
         .student-name { text-align: left; font-weight: 600; }
+        
+        /* В таблице учителя тоже сделаем красивую точку */
         .cell { cursor: pointer; font-weight: bold; font-size: 16px; position: relative; }
         .cell:hover { background: #e5f0fa; }
         .g2 { color: var(--t-g2); } .g3 { color: var(--t-g3); } .g4 { color: var(--t-g4); } .g5 { color: var(--t-g5); }
         
-        .dot-mark { font-size: 11px; color: #666; display: block; margin-top: 2px; }
+        .dot-mark { position: absolute; top: 4px; right: 8px; font-size: 14px; color: #666; font-weight: bold; }
 
         /* Мобильный список */
         .mobile-list { display: none; flex-direction: column; gap: 10px; }
         .mobile-card { background: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
         .mobile-card .name { font-weight: 600; }
         .mobile-card .grades-preview { display: flex; gap: 5px; margin-top: 5px; }
-        .mobile-card .grade-preview-item { width: 24px; height: 24px; border-radius: 4px; background: var(--t-bg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
+        .mobile-card .grade-preview-item { width: 24px; height: 24px; border-radius: 4px; background: var(--t-bg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; position: relative; }
 
         /* ===== УЧЕНИК ===== */
         #studentScreen {
@@ -117,20 +119,26 @@
         /* Квадратик оценки */
         .s-grade { 
             width: 44px; height: 44px; background: #3a3a3c; border-radius: 10px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            font-weight: 700; font-size: 16px; cursor: pointer;
-            border: 2px solid transparent; position: relative;
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 700; font-size: 18px; cursor: pointer;
+            border: 2px solid transparent; position: relative; /* Относительное позиционирование для точки */
         }
         .s-grade.g5 { color: #34c759; }
         .s-grade.g4 { color: #ff9500; }
         .s-grade.g3 { color: #ff3b30; }
         
-        /* Красный контур */
+        /* Красный контур для контрольной */
         .s-grade.test-grade { border-color: #ff3b30; background: rgba(255, 59, 48, 0.15); }
 
-        /* Точка и дата в квадратике */
-        .s-grade .grade-num { line-height: 1.1; }
-        .s-grade .dot-date { font-size: 8px; color: #8e8e93; line-height: 1; margin-top: 2px; }
+        /* ТОЧКА СВЕРХУ СПРАВА */
+        .s-grade .dot-indicator {
+            position: absolute;
+            top: -4px;   /* Чуть выше края */
+            right: -2px; /* Чуть правее края */
+            font-size: 26px; /* Размер точки */
+            line-height: 1;
+            color: #fff;
+        }
 
         .s-bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0 25px 0; border-top: 1px solid #333; }
         .s-nav-btn { background: none; border: none; color: var(--s-gray); font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -210,7 +218,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ОЦЕНКИ -->
+    <!-- МОДАЛЬНОЕ ОКНО ОЦЕНКИ (УЧИТЕЛЬ) -->
     <div id="gradeModal" class="modal hidden">
         <div class="modal-content">
             <h3 id="modalTitle">Выставление оценки</h3>
@@ -252,6 +260,46 @@
                     <button class="btn btn-gray" onclick="closeModal('gradeModal')">Отмена</button>
                     <button class="btn btn-blue" onclick="saveGrade()">Сохранить</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОКНО ДЕТАЛЕЙ ОЦЕНКИ (УЧЕНИК) -->
+    <div id="studentGradeDetailModal" class="modal hidden">
+        <div class="modal-content" style="background: var(--s-card); color: var(--s-text);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <h3 style="font-size: 18px;">Детали оценки</h3>
+                <button class="btn" style="background: none; color: var(--s-gray); font-size: 24px; padding: 0; line-height: 1;" onclick="closeModal('studentGradeDetailModal')">&times;</button>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div id="s-detail-grade" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 10px;">5</div>
+                <div id="s-detail-subject" style="font-size: 18px; font-weight: 600;">Математика</div>
+                <div id="s-detail-type" style="font-size: 14px; color: var(--s-gray);">Контрольная работа</div>
+            </div>
+            
+            <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #444;" id="s-detail-theme-row">
+                <div style="font-size: 12px; color: var(--s-gray); margin-bottom: 4px;">Тема</div>
+                <div id="s-detail-theme" style="font-size: 15px;">-</div>
+            </div>
+            
+            <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #444;" id="s-detail-comment-row">
+                <div style="font-size: 12px; color: var(--s-gray); margin-bottom: 4px;">Комментарий учителя</div>
+                <div id="s-detail-comment" style="font-size: 15px;">-</div>
+            </div>
+
+            <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #444;" id="s-detail-date-row">
+                <div style="font-size: 12px; color: var(--s-gray); margin-bottom: 4px;">Исправить до</div>
+                <div id="s-detail-date" style="font-size: 15px;">-</div>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <div style="font-size: 12px; color: var(--s-gray); margin-bottom: 4px;">Дата выставления</div>
+                <div id="s-detail-original-date" style="font-size: 15px;">-</div>
+            </div>
+            
+            <div class="modal-actions" style="border-top: none; padding-top: 0;">
+                <button class="btn" style="width: 100%; background: #3a3a3c; color: white; border-radius: 8px;" onclick="closeModal('studentGradeDetailModal')">Закрыть</button>
             </div>
         </div>
     </div>
@@ -314,9 +362,7 @@
             }
         });
 
-        function showLoginScreen() {
-            document.getElementById('loginScreen').classList.remove('hidden');
-        }
+        function showLoginScreen() { document.getElementById('loginScreen').classList.remove('hidden'); }
 
         async function doLogin() {
             const login = document.getElementById('loginInput').value;
@@ -401,12 +447,9 @@
                     const gradeData = appData.subjects[currentSubject].grades[key];
 
                     if (gradeData) {
-                        if (gradeData.isDot) {
-                            td.innerHTML = `<span class="g${gradeData.grade}">${gradeData.grade}.</span><span class="dot-mark">до ${gradeData.dueDate || '...'}</span>`;
-                        } else {
-                            td.innerText = gradeData.grade;
-                            td.classList.add(`g${gradeData.grade}`);
-                        }
+                        // В журнале учителя показываем цифру, а точку - в правом верхнем углу
+                        td.innerHTML = `${gradeData.grade}${gradeData.isDot ? '<span class="dot-mark">.</span>' : ''}`;
+                        td.classList.add(`g${gradeData.grade}`);
                     }
 
                     td.onclick = function() { openGradeModal(student, date); };
@@ -422,6 +465,7 @@
                     if (appData.subjects[currentSubject].grades[key]) {
                         const g = appData.subjects[currentSubject].grades[key].grade;
                         const isDot = appData.subjects[currentSubject].grades[key].isDot;
+                        // В мобильной карточке тоже с точкой сверху (для простоты просто приписываем)
                         gradesHtml += `<div class="grade-preview-item g${g}">${g}${isDot ? '.' : ''}</div>`;
                     }
                 });
@@ -632,19 +676,17 @@
                             
                             const isTestGrade = gradeItem.type === 'Контрольная работа' || tests.some(t => t.date === d);
                             const testClass = isTestGrade ? 'test-grade' : '';
-                            
-                            // ФОРМИРУЕМ ОТОБРАЖЕНИЕ ОЦЕНКИ С ТОЧКОЙ
-                            let innerHtml = `<span class="grade-num">${g}${isDot ? '.' : ''}</span>`;
-                            if (isDot && gradeItem.dueDate) {
-                                // Форматируем дату (из 2024-02-15 в 15.02)
-                                const parts = gradeItem.dueDate.split('-');
-                                if(parts.length === 3) {
-                                    innerHtml += `<span class="dot-date">до ${parts[2]}.${parts[1]}</span>`;
-                                }
-                            }
 
-                            gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="alert('Оценка: ${g}${isDot ? ' (Точка)' : ''}\\nЗа что: ${gradeItem.type}\\nТема: ${gradeItem.theme || 'Не указана'}\\n${isDot ? 'Исправить до: ' + gradeItem.dueDate : ''}')">
-                                ${innerHtml}
+                            // ТОЧКА СВЕРХУ СПРАВА
+                            const dotHtml = isDot ? '<span class="dot-indicator">.</span>' : '';
+                            
+                            // Сама цифра оценки (без точки)
+                            const value = g;
+
+                            // Клик открывает детали
+                            gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="openStudentGradeDetail('${subj}', '${d}')">
+                                ${dotHtml}
+                                ${value}
                             </div>`;
                         }
                     });
@@ -661,6 +703,44 @@
             } else if (tab === 'grades') {
                 container.innerHTML = '<div style="padding: 40px 20px; text-align: center; color: #8e8e93;">Все ваши оценки отображаются в разделе "Расписание"</div>';
             }
+        }
+
+        // ФУНКЦИЯ ОТКРЫТИЯ ДЕТАЛЕЙ ОЦЕНКИ У УЧЕНИКА
+        function openStudentGradeDetail(subject, date) {
+            const gradeItem = appData.subjects[subject].grades[`${currentUser.id}-${date}`];
+            if (!gradeItem) return;
+
+            // Заполняем большую цифру
+            const gradeNum = document.getElementById('s-detail-grade');
+            // В деталях оставляем просто цифру
+            gradeNum.innerText = gradeItem.grade; 
+            gradeNum.style.color = gradeItem.grade === 5 ? '#34c759' : gradeItem.grade === 4 ? '#ff9500' : '#ff3b30';
+            gradeNum.style.background = gradeItem.grade === 5 ? 'rgba(52, 199, 89, 0.2)' : gradeItem.grade === 4 ? 'rgba(255, 149, 0, 0.2)' : 'rgba(255, 59, 48, 0.2)';
+            
+            document.getElementById('s-detail-subject').innerText = subject;
+            document.getElementById('s-detail-type').innerText = gradeItem.type || 'Ответ на уроке';
+            
+            // Тема
+            document.getElementById('s-detail-theme').innerText = gradeItem.theme || 'Не указана';
+            
+            // Комментарий
+            document.getElementById('s-detail-comment').innerText = gradeItem.comment ? `«${gradeItem.comment}»` : 'Нет комментария';
+            
+            // Исправить до (показываем только если это точка и есть дата)
+            const dateRow = document.getElementById('s-detail-date-row');
+            if (gradeItem.isDot && gradeItem.dueDate) {
+                const parts = gradeItem.dueDate.split('-');
+                const formattedDate = parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : gradeItem.dueDate;
+                document.getElementById('s-detail-date').innerText = formattedDate;
+                dateRow.style.display = 'block';
+            } else {
+                dateRow.style.display = 'none';
+            }
+
+            // Дата выставления (когда учитель поставил оценку)
+            document.getElementById('s-detail-original-date').innerText = date;
+
+            document.getElementById('studentGradeDetailModal').classList.remove('hidden');
         }
     </script>
 </body>
