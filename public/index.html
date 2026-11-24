@@ -28,46 +28,30 @@
 
         .hidden { display: none !important; }
 
-        /* ===== ОБЩИЕ КНОПКИ ===== */
+        /* ===== КНОПКИ ===== */
         .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; border: none; font-weight: 500; font-size: 13px; }
         .btn-blue { background: var(--t-blue); color: white; }
         .btn-red { background: #fee2e2; color: #ef4444; }
         .btn-gray { background: var(--t-border); color: var(--t-text); }
 
-        /* ===== ЭКРАН ВХОДА ===== */
-        #loginScreen {
-            position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 1000; padding: 20px;
-        }
-        #loginScreen h2 { color: var(--t-blue); margin-bottom: 20px; font-size: 24px; }
-        #loginScreen input {
-            width: 100%; max-width: 300px; padding: 12px; margin: 5px 0;
-            border: 1px solid var(--t-border); border-radius: 8px; font-size: 14px;
-        }
-        #loginScreen button {
-            width: 100%; max-width: 300px; padding: 12px; margin-top: 15px;
-            background: var(--t-blue); color: white; border: none; border-radius: 8px;
-            font-size: 16px; font-weight: 600; cursor: pointer;
-        }
+        /* ===== ВХОД ===== */
+        #loginScreen { position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        #loginScreen h2 { color: var(--t-blue); margin-bottom: 20px; }
+        #loginScreen input { width: 100%; max-width: 300px; padding: 12px; margin: 5px 0; border: 1px solid var(--t-border); border-radius: 8px; }
+        #loginScreen button { width: 100%; max-width: 300px; padding: 12px; margin-top: 15px; background: var(--t-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
+        /* ===== МОДАЛКИ ===== */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 15px; }
         .modal-content { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
-        .modal-content h3 { margin-bottom: 15px; font-size: 18px; }
+        .modal-content h3 { margin-bottom: 15px; }
         .modal-content label { display: block; margin-top: 12px; font-size: 12px; color: var(--t-gray); font-weight: 600; text-transform: uppercase; }
-        .modal-content input, .modal-content select, .modal-content textarea {
-            width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--t-border); border-radius: 6px; font-size: 14px;
-        }
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--t-border); border-radius: 6px; }
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: space-between; }
         
         .grades-btns { display: flex; gap: 10px; margin-top: 5px; align-items: center; }
-        .grades-btns button {
-            flex: 1; height: 45px; border: 1px solid var(--t-border); background: #fff;
-            border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; color: var(--t-text);
-        }
+        .grades-btns button { flex: 1; height: 45px; border: 1px solid var(--t-border); background: #fff; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; }
         .grades-btns button.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
 
-        /* Переключатель точки */
         .toggle-group { display: flex; align-items: center; gap: 8px; margin-left: auto; background: #f3f4f6; padding: 5px 10px; border-radius: 20px; cursor: pointer; }
         .toggle { width: 36px; height: 20px; background: #ccc; border-radius: 10px; position: relative; transition: 0.2s; }
         .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 0.2s; }
@@ -75,7 +59,7 @@
         .toggle.active::after { left: 18px; }
 
         /* ===== УЧИТЕЛЬ ===== */
-        #teacherScreen { display: flex; height: 100vh; width: 100%; }
+        #teacherScreen { display: flex; height: 100vh; }
         .sidebar { width: 260px; background: #fff; border-right: 1px solid var(--t-border); padding: 20px; display: flex; flex-direction: column; }
         .sidebar h3 { color: var(--t-blue); margin-bottom: 20px; }
         .sidebar ul { list-style: none; }
@@ -86,33 +70,31 @@
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .header { background: #fff; padding: 15px 20px; border-bottom: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
         .header .title { font-size: 18px; font-weight: 700; color: var(--t-blue); }
-        .controls { display: flex; gap: 10px; align-items: center; }
+        .controls { display: flex; gap: 10px; }
 
         .subjects { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 10px; overflow-x: auto; }
         .subjects::-webkit-scrollbar { display: none; }
-        .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 13px; font-weight: 500; color: var(--t-text); }
+        .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 13px; }
         .subject-btn.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
 
         .content-area { flex: 1; overflow: auto; padding: 20px; }
 
-        /* Таблица */
         .desktop-table { display: block; width: 100%; }
         table { width: 100%; border-collapse: collapse; background: #fff; min-width: 800px; }
         th, td { border: 1px solid var(--t-border); padding: 12px; text-align: center; }
         th { background: #f9fafb; font-weight: 600; }
         .date-th { cursor: pointer; color: var(--t-blue); text-decoration: underline; }
-        .date-th:hover { background: #e5f0fa; }
         .student-name { text-align: left; font-weight: 600; }
         .cell { cursor: pointer; font-weight: bold; font-size: 16px; position: relative; }
         .cell:hover { background: #e5f0fa; }
         .g2 { color: var(--t-g2); } .g3 { color: var(--t-g3); } .g4 { color: var(--t-g4); } .g5 { color: var(--t-g5); }
         
-        .dot-mark { font-size: 12px; color: #666; font-style: italic; display: block; margin-top: 2px; }
+        .dot-mark { font-size: 11px; color: #666; display: block; margin-top: 2px; }
 
         /* Мобильный список */
         .mobile-list { display: none; flex-direction: column; gap: 10px; }
         .mobile-card { background: #fff; padding: 15px; border-radius: 8px; border: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
-        .mobile-card .name { font-weight: 600; font-size: 15px; }
+        .mobile-card .name { font-weight: 600; }
         .mobile-card .grades-preview { display: flex; gap: 5px; margin-top: 5px; }
         .mobile-card .grade-preview-item { width: 24px; height: 24px; border-radius: 4px; background: var(--t-bg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
 
@@ -132,8 +114,9 @@
         
         .s-grades-container { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; max-width: 50%; }
         
+        /* Квадратик оценки */
         .s-grade { 
-            width: 42px; height: 42px; background: #3a3a3c; border-radius: 10px; 
+            width: 44px; height: 44px; background: #3a3a3c; border-radius: 10px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             font-weight: 700; font-size: 16px; cursor: pointer;
             border: 2px solid transparent; position: relative;
@@ -142,12 +125,12 @@
         .s-grade.g4 { color: #ff9500; }
         .s-grade.g3 { color: #ff3b30; }
         
-        /* Красный контур для контрольной */
+        /* Красный контур */
         .s-grade.test-grade { border-color: #ff3b30; background: rgba(255, 59, 48, 0.15); }
 
-        /* Точка у ученика */
-        .s-grade .dot-indicator { font-size: 18px; line-height: 1; margin-bottom: -2px; }
-        .s-grade .date-indicator { font-size: 9px; color: #8e8e93; line-height: 1; margin-top: 2px; }
+        /* Точка и дата в квадратике */
+        .s-grade .grade-num { line-height: 1.1; }
+        .s-grade .dot-date { font-size: 8px; color: #8e8e93; line-height: 1; margin-top: 2px; }
 
         .s-bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0 25px 0; border-top: 1px solid #333; }
         .s-nav-btn { background: none; border: none; color: var(--s-gray); font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -171,7 +154,7 @@
     <!-- ВХОД -->
     <div id="loginScreen" class="hidden">
         <h2>Журнал МЭШ</h2>
-        <div id="loginError" style="color: red; font-size: 13px; margin-bottom: 10px; text-align: center;"></div>
+        <div id="loginError" style="color: red; font-size: 13px; margin-bottom: 10px;"></div>
         <input type="text" id="loginInput" placeholder="Логин">
         <input type="password" id="passwordInput" placeholder="Пароль">
         <button onclick="doLogin()">Войти</button>
@@ -248,7 +231,6 @@
                 <button type="button" onclick="selectGrade(3)">3</button>
                 <button type="button" onclick="selectGrade(2)">2</button>
                 
-                <!-- ПЕРЕКЛЮЧАТЕЛЬ ТОЧКИ -->
                 <div class="toggle-group" onclick="toggleDot()">
                     <span style="font-size:12px; font-weight:bold;">Точка</span>
                     <div class="toggle" id="dotToggle"></div>
@@ -278,9 +260,8 @@
     <div id="dateModal" class="modal hidden">
         <div class="modal-content">
             <h3 id="dateModalTitle">Настройки дня</h3>
-            
             <label>Домашнее задание на этот день</label>
-            <textarea id="dateHwInput" rows="3" placeholder="Введите ДЗ..."></textarea>
+            <textarea id="dateHwInput" rows="3"></textarea>
             
             <label style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">Контрольная работа</label>
             <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
@@ -309,7 +290,6 @@
     </div>
 
     <script>
-        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let currentUser = null;
         let appData = null;
         let currentSubject = "Математика";
@@ -318,7 +298,7 @@
         let selectedGrade = null;
         let isDotSelected = false;
 
-        // --- АВТОМАТИЧЕСКИЙ ВХОД (ПРОВЕРКА LOCALSTORAGE) ---
+        // Автоматический вход
         document.addEventListener('DOMContentLoaded', async () => {
             const savedUser = localStorage.getItem('mesh_user');
             if (savedUser) {
@@ -336,11 +316,8 @@
 
         function showLoginScreen() {
             document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('teacherScreen').classList.add('hidden');
-            document.getElementById('studentScreen').classList.add('hidden');
         }
 
-        // --- АВТОРИЗАЦИЯ ---
         async function doLogin() {
             const login = document.getElementById('loginInput').value;
             const pass = document.getElementById('passwordInput').value;
@@ -356,7 +333,6 @@
 
                 if (res.ok) {
                     currentUser = data;
-                    // СОХРАНЯЕМ СЕССИЮ
                     localStorage.setItem('mesh_user', JSON.stringify(data));
                     errorDiv.innerText = "";
                     document.getElementById('loginScreen').classList.add('hidden');
@@ -374,7 +350,6 @@
             location.reload();
         }
 
-        // --- ЗАГРУЗКА ДАННЫХ ---
         async function loadAppData() {
             const url = currentUser.role === 'student' 
                 ? `/api/data?role=student&studentId=${currentUser.id}` 
@@ -391,7 +366,7 @@
             }
         }
 
-        // --- ИНТЕРФЕЙС УЧИТЕЛЯ ---
+        // --- УЧИТЕЛЬ ---
         function renderTeacherUI() {
             const subBar = document.getElementById('subjectsBar');
             subBar.innerHTML = '';
@@ -416,7 +391,6 @@
             mobileList.innerHTML = '';
 
             appData.students.forEach(student => {
-                // Таблица ПК
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td class="student-name">${student.name}</td>`;
                 
@@ -428,8 +402,7 @@
 
                     if (gradeData) {
                         if (gradeData.isDot) {
-                            // Отображение точки (маленькая оценка с датой)
-                            td.innerHTML = `<span class="g${gradeData.grade}">${gradeData.grade}.</span> <span class="dot-mark">до ${gradeData.dueDate || '...'}</span>`;
+                            td.innerHTML = `<span class="g${gradeData.grade}">${gradeData.grade}.</span><span class="dot-mark">до ${gradeData.dueDate || '...'}</span>`;
                         } else {
                             td.innerText = gradeData.grade;
                             td.classList.add(`g${gradeData.grade}`);
@@ -441,10 +414,8 @@
                 });
                 tbody.appendChild(tr);
 
-                // Карточка Телефон
                 const card = document.createElement('div');
                 card.className = 'mobile-card';
-                
                 let gradesHtml = '';
                 appData.dates.forEach(date => {
                     const key = `${student.id}-${date}`;
@@ -489,12 +460,9 @@
                 if (b.innerText == selectedGrade) b.classList.add('active');
             });
 
-            // Настройка точки
             const dotToggle = document.getElementById('dotToggle');
-            if (isDotSelected) dotToggle.classList.add('active');
-            else dotToggle.classList.remove('active');
+            if (isDotSelected) dotToggle.classList.add('active'); else dotToggle.classList.remove('active');
 
-            // Настройка даты исправления
             const dateLabel = document.getElementById('dateLabel');
             const dateInput = document.getElementById('inputDate');
             
@@ -536,13 +504,10 @@
             }
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         async function saveGrade() {
             if (!selectedGrade) return alert("Выберите оценку!");
-
             const dueDate = isDotSelected ? document.getElementById('inputDate').value : null;
 
             await fetch('/api/grade', {
@@ -567,23 +532,17 @@
         }
 
         async function deleteGrade() {
-            if (!confirm('Удалить эту оценку?')) return;
+            if (!confirm('Удалить?')) return;
             await fetch('/api/grade', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    role: currentUser.role,
-                    subject: currentSubject,
-                    studentId: activeCell.studentId,
-                    date: activeCell.date,
-                    grade: null
-                })
+                body: JSON.stringify({ role: currentUser.role, subject: currentSubject, studentId: activeCell.studentId, date: activeCell.date, grade: null })
             });
             closeModal('gradeModal');
             await loadAppData();
         }
 
-        // --- НАСТРОЙКА ДНЯ ---
+        // --- ДАТА / КОНТРОЛЬНАЯ ---
         function openDateModal(date) {
             activeDate = date;
             document.getElementById('dateModalTitle').innerText = `Настройки на ${date}`;
@@ -595,7 +554,6 @@
             document.getElementById('isTestCheckbox').checked = !!hasTest;
             document.getElementById('dateTestTheme').value = hasTest ? hasTest.theme : '';
             document.getElementById('dateTestTheme').style.display = hasTest ? 'block' : 'none';
-
             document.getElementById('dateModal').classList.remove('hidden');
         }
 
@@ -647,7 +605,7 @@
             await loadAppData();
         }
 
-        // --- ИНТЕРФЕЙС УЧЕНИКА ---
+        // --- УЧЕНИК ---
         function switchStudentTab(tab) {
             document.querySelectorAll('.s-nav-btn').forEach(b => b.classList.remove('active'));
             if(tab === 'schedule') document.querySelectorAll('.s-nav-btn')[0].classList.add('active');
@@ -674,15 +632,19 @@
                             
                             const isTestGrade = gradeItem.type === 'Контрольная работа' || tests.some(t => t.date === d);
                             const testClass = isTestGrade ? 'test-grade' : '';
-                            const dotClass = isDot ? 'dot-indicator' : '';
                             
-                            let innerHtml = `${g}${isDot ? '.' : ''}`;
+                            // ФОРМИРУЕМ ОТОБРАЖЕНИЕ ОЦЕНКИ С ТОЧКОЙ
+                            let innerHtml = `<span class="grade-num">${g}${isDot ? '.' : ''}</span>`;
                             if (isDot && gradeItem.dueDate) {
-                                innerHtml += `<span class="date-indicator">до ${gradeItem.dueDate}</span>`;
+                                // Форматируем дату (из 2024-02-15 в 15.02)
+                                const parts = gradeItem.dueDate.split('-');
+                                if(parts.length === 3) {
+                                    innerHtml += `<span class="dot-date">до ${parts[2]}.${parts[1]}</span>`;
+                                }
                             }
 
-                            gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="alert('Оценка: ${g}\\nЗа что: ${gradeItem.type}\\nТема: ${gradeItem.theme || 'Не указана'}')">
-                                <span class="${dotClass}">${innerHtml}</span>
+                            gradesHtml += `<div class="s-grade g${g} ${testClass}" onclick="alert('Оценка: ${g}${isDot ? ' (Точка)' : ''}\\nЗа что: ${gradeItem.type}\\nТема: ${gradeItem.theme || 'Не указана'}\\n${isDot ? 'Исправить до: ' + gradeItem.dueDate : ''}')">
+                                ${innerHtml}
                             </div>`;
                         }
                     });
