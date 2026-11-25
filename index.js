@@ -25,15 +25,15 @@ function initDB() {
             "Яковлев Тимур", "Яковлева Есения", "Антонов Марк", "Борисова Варвара", "Виноградов Владислав"
         ];
 
-        // ГЕНЕРАЦИЯ ВСЕХ ДАТ С 24.11.2026 ПО 25.05.2027 (ТОЛЬКО БУДНИЕ ДНИ)
+        // Генерация дат (будни) с 24.11.2026 по 25.05.2027
         const columns = [];
-        let currentDate = new Date(2026, 10, 24); // 24 ноября 2026
-        const endDate = new Date(2027, 4, 25); // 25 мая 2027
+        let currentDate = new Date(2026, 10, 24);
+        const endDate = new Date(2027, 4, 25);
         let colId = 1;
 
         while (currentDate <= endDate) {
             const day = currentDate.getDay();
-            if (day !== 0 && day !== 6) { // Пропускаем Сб и Вс
+            if (day !== 0 && day !== 6) { 
                 const d = String(currentDate.getDate()).padStart(2, '0');
                 const m = String(currentDate.getMonth() + 1).padStart(2, '0');
                 columns.push({ id: colId++, date: `${d}.${m}`, type: 'Урок', theme: '' });
@@ -45,7 +45,7 @@ function initDB() {
             class: "5В",
             teachers: [{ id: 1, login: "Tim", password: "Px+j812ba1", name: "Тим Тимофеевич" }],
             students: studentNames.map((name, i) => ({ id: i + 1, name, login: `student${i+1}`, password: "123456" })),
-            columns: columns, // Сохраняем все сгенерированные столбцы
+            columns: columns, 
             subjects: {
                 "Математика": { grades: {}, homework: "Повторить параграф 24", tests: [], teacherId: 1 },
                 "Русский язык": { grades: {}, homework: "Упражнение 154", tests: [], teacherId: 1 },
@@ -56,14 +56,13 @@ function initDB() {
             substitutions: [] 
         };
         fs.writeFileSync(JOURNAL_FILE, JSON.stringify(initialData, null, 2));
-        console.log('✅ База данных создана. Сгенерировано столбцов:', columns.length);
     }
 }
 
-// API Вход
+// API
 app.post('/api/login', (req, res) => {
-    const { login, password } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
+    const { login, password } = req.body;
 
     const teacher = data.teachers.find(t => t.login === login && t.password === password);
     if (teacher) return res.json({ role: 'teacher', name: teacher.name, id: teacher.id, login: teacher.login });
@@ -74,7 +73,6 @@ app.post('/api/login', (req, res) => {
     res.status(401).json({ error: 'Неверный логин или пароль' });
 });
 
-// Получить данные
 app.get('/api/data', (req, res) => {
     const { role, studentId } = req.query;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
@@ -94,19 +92,15 @@ app.get('/api/data', (req, res) => {
         }
         return res.json({ 
             class: data.class, student, students: [student], subjects: filteredSubjects, 
-            columns: data.columns || [],
-            teachers: data.teachers, substitutions: data.substitutions
+            columns: data.columns || [], teachers: data.teachers, substitutions: data.substitutions
         });
     }
-
     res.json(data);
 });
 
-// Сохранение оценки
 app.post('/api/grade', (req, res) => {
     const { subject, studentId, columnId, grade, comment } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-    
     const key = `${studentId}-${columnId}`;
     
     if (grade === null) delete data.subjects[subject].grades[key];
@@ -116,7 +110,6 @@ app.post('/api/grade', (req, res) => {
     res.json({ success: true });
 });
 
-// Добавление нового столбца (Урока)
 app.post('/api/column', (req, res) => {
     const { date, type, theme, hw } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
@@ -124,17 +117,13 @@ app.post('/api/column', (req, res) => {
     const newId = data.columns.length > 0 ? Math.max(...data.columns.map(c => c.id)) + 1 : 1;
     data.columns.push({ id: newId, date, type, theme });
     
-    // Сортируем по дате
     data.columns.sort((a, b) => {
         const [d1, m1] = a.date.split('.').map(Number);
         const [d2, m2] = b.date.split('.').map(Number);
-        if (m1 !== m2) return m1 - m2;
-        return d1 - d2;
+        return (m1 * 100 + d1) - (m2 * 100 + d2);
     });
 
-    // Обновляем ДЗ и контрольную
     if (hw) data.subjects[req.body.subject].homework = hw;
-    
     if (type === 'Контрольная работа') {
         const subj = data.subjects[req.body.subject];
         if (!subj.tests) subj.tests = [];
@@ -143,60 +132,6 @@ app.post('/api/column', (req, res) => {
 
     fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
     res.json({ success: true, columns: data.columns });
-});
-
-// --- АДМИНИСТРИРОВАНИЕ ---
-app.post('/api/admin/student', (req, res) => {
-    const { action, studentData, studentId } = req.body;
-    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-
-    if (action === 'add') {
-        const newId = data.students.length > 0 ? Math.max(...data.students.map(s => s.id)) + 1 : 1;
-        data.students.push({ id: newId, name: studentData.name, login: studentData.login, password: studentData.password });
-    } else if (action === 'edit') {
-        const s = data.students.find(s => s.id === studentId);
-        if (s) { s.name = studentData.name; s.login = studentData.login; s.password = studentData.password; }
-    } else if (action === 'delete') {
-        data.students = data.students.filter(s => s.id !== studentId);
-        for (const subj in data.subjects) {
-            for (const key in data.subjects[subj].grades) {
-                if (key.startsWith(`${studentId}-`)) delete data.subjects[subj].grades[key];
-            }
-        }
-    }
-    fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
-    res.json({ success: true });
-});
-
-app.post('/api/admin/teacher', (req, res) => {
-    const { action, teacherData, teacherId } = req.body;
-    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-
-    if (action === 'add') {
-        const newId = data.teachers.length > 0 ? Math.max(...data.teachers.map(t => t.id)) + 1 : 1;
-        data.teachers.push({ id: newId, name: teacherData.name, login: teacherData.login, password: teacherData.password });
-    } else if (action === 'edit') {
-        const t = data.teachers.find(t => t.id === teacherId);
-        if (t) { t.name = teacherData.name; t.login = teacherData.login; t.password = teacherData.password; }
-    } else if (action === 'delete') {
-        if (data.teachers.length > 1) data.teachers = data.teachers.filter(t => t.id !== teacherId);
-        else return res.status(400).json({ error: 'Нельзя удалить последнего учителя' });
-    }
-    fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
-    res.json({ success: true });
-});
-
-app.post('/api/admin/my-profile', (req, res) => {
-    const { teacherId, newData } = req.body;
-    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
-    const t = data.teachers.find(t => t.id === teacherId);
-    if (t) {
-        t.name = newData.name;
-        t.login = newData.login;
-        t.password = newData.password;
-        fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
-        res.json({ success: true, updatedTeacher: t });
-    } else res.status(404).json({ error: 'Учитель не найден' });
 });
 
 app.post('/api/admin/substitution', (req, res) => {
@@ -211,6 +146,50 @@ app.post('/api/admin/substitution', (req, res) => {
     }
     fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
     res.json({ success: true, substitutions: data.substitutions });
+});
+
+// Остальные API (ученики, учителя) оставляем как были...
+app.post('/api/admin/student', (req, res) => {
+    const { action, studentData, studentId } = req.body;
+    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
+    if (action === 'add') {
+        const newId = data.students.length > 0 ? Math.max(...data.students.map(s => s.id)) + 1 : 1;
+        data.students.push({ id: newId, name: studentData.name, login: studentData.login, password: studentData.password });
+    } else if (action === 'edit') {
+        const s = data.students.find(s => s.id === studentId);
+        if (s) { s.name = studentData.name; s.login = studentData.login; s.password = studentData.password; }
+    } else if (action === 'delete') {
+        data.students = data.students.filter(s => s.id !== studentId);
+    }
+    fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
+    res.json({ success: true });
+});
+
+app.post('/api/admin/teacher', (req, res) => {
+    const { action, teacherData, teacherId } = req.body;
+    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
+    if (action === 'add') {
+        const newId = data.teachers.length > 0 ? Math.max(...data.teachers.map(t => t.id)) + 1 : 1;
+        data.teachers.push({ id: newId, name: teacherData.name, login: teacherData.login, password: teacherData.password });
+    } else if (action === 'edit') {
+        const t = data.teachers.find(t => t.id === teacherId);
+        if (t) { t.name = teacherData.name; t.login = teacherData.login; t.password = teacherData.password; }
+    } else if (action === 'delete') {
+        if (data.teachers.length > 1) data.teachers = data.teachers.filter(t => t.id !== teacherId);
+    }
+    fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
+    res.json({ success: true });
+});
+
+app.post('/api/admin/my-profile', (req, res) => {
+    const { teacherId, newData } = req.body;
+    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
+    const t = data.teachers.find(t => t.id === teacherId);
+    if (t) {
+        t.name = newData.name; t.login = newData.login; t.password = newData.password;
+        fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
+        res.json({ success: true, updatedTeacher: t });
+    }
 });
 
 initDB();
