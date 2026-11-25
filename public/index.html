@@ -44,60 +44,38 @@
         .sidebar .logout { margin-top: auto; background: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .header { background: #fff; padding: 15px 20px; border-bottom: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
+        .header { background: #fff; padding: 15px 20px; border-bottom: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         
         .subjects { background: #fff; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 10px; overflow-x: auto; }
         .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; }
         .subject-btn.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
 
-        /* Контейнер таблицы для горизонтальной прокрутки */
-        .table-responsive { flex: 1; overflow: auto; position: relative; }
+        /* Кнопки управления */
+        .controls-bar { background: #f8fafc; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .hw-display { font-size: 13px; color: var(--t-gray); margin-right: auto; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Контейнер таблицы */
+        .table-responsive { flex: 1; overflow: auto; position: relative; background: #fff;}
         
-        table { width: max-content; border-collapse: collapse; background: #fff; }
+        table { width: max-content; border-collapse: collapse; }
         
         /* МАЛЕНЬКИЕ КЛЕТКИ */
-        th, td { 
-            border: 1px solid var(--t-border); 
-            padding: 0; 
-            text-align: center; 
-            height: 28px; /* Маленькая высота */
-            min-width: 35px; /* Маленькая ширина */
-            font-size: 12px;
-        }
+        th, td { border: 1px solid var(--t-border); padding: 0; text-align: center; height: 28px; min-width: 35px; font-size: 12px; }
+        th { background: #f9fafb; font-weight: 600; padding: 4px; position: sticky; top: 0; z-index: 10; }
         
-        th { 
-            background: #f9fafb; font-weight: 600; padding: 4px; 
-            position: sticky; top: 0; z-index: 10;
-        }
-        
-        /* Дата и тип в шапке */
         .th-date { display: block; font-weight: bold; color: var(--t-blue); font-size: 11px; }
         .th-type { display: block; font-size: 9px; color: var(--t-gray); margin-top: 2px; }
 
-        /* Имя ученика слева (прилипает при прокрутке) */
-        .student-name { 
-            text-align: left; font-weight: 600; padding-left: 8px; font-size: 12px; 
-            min-width: 160px; position: sticky; left: 0; background: #fff; z-index: 5; 
-            border-right: 2px solid #ccc;
-        }
-        
-        .cell { 
-            cursor: pointer; font-weight: bold; font-size: 13px; 
-            color: #1f2937; transition: background 0.1s;
-        }
+        /* Левая колонка учеников */
+        .student-name { text-align: left; font-weight: 600; padding-left: 8px; font-size: 12px; min-width: 160px; position: sticky; left: 0; background: #fff; z-index: 5; border-right: 2px solid #ccc; }
+        .cell { cursor: pointer; font-weight: bold; font-size: 13px; color: #1f2937; }
         .cell:hover { background: #e5f0fa; }
 
-        .add-col-btn { background: #f0fdf4; color: #16a34a; border: 1px dashed #16a34a; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; height: 100%; padding: 4px;}
-
-        /* Мобильный список учителя */
+        /* Мобильный список */
         .mobile-list { display: none; flex-direction: column; gap: 10px; padding: 10px; }
         .mobile-card { background: #fff; padding: 10px; border-radius: 8px; border: 1px solid var(--t-border); display: flex; justify-content: space-between; align-items: center; }
         .mobile-card .grades-preview { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
-        .mobile-card .grade-preview-item { 
-            width: 28px; height: 28px; border-radius: 6px; background: #e5e7eb; color: #1f2937;
-            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; 
-            cursor: pointer;
-        }
+        .mobile-card .grade-preview-item { width: 28px; height: 28px; border-radius: 6px; background: #e5e7eb; color: #1f2937; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 13px; cursor: pointer; }
 
         /* Ученик */
         #studentScreen { display: flex; flex-direction: column; background: var(--s-bg); color: var(--s-text); height: 100vh; width: 100%; max-width: 600px; margin: 0 auto; position: relative; }
@@ -120,17 +98,8 @@
         .s-test-badge { display: inline-block; background: rgba(255, 59, 48, 0.1); color: #ff3b30; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 5px; border: 1px solid #ff3b30; align-self: flex-start; }
         .s-card-hw { font-size: 13px; color: var(--s-gray); margin-top: 5px; }
         
-        /* МАЛЕНЬКИЕ КВАДРАТИКИ У УЧЕНИКА */
-        .s-grade { 
-            width: 36px; height: 36px; background: #3a3a3c; border-radius: 8px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 700; font-size: 15px; cursor: pointer; 
-            border: 2px solid transparent; position: relative;
-            color: #fff;
-        }
-        /* Только красный контур для контрольной */
+        .s-grade { width: 36px; height: 36px; background: #3a3a3c; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; cursor: pointer; border: 2px solid transparent; position: relative; color: #fff; }
         .s-grade.test-grade { border-color: #ff3b30; background: #3a3a3c; }
-        .s-grade .dot-indicator { position: absolute; top: -4px; right: -2px; font-size: 22px; color: #fff; }
 
         .s-bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0 25px 0; border-top: 1px solid #333; }
         .s-nav-btn { background: none; border: none; color: var(--s-gray); font-size: 11px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -175,6 +144,14 @@
             <!-- Вкладка Журнал -->
             <div id="teacherView-journal" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
                 <div class="subjects" id="subjectsBar"></div>
+                
+                <!-- Панель управления -->
+                <div class="controls-bar">
+                    <button class="btn btn-green" onclick="openAddColumnModal()">+ Добавить столбец</button>
+                    <button class="btn btn-gray" onclick="openHwModal()">✏️ Изменить общее ДЗ</button>
+                    <div class="hw-display" id="hwDisplay">ДЗ: -</div>
+                </div>
+
                 <div class="table-responsive">
                     <table>
                         <thead id="tableHead"></thead>
@@ -278,6 +255,19 @@
             <div class="modal-actions">
                 <button class="btn btn-gray" onclick="closeModal('addColumnModal')">Отмена</button>
                 <button class="btn btn-blue" onclick="saveNewColumn()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка общего ДЗ -->
+    <div id="hwModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Общее ДЗ на предмет</h3>
+            <label>Текст задания</label>
+            <textarea id="hwInput" rows="4"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-gray" onclick="closeModal('hwModal')">Отмена</button>
+                <button class="btn btn-blue" onclick="saveHw()">Сохранить</button>
             </div>
         </div>
     </div>
@@ -398,10 +388,12 @@
                 subBar.appendChild(btn);
             });
 
+            document.getElementById('hwDisplay').innerText = `ДЗ: ${appData.subjects[currentSubject].homework || 'Не задано'}`;
+
             const thead = document.getElementById('tableHead');
             thead.innerHTML = `<tr><th class="student-name">Ученик</th>`;
             
-            // ВЫВОДИМ ВСЕ СТОЛБЦЫ С ДАТАМИ С 24.11.2026 по 25.05.2027
+            // ВЫВОДИМ ВСЕ СТОЛБЦЫ
             appData.columns.forEach(col => {
                 thead.innerHTML += `
                     <th>
@@ -410,7 +402,6 @@
                     </th>
                 `;
             });
-            thead.innerHTML += `<th style="width: 35px;"><button class="add-col-btn" onclick="openAddColumnModal()">+</button></th>`;
             thead.innerHTML += `</tr>`;
 
             const tbody = document.getElementById('tableBody');
@@ -419,7 +410,6 @@
             mobileList.innerHTML = '';
 
             appData.students.forEach(student => {
-                // Строка для ПК
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td class="student-name">${student.name}</td>`;
                 
@@ -434,15 +424,13 @@
                     td.onclick = () => openGradeModal(student, col);
                     tr.appendChild(td);
                 });
-                tr.innerHTML += `<td></td>`;
                 tbody.appendChild(tr);
 
-                // Карточка для мобилки
+                // Мобилка
                 const card = document.createElement('div');
                 card.className = 'mobile-card';
                 let gradesHtml = '';
                 
-                // Берем только те столбцы, где есть оценки (для компактности на телефоне)
                 appData.columns.forEach(col => {
                     const key = `${student.id}-${col.id}`;
                     if (appData.subjects[currentSubject].grades[key]) {
@@ -463,8 +451,6 @@
         }
 
         function openAddGradeMobile(studentId) {
-            // Для телефона просто открываем первый попавшийся столбец (для примера)
-            // В реальном приложении тут нужен выбор даты, но для компактности оставим так
             const student = appData.students.find(s => s.id === studentId);
             if(appData.columns.length > 0) openGradeModal(student, appData.columns[0]);
         }
@@ -491,6 +477,21 @@
             });
 
             closeModal('addColumnModal');
+            await loadAppData();
+        }
+
+        // Модалка общего ДЗ
+        function openHwModal() {
+            document.getElementById('hwInput').value = appData.subjects[currentSubject].homework || '';
+            document.getElementById('hwModal').classList.remove('hidden');
+        }
+
+        async function saveHw() {
+            await fetch('/api/homework', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject: currentSubject, text: document.getElementById('hwInput').value })
+            });
+            closeModal('hwModal');
             await loadAppData();
         }
 
@@ -676,7 +677,6 @@
             const subjSel = document.getElementById('subSubject');
             const teachSel = document.getElementById('subTeacher');
 
-            // Заполняем только первые 30 дат для селекта, чтобы не было 100500 опций
             dateSel.innerHTML = appData.columns.slice(0, 30).map(c => `<option value="${c.date}">${c.date}</option>`).join('');
             subjSel.innerHTML = Object.keys(appData.subjects).map(s => `<option value="${s}">${s}</option>`).join('');
             teachSel.innerHTML = appData.teachers.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
@@ -740,17 +740,14 @@
         }
 
         function getDateForWeekAndDay(week, day) {
-            const startDate = new Date(2026, 10, 24); // 24.11.2026
-            // Учитываем только будни
+            const startDate = new Date(2026, 10, 24);
             let addedDays = 0;
             let current = new Date(startDate);
             const offset = (week - 1) * 5 + (day - 1);
             
             while(addedDays < offset) {
                 current.setDate(current.getDate() + 1);
-                if (current.getDay() !== 0 && current.getDay() !== 6) {
-                    addedDays++;
-                }
+                if (current.getDay() !== 0 && current.getDay() !== 6) addedDays++;
             }
             const d = String(current.getDate()).padStart(2, '0');
             const m = String(current.getMonth() + 1).padStart(2, '0');
@@ -782,7 +779,6 @@
                 const testInfo = tests.find(t => t.date === selectedDate);
                 const sub = appData.substitutions.find(s => s.date === selectedDate && s.subject === subj);
 
-                // Ищем столбцы для этого дня
                 const dayCols = appData.columns.filter(c => c.date === selectedDate);
 
                 const div = document.createElement('div');
