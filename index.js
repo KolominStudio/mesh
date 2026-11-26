@@ -11,7 +11,6 @@ const JOURNAL_FILE = path.join(DATA_DIR, 'journal.json');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Инициализация БД
 function initDB() {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
     
@@ -25,7 +24,7 @@ function initDB() {
             "Яковлев Тимур", "Яковлева Есения", "Антонов Марк", "Борисова Варвара", "Виноградов Владислав"
         ];
 
-        // Генерация дат (будни) с 24.11.2026 по 25.05.2027
+        // Генерируем ВСЕ даты (по будням) с 24.11.2026 по 25.05.2027
         const columns = [];
         let currentDate = new Date(2026, 10, 24);
         const endDate = new Date(2027, 4, 25);
@@ -59,7 +58,7 @@ function initDB() {
     }
 }
 
-// API
+// API Вход
 app.post('/api/login', (req, res) => {
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
     const { login, password } = req.body;
@@ -73,6 +72,7 @@ app.post('/api/login', (req, res) => {
     res.status(401).json({ error: 'Неверный логин или пароль' });
 });
 
+// Получить данные
 app.get('/api/data', (req, res) => {
     const { role, studentId } = req.query;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
@@ -98,18 +98,20 @@ app.get('/api/data', (req, res) => {
     res.json(data);
 });
 
+// Сохранение оценки
 app.post('/api/grade', (req, res) => {
-    const { subject, studentId, columnId, grade, comment } = req.body;
+    const { subject, studentId, columnId, grade, comment, theme } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
     const key = `${studentId}-${columnId}`;
     
     if (grade === null) delete data.subjects[subject].grades[key];
-    else data.subjects[subject].grades[key] = { grade: Number(grade), comment };
+    else data.subjects[subject].grades[key] = { grade: Number(grade), comment, theme };
     
     fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
     res.json({ success: true });
 });
 
+// Добавление нового столбца (доп. работы)
 app.post('/api/column', (req, res) => {
     const { date, type, theme, hw } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
@@ -134,6 +136,28 @@ app.post('/api/column', (req, res) => {
     res.json({ success: true, columns: data.columns });
 });
 
+// Управление ДЗ и контрольными (для клика по дате)
+app.post('/api/date-settings', (req, res) => {
+    const { date, hw, isTest, testTheme, subject } = req.body;
+    const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
+    const subj = data.subjects[subject];
+
+    if (hw !== undefined) subj.homework = hw;
+
+    if (isTest !== undefined) {
+        if (!subj.tests) subj.tests = [];
+        if (isTest && testTheme) {
+            if (!subj.tests.find(t => t.date === date)) subj.tests.push({ date, theme: testTheme, type: 'Контрольная работа' });
+        } else if (!isTest) {
+            subj.tests = subj.tests.filter(t => t.date !== date);
+        }
+    }
+
+    fs.writeFileSync(JOURNAL_FILE, JSON.stringify(data, null, 2));
+    res.json({ success: true });
+});
+
+// Замены
 app.post('/api/admin/substitution', (req, res) => {
     const { action, date, subject, newTeacherId } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
