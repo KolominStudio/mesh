@@ -54,20 +54,34 @@
         .hw-display { font-size: 13px; color: var(--t-gray); margin-right: auto; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* ТАБЛИЦА */
-        .table-responsive { flex: 1; overflow: auto; position: relative; background: #fff;}
-        table { width: max-content; border-collapse: collapse; }
+        .table-responsive { flex: 1; overflow: auto; position: relative; background: #fff; }
+        table { border-collapse: separate; border-spacing: 0; }
         
-        /* МАЛЕНЬКИЕ КЛЕТКИ */
-        th, td { border: 1px solid var(--t-border); padding: 0; text-align: center; height: 28px; min-width: 35px; font-size: 12px; }
+        th, td { 
+            border-right: 1px solid var(--t-border); 
+            border-bottom: 1px solid var(--t-border); 
+            padding: 0; 
+            text-align: center; 
+            height: 35px; 
+            min-width: 45px; /* Фиксированная ширина */
+            font-size: 12px; 
+        }
         
-        /* Шапка прилипает сверху */
-        th { background: #f9fafb; font-weight: 600; padding: 4px; position: sticky; top: 0; z-index: 10; cursor: pointer;}
+        th { 
+            background: #f9fafb; font-weight: 600; padding: 4px; 
+            position: sticky; top: 0; z-index: 10; cursor: pointer;
+        }
         th:hover { background: #e5f0fa; }
         
-        /* ИМЕНА СЛЕВА (прилипают) */
-        .student-name { text-align: left; font-weight: 600; padding-left: 8px; font-size: 12px; min-width: 160px; position: sticky; left: 0; background: #fff; z-index: 5; border-right: 2px solid #ccc; }
+        /* ИМЕНА СЛЕВА */
+        .student-name { 
+            text-align: left; font-weight: 600; padding-left: 10px; font-size: 13px; 
+            min-width: 180px; max-width: 180px; 
+            position: sticky; left: 0; background: #fff; z-index: 5; 
+            border-right: 2px solid #ccc;
+        }
         
-        .cell { cursor: pointer; font-weight: bold; font-size: 13px; color: #1f2937; }
+        .cell { cursor: pointer; font-weight: bold; font-size: 14px; color: #1f2937; }
         .cell:hover { background: #e5f0fa; }
 
         .th-date { display: block; font-weight: bold; color: var(--t-blue); font-size: 11px; }
@@ -273,7 +287,7 @@
         </div>
     </div>
 
-    <!-- Модалка настройки дня (для клика по дате) -->
+    <!-- Модалка настройки дня -->
     <div id="dateSettingsModal" class="modal hidden">
         <div class="modal-content">
             <h3 id="dateSettingsTitle">Настройки дня</h3>
@@ -412,7 +426,6 @@
             document.getElementById('hwDisplay').innerText = `ДЗ: ${appData.subjects[currentSubject].homework || 'Не задано'}`;
 
             const thead = document.getElementById('tableHead');
-            // ШАПКА С ДАТАМИ (ТЕПЕРЬ КЛИКАБЕЛЬНЫ)
             thead.innerHTML = `<tr><th class="student-name">Ученик</th>`;
             appData.columns.forEach(col => {
                 thead.innerHTML += `
@@ -474,7 +487,6 @@
             if(appData.columns.length > 0) openGradeModal(student, appData.columns[0]);
         }
 
-        // ОТКРЫТИЕ НАСТРОЕК ДНЯ ПО КЛИКУ НА ДАТУ
         function openDateSettings(date) {
             activeDateForSettings = date;
             document.getElementById('dateSettingsTitle').innerText = `Настройки на ${date}`;
@@ -508,7 +520,6 @@
             await loadAppData();
         }
 
-        // ДОБАВЛЕНИЕ СТОЛБЦА
         function openAddColumnModal() {
             document.getElementById('newColDate').value = '';
             document.getElementById('newColTheme').value = '';
