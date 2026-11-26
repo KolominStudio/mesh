@@ -50,26 +50,28 @@
         .subject-btn { padding: 6px 16px; border: 1px solid var(--t-border); background: #fff; border-radius: 20px; cursor: pointer; white-space: nowrap; }
         .subject-btn.active { background: var(--t-blue); color: white; border-color: var(--t-blue); }
 
-        /* Кнопки управления */
         .controls-bar { background: #f8fafc; padding: 10px 20px; border-bottom: 1px solid var(--t-border); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .hw-display { font-size: 13px; color: var(--t-gray); margin-right: auto; max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Контейнер таблицы */
+        /* ТАБЛИЦА */
         .table-responsive { flex: 1; overflow: auto; position: relative; background: #fff;}
-        
         table { width: max-content; border-collapse: collapse; }
         
         /* МАЛЕНЬКИЕ КЛЕТКИ */
         th, td { border: 1px solid var(--t-border); padding: 0; text-align: center; height: 28px; min-width: 35px; font-size: 12px; }
-        th { background: #f9fafb; font-weight: 600; padding: 4px; position: sticky; top: 0; z-index: 10; }
         
-        .th-date { display: block; font-weight: bold; color: var(--t-blue); font-size: 11px; }
-        .th-type { display: block; font-size: 9px; color: var(--t-gray); margin-top: 2px; }
-
-        /* Левая колонка учеников */
+        /* Шапка прилипает сверху */
+        th { background: #f9fafb; font-weight: 600; padding: 4px; position: sticky; top: 0; z-index: 10; cursor: pointer;}
+        th:hover { background: #e5f0fa; }
+        
+        /* ИМЕНА СЛЕВА (прилипают) */
         .student-name { text-align: left; font-weight: 600; padding-left: 8px; font-size: 12px; min-width: 160px; position: sticky; left: 0; background: #fff; z-index: 5; border-right: 2px solid #ccc; }
+        
         .cell { cursor: pointer; font-weight: bold; font-size: 13px; color: #1f2937; }
         .cell:hover { background: #e5f0fa; }
+
+        .th-date { display: block; font-weight: bold; color: var(--t-blue); font-size: 11px; }
+        .th-type { display: block; font-size: 9px; color: var(--t-gray); margin-top: 2px; }
 
         /* Мобильный список */
         .mobile-list { display: none; flex-direction: column; gap: 10px; padding: 10px; }
@@ -145,9 +147,8 @@
             <div id="teacherView-journal" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
                 <div class="subjects" id="subjectsBar"></div>
                 
-                <!-- Панель управления -->
                 <div class="controls-bar">
-                    <button class="btn btn-green" onclick="openAddColumnModal()">+ Добавить столбец</button>
+                    <button class="btn btn-green" onclick="openAddColumnModal()">+ Добавить работу (столбец)</button>
                     <button class="btn btn-gray" onclick="openHwModal()">✏️ Изменить общее ДЗ</button>
                     <div class="hw-display" id="hwDisplay">ДЗ: -</div>
                 </div>
@@ -229,6 +230,7 @@
                 <button onclick="selectGrade(5)">5</button><button onclick="selectGrade(4)">4</button>
                 <button onclick="selectGrade(3)">3</button><button onclick="selectGrade(2)">2</button>
             </div>
+            <label>Тема</label><input type="text" id="inputTheme">
             <label>Комментарий</label><input type="text" id="inputComment">
             <div class="modal-actions">
                 <button class="btn btn-red" id="btnDelete" onclick="deleteGrade()" style="display:none;">Удалить</button>
@@ -243,15 +245,14 @@
     <!-- Модалка добавления столбца -->
     <div id="addColumnModal" class="modal hidden">
         <div class="modal-content">
-            <h3>Новый столбец (Урок)</h3>
-            <label>Дата</label><input type="text" id="newColDate" placeholder="ДД.ММ (например, 12.02)">
+            <h3>Новая работа (Столбец)</h3>
+            <label>Дата</label><input type="text" id="newColDate" placeholder="ДД.ММ">
             <label>Тип работы</label>
             <select id="newColType">
                 <option>Устный ответ</option><option>Контрольная работа</option><option>Самостоятельная работа</option>
                 <option>Домашнее задание</option><option>Тест</option>
             </select>
             <label>Тема (необязательно)</label><input type="text" id="newColTheme">
-            <label>Домашнее задание (необязательно)</label><input type="text" id="newColHw">
             <div class="modal-actions">
                 <button class="btn btn-gray" onclick="closeModal('addColumnModal')">Отмена</button>
                 <button class="btn btn-blue" onclick="saveNewColumn()">Добавить</button>
@@ -268,6 +269,25 @@
             <div class="modal-actions">
                 <button class="btn btn-gray" onclick="closeModal('hwModal')">Отмена</button>
                 <button class="btn btn-blue" onclick="saveHw()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка настройки дня (для клика по дате) -->
+    <div id="dateSettingsModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="dateSettingsTitle">Настройки дня</h3>
+            <label>Домашнее задание (на этот день)</label>
+            <textarea id="dateHwInput" rows="3"></textarea>
+            <label style="margin-top:15px;">Контрольная работа</label>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                <input type="checkbox" id="dateIsTest" style="width:auto;">
+                <span>Назначить контрольную</span>
+            </div>
+            <input type="text" id="dateTestTheme" placeholder="Тема контрольной" style="display:none; margin-top:10px;">
+            <div class="modal-actions">
+                <button class="btn btn-gray" onclick="closeModal('dateSettingsModal')">Отмена</button>
+                <button class="btn btn-blue" onclick="saveDateSettings()">Сохранить</button>
             </div>
         </div>
     </div>
@@ -318,6 +338,7 @@
         let selectedGrade = null;
         let currentStudentWeek = 1;
         let currentStudentDay = 1;
+        let activeDateForSettings = null;
         
         let adminEditStudentId = null;
         let adminEditTeacherId = null;
@@ -391,12 +412,11 @@
             document.getElementById('hwDisplay').innerText = `ДЗ: ${appData.subjects[currentSubject].homework || 'Не задано'}`;
 
             const thead = document.getElementById('tableHead');
+            // ШАПКА С ДАТАМИ (ТЕПЕРЬ КЛИКАБЕЛЬНЫ)
             thead.innerHTML = `<tr><th class="student-name">Ученик</th>`;
-            
-            // ВЫВОДИМ ВСЕ СТОЛБЦЫ
             appData.columns.forEach(col => {
                 thead.innerHTML += `
-                    <th>
+                    <th onclick="openDateSettings('${col.date}')">
                         <span class="th-date">${col.date}</span>
                         <span class="th-type">${col.type}</span>
                     </th>
@@ -426,7 +446,6 @@
                 });
                 tbody.appendChild(tr);
 
-                // Мобилка
                 const card = document.createElement('div');
                 card.className = 'mobile-card';
                 let gradesHtml = '';
@@ -455,10 +474,44 @@
             if(appData.columns.length > 0) openGradeModal(student, appData.columns[0]);
         }
 
+        // ОТКРЫТИЕ НАСТРОЕК ДНЯ ПО КЛИКУ НА ДАТУ
+        function openDateSettings(date) {
+            activeDateForSettings = date;
+            document.getElementById('dateSettingsTitle').innerText = `Настройки на ${date}`;
+            document.getElementById('dateHwInput').value = appData.subjects[currentSubject].homework || '';
+            
+            const subjTests = appData.subjects[currentSubject].tests || [];
+            const hasTest = subjTests.find(t => t.date === date);
+            
+            document.getElementById('dateIsTest').checked = !!hasTest;
+            document.getElementById('dateTestTheme').value = hasTest ? hasTest.theme : '';
+            document.getElementById('dateTestTheme').style.display = hasTest ? 'block' : 'none';
+
+            document.getElementById('dateSettingsModal').classList.remove('hidden');
+        }
+
+        document.getElementById('dateIsTest').addEventListener('change', function() {
+            document.getElementById('dateTestTheme').style.display = this.checked ? 'block' : 'none';
+        });
+
+        async function saveDateSettings() {
+            const hw = document.getElementById('dateHwInput').value;
+            const isTest = document.getElementById('dateIsTest').checked;
+            const testTheme = document.getElementById('dateTestTheme').value;
+
+            await fetch('/api/date-settings', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject: currentSubject, date: activeDateForSettings, hw, isTest, testTheme })
+            });
+
+            closeModal('dateSettingsModal');
+            await loadAppData();
+        }
+
+        // ДОБАВЛЕНИЕ СТОЛБЦА
         function openAddColumnModal() {
             document.getElementById('newColDate').value = '';
             document.getElementById('newColTheme').value = '';
-            document.getElementById('newColHw').value = '';
             document.getElementById('newColType').value = 'Устный ответ';
             document.getElementById('addColumnModal').classList.remove('hidden');
         }
@@ -467,29 +520,27 @@
             const date = document.getElementById('newColDate').value.trim();
             const type = document.getElementById('newColType').value;
             const theme = document.getElementById('newColTheme').value;
-            const hw = document.getElementById('newColHw').value;
 
             if (!/^\d{2}\.\d{2}$/.test(date)) return alert('Формат даты: ДД.ММ');
 
             await fetch('/api/column', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject: currentSubject, date, type, theme, hw })
+                body: JSON.stringify({ subject: currentSubject, date, type, theme })
             });
 
             closeModal('addColumnModal');
             await loadAppData();
         }
 
-        // Модалка общего ДЗ
         function openHwModal() {
             document.getElementById('hwInput').value = appData.subjects[currentSubject].homework || '';
             document.getElementById('hwModal').classList.remove('hidden');
         }
 
         async function saveHw() {
-            await fetch('/api/homework', {
+            await fetch('/api/date-settings', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject: currentSubject, text: document.getElementById('hwInput').value })
+                body: JSON.stringify({ subject: currentSubject, hw: document.getElementById('hwInput').value })
             });
             closeModal('hwModal');
             await loadAppData();
@@ -508,7 +559,8 @@
             selectedGrade = gradeData ? gradeData.grade : null;
             
             document.getElementById('modalTitle').innerText = `${student.name} — ${column.date}`;
-            document.getElementById('modalTypeInfo').innerText = `Работа: ${column.type} ${column.theme ? ' ('+column.theme+')' : ''}`;
+            document.getElementById('modalTypeInfo').innerText = `Работа: ${column.type}`;
+            document.getElementById('inputTheme').value = gradeData ? (gradeData.theme || '') : column.theme || '';
             document.getElementById('inputComment').value = gradeData ? (gradeData.comment || '') : '';
             
             document.querySelectorAll('.grades-grid button').forEach(b => {
@@ -535,7 +587,8 @@
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     subject: currentSubject, studentId: activeCell.studentId, columnId: activeCell.columnId,
-                    grade: selectedGrade, comment: document.getElementById('inputComment').value
+                    grade: selectedGrade, comment: document.getElementById('inputComment').value,
+                    theme: document.getElementById('inputTheme').value
                 })
             });
             closeModal('gradeModal');
@@ -835,6 +888,7 @@
                                         <div>
                                             <div style="font-weight:600;">${subj}</div>
                                             <div style="font-size:12px; color:#aaa;">${col.type} • ${col.date}</div>
+                                            ${g.theme ? `<div style="font-size:12px; color:#aaa;">Тема: ${g.theme}</div>` : ''}
                                         </div>
                                         <div style="font-size:24px; font-weight:bold; color:white;">${g.grade}</div>
                                     </div>
