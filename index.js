@@ -11,6 +11,7 @@ const JOURNAL_FILE = path.join(DATA_DIR, 'journal.json');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Инициализация БД
 function initDB() {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
     
@@ -24,7 +25,7 @@ function initDB() {
             "Яковлев Тимур", "Яковлева Есения", "Антонов Марк", "Борисова Варвара", "Виноградов Владислав"
         ];
 
-        // Генерируем ВСЕ даты (по будням) с 24.11.2026 по 25.05.2027
+        // Генерация всех дат по будням
         const columns = [];
         let currentDate = new Date(2026, 10, 24);
         const endDate = new Date(2027, 4, 25);
@@ -111,7 +112,7 @@ app.post('/api/grade', (req, res) => {
     res.json({ success: true });
 });
 
-// Добавление нового столбца (доп. работы)
+// Добавление нового столбца
 app.post('/api/column', (req, res) => {
     const { date, type, theme, hw } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
@@ -136,7 +137,7 @@ app.post('/api/column', (req, res) => {
     res.json({ success: true, columns: data.columns });
 });
 
-// Управление ДЗ и контрольными (для клика по дате)
+// Настройки дня (ДЗ + Контрольная)
 app.post('/api/date-settings', (req, res) => {
     const { date, hw, isTest, testTheme, subject } = req.body;
     const data = JSON.parse(fs.readFileSync(JOURNAL_FILE, 'utf-8'));
